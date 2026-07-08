@@ -1,6 +1,7 @@
 import { ExtensionInstallRegisters } from '../../../extension'
 import { inheritDefaultOption } from '../../util/component'
 import { ZRColor } from '../../util/types'
+import installCommon from './installCommon'
 import SliderSplitView from './SliderSplitView'
 import SplitModel, { SplitOption } from './SplitModel'
 
@@ -23,6 +24,7 @@ export default class SliderSplitModel extends SplitModel<SliderSplitOption> {
     {
       show: true,
       backgroundColor: '#eee',
+      zlevel: 1000,
     } as SliderSplitOption
   )
 }
@@ -30,6 +32,7 @@ export default class SliderSplitModel extends SplitModel<SliderSplitOption> {
 export function install(registers: ExtensionInstallRegisters) {
   registers.registerComponentModel(SliderSplitModel)
   registers.registerComponentView(SliderSplitView)
+  installCommon(registers)
   registers.registerSubTypeDefaulter('split', function () {
     return 'slider'
   })
