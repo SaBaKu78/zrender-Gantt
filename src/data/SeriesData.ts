@@ -485,7 +485,6 @@ class SeriesData<
   //创建一个数据的对比器
   diff(otherList: SeriesData) {
     const thisList = this
-            console.log(">>>>",this.getStore())
 
     return new DataDiffer(
       otherList ? otherList.getStore().getIndices() : [],

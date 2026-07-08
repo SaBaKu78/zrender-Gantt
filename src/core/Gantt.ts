@@ -58,9 +58,9 @@ import { install as SliderSplitInstall } from '../component/split/SliderSplitMod
 import { install as CustomSeriesInstall } from '../component/custom/install'
 import { install as AxisInstall } from '../component/axis/install'
 import { install as DataZoomInstall } from '../component/dataZoom/install'
+import { install as UnassignedBoardInstall } from '../component/unassignedBoard/install'
 import ExtensionAPI from './ExtensionAPI'
 import EventController from './EventController'
-import SliderSplitView from '../component/split/SliderSplitView'
 import { getResourceList } from '../api/resource'
 import Scheduler from './Scheduler'
 import {
@@ -243,7 +243,6 @@ let updateDirectly: (
 ) => void
 let bindRenderedEvent: (zr: zrender.ZRenderType, piIns: Gantt) => void
 let bindMouseEvent: (zr: zrender.ZRenderType, piIns: Gantt) => void
-let bindLayeroutEvent: (zr: zrender.ZRenderType, piIns: Gantt) => void
 type UpdateMethod = (
   this: Gantt,
   payload?: Payload,
@@ -299,6 +298,7 @@ use(CustomSeriesInstall)
 registerCoordinateSystem('cartesian2d', Grid)
 use(AxisInstall)
 use(DataZoomInstall)
+use(UnassignedBoardInstall)
 registerVisual(PRIORITY_VISUAL_CHART_DATA_CUSTOM, dataSymbolTask)
 
 //----------------------------------- 注册实例区 --------------------------------------------------------
@@ -1188,76 +1188,6 @@ class Gantt extends Eventful<EventDefinition> {
       // });
     }
 
-    //初始化被分割线分割的容器区域
-    bindLayeroutEvent = function (zr: zrender.ZRenderType, piIns: Gantt): void {
-      const splitViewList = piIns._componentsViews.filter(
-        //@ts-ignore
-        (c) => c.type == 'split.slider'
-      ) as SliderSplitView[]
-      const verticalSplitView = splitViewList?.filter(
-        (split) => split.getOrient() == 'vertical'
-      )[0]
-      const horizontalSplitView = splitViewList?.filter(
-        (split) => split.getOrient() == 'horizontal'
-      )[0]
-      const vPos = verticalSplitView.getPos()
-      const hPos = horizontalSplitView.getPos()
-      //横竖分割线情况
-      if (verticalSplitView && horizontalSplitView) {
-        //被分割册成四块区域
-
-        //左上
-        piIns._containerInstence.set(
-          'ltopContainer',
-          new graphic.Group({
-            name: 'ltopContainer',
-            x: 0,
-            y: 0,
-          })
-        )
-        //右上
-        piIns._containerInstence.set(
-          'rtopContainer',
-          new graphic.Group({
-            name: 'rtopContainer',
-            x: vPos.x + vPos.width,
-            y: 0,
-          })
-        )
-        //左下
-        piIns._containerInstence.set(
-          'lbottomContainer',
-          new graphic.Group({
-            name: 'lbottomContainer',
-            x: 0,
-            y: hPos.y + hPos.height,
-          })
-        )
-        //右下
-        piIns._containerInstence.set(
-          'rbottomContainer',
-          new graphic.Group({
-            name: 'rbottomContainer',
-            x: vPos.x + vPos.width,
-            y: hPos.y + hPos.height,
-          })
-        )
-        piIns._containerInstence.forEach((v, k) => {
-          zr.add(v)
-        })
-      }
-      extensionRegisters.registerAction(
-        {
-          type: 'updateLayerout',
-        },
-        function (e) {
-          if (verticalSplitView && horizontalSplitView) {
-            const { displayables, orient } = e.data
-          }
-        }
-      )
-    }
-
     updateMethods = {
       //TODO
       update(
@@ -1305,6 +1235,11 @@ class Gantt extends Eventful<EventDefinition> {
       each(piIns._chartsViews, function (chart: ChartView) {
         if (!chart.__alive) {
           chart.remove(piModel, api)
+        }
+      })
+      each(piIns._componentsViews, function (componentView: ComponentView) {
+        if ((componentView as any).type === 'split.slider') {
+          componentView.render(componentView.__model, piModel, api, payload)
         }
       })
     }

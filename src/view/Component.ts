@@ -10,6 +10,7 @@ import SeriesModel from '../model/Series'
 interface ComponentView {
   findHighDownDispatchers?(name: string): Element[]
   focusBlurEnabled?: boolean
+  updateLayout?(model: ComponentModel, api: ExtensionAPI, payload?: any): void
 }
 
 class ComponentView {

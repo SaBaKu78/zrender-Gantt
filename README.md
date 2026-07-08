@@ -1,4 +1,4 @@
-# JCGantt
+# Gantt
 
 一个基于zrender的甘特图组件
 

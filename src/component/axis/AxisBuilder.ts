@@ -282,6 +282,7 @@ const builders: Record<
   axisTickLabel(opt, axisModel, group, transformGroup) {
     const ticksEls = buildAxisMajorTicks(group, transformGroup, axisModel, opt)
     const labelEls = buildAxisLabel(group, transformGroup, axisModel, opt)
+    buildAxisMinorTicks(group, transformGroup, axisModel, opt)
     fixMinMaxLabelShow(axisModel, labelEls, ticksEls)
   },
   axisName(opt, axisModel, group, transformGroup) {},
@@ -319,6 +320,52 @@ function buildAxisMajorTicks(
     group.add(ticksEls[i])
   }
   return ticksEls
+}
+
+function buildAxisMinorTicks(
+  group: Group,
+  transformGroup: Group,
+  axisModel: AxisBaseModel,
+  opt: AxisBuilderCfg
+) {
+  const axis = axisModel.axis
+  const tickModel = axisModel.getModel('axisTick')
+  let shown = tickModel.get('show')
+  if (shown === 'auto' && opt.handleAutoShown) {
+    shown = opt.handleAutoShown('axisTick')
+  }
+  if (!shown || axis.scale.isBlank()) {
+    return
+  }
+  const lineStyleModel = tickModel.getModel('lineStyle')
+  const tickLength = tickModel.get('length') || 5
+  const minorTickEndCoord = opt.tickDirection * (tickLength * 0.6)
+  const ticksCoords = axis.getTicksCoords()
+
+  // 在每个相邻主刻度之间插入一条辅助刻度线
+  const minorTicksCoords: TickCoord[] = []
+  for (let i = 0; i < ticksCoords.length - 1; i++) {
+    const midCoord = (ticksCoords[i].coord + ticksCoords[i + 1].coord) / 2
+    minorTicksCoords.push({ coord: midCoord })
+  }
+
+  if (minorTicksCoords.length === 0) {
+    return
+  }
+
+  const minorTicksEls = createTicks(
+    minorTicksCoords,
+    transformGroup.transform,
+    minorTickEndCoord,
+    defaults(lineStyleModel.getLineStyle(), {
+      stroke: axisModel.get(['axisLine', 'lineStyle', 'color']),
+    }),
+    'minorTicks'
+  )
+
+  for (let i = 0; i < minorTicksEls.length; i++) {
+    group.add(minorTicksEls[i])
+  }
 }
 
 function buildAxisLabel(

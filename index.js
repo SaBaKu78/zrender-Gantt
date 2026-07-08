@@ -7,7 +7,6 @@ const dom = document.getElementById('main')
 
 const data1 = await getResourceList({})
 const data2 = await getTask({})
-console.log(">>>",data2)
 const resource = data1?.map((r) => [r.displayName, r.id])
 const gantt = init(dom)
 
@@ -185,7 +184,7 @@ gantt.setOption({
       top: 70,
       bottom: 20,
       start: 0,
-      end: 5,
+      end: 10.5,
       handleSize: 0,
       showDetail: false,
     },
@@ -219,7 +218,7 @@ gantt.setOption({
       show: false,
     },
     axisLine: {
-      show: true,
+      show: false,
     },
     axisLabel: {
       show: false,
@@ -229,6 +228,9 @@ gantt.setOption({
     inverse: true,
     min: 0,
     max: resource?.length,
+  },
+  unassignedBoard: {
+    show: true,
   },
   series: [
     {
