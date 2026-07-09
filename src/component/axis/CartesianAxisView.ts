@@ -9,6 +9,7 @@ import AxisBuilder, { AxisBuilderCfg } from './AxisBuilder'
 import { isIntervalOrLogScale } from '../scale/helper'
 import * as zrUtil from 'zrender/src/core/util'
 import GridModel from '../gird/GridModel'
+import { Line } from 'zrender'
 
 const axisBuilderAttrs = ['axisLine', 'axisTickLabel', 'axisName'] as const
 
@@ -95,8 +96,61 @@ const axisElementBuilders: Record<
   (typeof selfBuilderAttrs)[number],
   AxisElementBuilder
 > = {
-  splitLine(axisView, axisGroup, axisModel, gridModel) {},
-  minorSplitLine(axisView, axisGroup, axisModel, gridModel) {},
+  splitLine(axisView, axisGroup, axisModel, gridModel) {
+    const axis = axisModel.axis
+    const grid = gridModel.coordinateSystem
+    const rect = grid.getRect()
+    const ticksCoords = axis.getTicksCoords()
+
+    if (axis.dim === 'x') {
+      ticksCoords.forEach(function (tickCoord) {
+        const x = rect.x + tickCoord.coord
+        axisGroup.add(new Line({
+          shape: {
+            x1: x,
+            y1: rect.y,
+            x2: x,
+            y2: rect.y + rect.height,
+          },
+          style: {
+            stroke: '#E2E8ED',
+            lineWidth: 1,
+          },
+          z2: 0,
+          silent: true,
+        }))
+      })
+    } else {
+      // y 轴水平线已在 ResourceRenderItem 中处理
+    }
+  },
+  minorSplitLine(axisView, axisGroup, axisModel, gridModel) {
+    const axis = axisModel.axis
+    if (axis.dim !== 'x') return
+
+    const grid = gridModel.coordinateSystem
+    const rect = grid.getRect()
+    const ticksCoords = axis.getTicksCoords()
+
+    for (let i = 0; i < ticksCoords.length - 1; i++) {
+      const midX = rect.x + (ticksCoords[i].coord + ticksCoords[i + 1].coord) / 2
+      axisGroup.add(new Line({
+        shape: {
+          x1: midX,
+          y1: rect.y,
+          x2: midX,
+          y2: rect.y + rect.height,
+        },
+        style: {
+          stroke: '#E2E8ED',
+          lineWidth: 1,
+          lineDash: [4, 4],
+        },
+        z2: 0,
+        silent: true,
+      }))
+    }
+  },
   splitArea(axisView, axisGroup, axisModel, gridModel) {},
 }
 

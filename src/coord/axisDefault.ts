@@ -97,7 +97,7 @@ const categoryAxis: AxisBaseOption = zrUtil.merge(
     // show: false
     // },
     splitLine: {
-      show: false,
+      show: true,
     },
     axisTick: {
       // If tick is align with label when boundaryGap is true
@@ -169,7 +169,10 @@ const timeAxis: AxisBaseOption = zrUtil.merge(
       },
     },
     splitLine: {
-      show: false,
+      show: true,
+    },
+    minorSplitLine: {
+      show: true,
     },
   },
   valueAxis
