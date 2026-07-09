@@ -14,7 +14,7 @@ const TaskRenderItem = function (params, api) {
   const categoryIndex = api.value(0)
   const startTime = api.coord([api.value(1), categoryIndex])
   const endTime = api.coord([api.value(2), categoryIndex])
-  const barHeight = 60
+  const barHeight = api.size([0, 1])[1]
   const barWidth = endTime[0] - startTime[0]
   const x = api.coord([api.value(1), categoryIndex])[0]
   const y = api.coord([api.value(1), categoryIndex])[1]
@@ -48,29 +48,32 @@ const TaskRenderItem = function (params, api) {
 
 const ResourceRenderItem = function (params, api) {
   var y = api.coord([api.value(2), api.value(0)])[1]
-  const rectWidth = 170
-  const rectHeight = 60
+  const gridX = params.coordSys.x
+  const rectWidth = gridX
+  const rectHeight = api.size([0, 1])[1]
   return {
     type: 'group',
-    position: [10, y],
+    position: [0, y],
     children: [
       {
         type: 'rect',
         shape: {
-          x: 5,
+          x: 0,
           y: 0,
           width: rectWidth,
           height: rectHeight,
         },
         style: {
           fill: '#fff',
+          stroke: '#E2E8ED',
+          lineWidth: 1,
         },
       },
       {
         type: 'text',
         style: {
-          x: 70,
-          y: 25,
+          x: rectWidth / 2,
+          y: rectHeight / 2,
           text: api.value(1),
           textVerticalAlign: 'middle',
           textAlign: 'center',
