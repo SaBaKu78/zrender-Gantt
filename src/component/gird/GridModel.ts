@@ -30,7 +30,7 @@ class GridModel
     left: '10%',
     top: 60,
     right: '10%',
-    bottom: 70,
+    bottom: 26,
     backgroundColor: 'rgba(0,0,0,0)',
     borderWidth: 1,
     borderColor: '#E2E8ED',
