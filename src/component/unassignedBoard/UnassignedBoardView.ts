@@ -39,6 +39,10 @@ export default class UnassignedBoardView extends ComponentView {
 
   private _splitY: number
 
+  private _backgroundRect: Rect
+
+  private _emptyText: Text
+
   render(model: ComponentModel, piModel: GlobalModel, api: ExtensionAPI, payload?: Payload): void {
     this.group.removeAll()
     this.piModel = piModel
@@ -68,8 +72,31 @@ export default class UnassignedBoardView extends ComponentView {
 
       this._splitY = newY
       this.api = api
-      this.group.removeAll()
-      this._renderBoard(this._getUnassignedData())
+      this._updateBoardLayout()
+    }
+  }
+
+  private _updateBoardLayout(): void {
+    const splitY = this._splitY
+    const width = this.api.getWidth()
+    const height = this.api.getHeight() - splitY
+
+    ;(this.group as any).attr({ x: 0, y: splitY })
+
+    if (this._backgroundRect) {
+      this._backgroundRect.setShape({
+        x: 0,
+        y: 0,
+        width,
+        height,
+      })
+    }
+
+    if (this._emptyText) {
+      this._emptyText.setStyle({
+        x: width / 2,
+        y: height / 2,
+      })
     }
   }
 
@@ -94,8 +121,7 @@ export default class UnassignedBoardView extends ComponentView {
     ;(group as any).attr({ z: 0 })
     ;(group as any).attr({ x, y: splitY })
 
-    group.add(
-      new Rect({
+    this._backgroundRect = new Rect({
         shape: {
           x: 0,
           y: 0,
@@ -110,7 +136,7 @@ export default class UnassignedBoardView extends ComponentView {
         z2: 0,
         silent: true,
       })
-    )
+    group.add(this._backgroundRect)
 
     let yOffset = padding[0]
     const maxWidth = width - padding[1] - padding[3]
@@ -139,8 +165,7 @@ export default class UnassignedBoardView extends ComponentView {
     })
 
     if (tasks.length === 0) {
-      group.add(
-        new Text({
+      this._emptyText = new Text({
           style: {
             text: '暂无未分配任务',
             x: width / 2,
@@ -155,7 +180,7 @@ export default class UnassignedBoardView extends ComponentView {
           z2: 1,
           silent: true,
         })
-      )
+      group.add(this._emptyText)
     }
   }
 }
