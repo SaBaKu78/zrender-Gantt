@@ -9,13 +9,19 @@ import SliderSplitModel from './SliderSplitModel'
 import * as eventTool from 'zrender/src/core/event'
 import { applyTransform, traverseElements } from '../../util/graphic'
 import * as graphic from '../../util/graphic'
+import * as layout from '../../util/layout'
 
 const DEFAULT_SPLIT_GAP = 4
+export const DATAZOOM_SPLIT_GAP = 6
+const INITIAL_DATAZOOM_SPLIT_GAP = 2
+const HORIZONTAL_HANDLE_ICON_WIDTH = 30
+const HORIZONTAL_HANDLE_ICON_HEIGHT = 5
+const VERTICAL_HANDLE_ICON_WIDTH = 5
+const VERTICAL_HANDLE_ICON_HEIGHT = 30
 export const DEFAULT_HORIZONTAL_RATIO = 0.8 //默认横向分割线得y占比
 export const DEFAULT_VERTICAL_RATIO = 0.2 //默认竖向分割线x占比
 const HORIZONTAL = 'horizontal'
 const VERTICAL = 'vertical'
-const BOUNDARY = 2
 
 interface Displayables {
   sliderGroup: Group
@@ -39,6 +45,10 @@ export default class SliderSplitView extends SplitView {
 
   private _dragging: boolean
 
+  private _horizontalMinHandleEnd: number
+
+  private _horizontalMaxHandleEnd: number
+
   init(piModel: GlobalModel, api: ExtensionAPI) {
     this.api = api
   }
@@ -54,6 +64,7 @@ export default class SliderSplitView extends SplitView {
   private _buildView() {
     const group = this.group
     group.removeAll()
+    ;(group as any).attr({ z: 99 })
     const sliderGroup = (this._displayables.sliderGroup = new Group())
     const gridRect = this._getGridRect()
     const api = this.api
@@ -106,16 +117,86 @@ export default class SliderSplitView extends SplitView {
       this._hanldeEnd = gridRect.x
       this._size = [gridRect.x, 0]
     } else if (this._orient === HORIZONTAL) {
+      const initialHandleEnd =
+        this._getHorizontalDataZoomBottom() + INITIAL_DATAZOOM_SPLIT_GAP
+      if (this._horizontalMinHandleEnd == null) {
+        this._horizontalMinHandleEnd = this._getHorizontalDragMinHandleEnd(gridRect)
+      }
+      if (this._horizontalMaxHandleEnd == null) {
+        this._horizontalMaxHandleEnd = initialHandleEnd
+      }
+
       if (ratio === undefined) {
-        this._hanldeEnd = piSize.height - BOUNDARY
+        this._hanldeEnd = initialHandleEnd
       } else {
         this._hanldeEnd = piSize.height * parseRatio(ratio, this._orient)
-          }
-          this._size = [0, this._hanldeEnd]
+      }
+      this._hanldeEnd = Math.max(
+        this._horizontalMinHandleEnd,
+        Math.min(this._hanldeEnd, this._horizontalMaxHandleEnd)
+      )
+      this._size = [0, this._hanldeEnd]
     } else {
       this._size = [piSize.width * parseRatio(ratio, this._orient), 0]
       this._hanldeEnd = this._size[1]
     }
+  }
+
+  private _getHorizontalDragMinHandleEnd(gridRect: RectLike | null): number {
+    return gridRect ? gridRect.y : 0
+  }
+
+  private _getHorizontalDataZoomTop(): number | null {
+    const api = this.api
+    const piSize = { width: api.getWidth(), height: api.getHeight() }
+    let trackTop: number | null = null
+
+    api.getModel().eachComponent('dataZoom', function (dataZoomModel: any) {
+      if (
+        dataZoomModel.subType !== 'slider' ||
+        dataZoomModel.getOrient() !== HORIZONTAL ||
+        dataZoomModel.get('show') === false
+      ) {
+        return
+      }
+
+      const layoutRect = layout.getLayoutRect(
+        layout.getLayoutParams(dataZoomModel.option),
+        piSize
+      )
+      trackTop = layoutRect.y
+    })
+
+    return trackTop
+  }
+
+  private _getHorizontalDataZoomBottom(): number {
+    const api = this.api
+    const piSize = { width: api.getWidth(), height: api.getHeight() }
+    let trackBottom = piSize.height
+
+    api.getModel().eachComponent('dataZoom', function (dataZoomModel: any) {
+      if (
+        dataZoomModel.subType !== 'slider' ||
+        dataZoomModel.getOrient() !== HORIZONTAL ||
+        dataZoomModel.get('show') === false
+      ) {
+        return
+      }
+
+      const layoutRect = layout.getLayoutRect(
+        layout.getLayoutParams(dataZoomModel.option),
+        piSize
+      )
+      if (dataZoomModel.get('brushSelect')) {
+        trackBottom =
+          layoutRect.y + (dataZoomModel.get('moveHandleSize') || 0) - 0.5
+      } else {
+        trackBottom = layoutRect.y + layoutRect.height
+      }
+    })
+
+    return trackBottom
   }
 
   _renderHandle() {
@@ -149,21 +230,20 @@ export default class SliderSplitView extends SplitView {
     const handleIcon = new Image({
       style: {
         image: iconStr,
+        width:
+          this._orient === HORIZONTAL
+            ? HORIZONTAL_HANDLE_ICON_WIDTH
+            : VERTICAL_HANDLE_ICON_WIDTH,
+        height:
+          this._orient === HORIZONTAL
+            ? HORIZONTAL_HANDLE_ICON_HEIGHT
+            : VERTICAL_HANDLE_ICON_HEIGHT,
       },
       cursor: getCursor(this._orient),
       zlevel: zlevel,
       z2: 10001,
     })
-    handleIcon.attr({
-      x:
-        this._orient === HORIZONTAL
-          ? bRect.getBoundingRect().width / 2 - handleIcon.getWidth() / 2
-          : this._size[0] + DEFAULT_SPLIT_GAP,
-      y:
-        this._orient === HORIZONTAL
-          ? this._size[1] + DEFAULT_SPLIT_GAP
-          : bRect.getBoundingRect().height / 2 - handleIcon.getHeight() / 2,
-    })
+    handleIcon.attr(this._getHandleIconPosition(this._hanldeEnd))
     sliderGroup.add(bRect)
     sliderGroup.add(handleIcon)
     sliderGroup.attr({
@@ -175,8 +255,32 @@ export default class SliderSplitView extends SplitView {
     this._displayables.handleIcon = handleIcon
   }
 
+  private _getHandleIconPosition(handleEnd: number) {
+    return this._orient === HORIZONTAL
+      ? {
+          x: this.api.getWidth() / 2 - HORIZONTAL_HANDLE_ICON_WIDTH / 2,
+          y:
+            handleEnd +
+            DEFAULT_SPLIT_GAP / 2 -
+            HORIZONTAL_HANDLE_ICON_HEIGHT / 2,
+        }
+      : {
+          x:
+            handleEnd +
+            DEFAULT_SPLIT_GAP / 2 -
+            VERTICAL_HANDLE_ICON_WIDTH / 2,
+          y: this.api.getHeight() / 2 - VERTICAL_HANDLE_ICON_HEIGHT / 2,
+        }
+  }
+
   private updateInterval(delta: number): boolean {
     this._hanldeEnd += delta
+    if (this._orient === HORIZONTAL) {
+      this._hanldeEnd = Math.max(
+        this._horizontalMinHandleEnd,
+        Math.min(this._hanldeEnd, this._horizontalMaxHandleEnd)
+      )
+    }
     return true
   }
 
@@ -186,16 +290,9 @@ export default class SliderSplitView extends SplitView {
       x: this._orient === VERTICAL ? handleEnds : 0,
       y: this._orient === HORIZONTAL ? handleEnds : 0,
     })
-    this._displayables.handleIcon.attr({
-      x:
-        this._orient === HORIZONTAL
-          ? this._displayables.handle.getBoundingRect().width / 2
-          : handleEnds + DEFAULT_SPLIT_GAP,
-      y:
-        this._orient === HORIZONTAL
-          ? handleEnds + DEFAULT_SPLIT_GAP
-          : this._displayables.handle.getBoundingRect().height / 2,
-    })
+    this._displayables.handleIcon.attr(
+      this._getHandleIconPosition(handleEnds)
+    )
   }
 
   private _onDragMove(dx: number, dy: number, event: ElementEvent) {
@@ -265,8 +362,9 @@ export default class SliderSplitView extends SplitView {
 
   private _boundaryDefinition(): boolean {
     return this._orient === HORIZONTAL
-      ? this._hanldeEnd <= 0 || this._hanldeEnd >= this.api.getHeight() - BOUNDARY
-      : this._hanldeEnd <= 0 || this._hanldeEnd >= this.api.getWidth() - BOUNDARY
+      ? false
+      : this._hanldeEnd <= 0 ||
+          this._hanldeEnd >= this.api.getWidth() - DEFAULT_SPLIT_GAP
   }
 
   eachRendered(cb: (el: Element) => boolean | void) {

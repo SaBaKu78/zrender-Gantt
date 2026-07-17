@@ -10,6 +10,7 @@ import { isIntervalOrLogScale } from '../scale/helper'
 import * as zrUtil from 'zrender/src/core/util'
 import GridModel from '../gird/GridModel'
 import { Line } from 'zrender'
+import * as layout from '../../util/layout'
 
 const axisBuilderAttrs = ['axisLine', 'axisTickLabel', 'axisName'] as const
 
@@ -27,6 +28,7 @@ class CartesianAxisView extends AxisView {
     api: ExtensionAPI,
     payload: Payload
   ): void {
+    ;(this as any).api = api
     this.group.removeAll()
     const oldAxisGroup = this._axisGroup
     this._axisGroup = new graphic.Group()
@@ -83,6 +85,33 @@ class CartesianAxisView extends AxisView {
   }
 }
 
+
+function getVerticalSplitLineEndY(
+  api: ExtensionAPI,
+  gridRect: { y: number; height: number }
+): number {
+  const piSize = { width: api.getWidth(), height: api.getHeight() }
+  let endY = gridRect.y + gridRect.height
+
+  api.getModel().eachComponent('dataZoom', function (dataZoomModel: any) {
+    if (
+      dataZoomModel.subType !== 'slider' ||
+      dataZoomModel.getOrient() !== 'horizontal' ||
+      dataZoomModel.get('show') === false
+    ) {
+      return
+    }
+
+    const layoutRect = layout.getLayoutRect(
+      layout.getLayoutParams(dataZoomModel.option),
+      piSize
+    )
+    endY = Math.max(endY, layoutRect.y)
+  })
+
+  return Math.min(endY, piSize.height)
+}
+
 interface AxisElementBuilder {
   (
     axisView: CartesianAxisView,
@@ -101,6 +130,7 @@ const axisElementBuilders: Record<
     const grid = gridModel.coordinateSystem
     const rect = grid.getRect()
     const ticksCoords = axis.getTicksCoords()
+    const endY = getVerticalSplitLineEndY(axisView.api, rect)
 
     if (axis.dim === 'x') {
       ticksCoords.forEach(function (tickCoord) {
@@ -110,7 +140,7 @@ const axisElementBuilders: Record<
             x1: x,
             y1: rect.y,
             x2: x,
-            y2: rect.y + rect.height,
+            y2: endY,
           },
           style: {
             stroke: '#E2E8ED',
@@ -131,6 +161,7 @@ const axisElementBuilders: Record<
     const grid = gridModel.coordinateSystem
     const rect = grid.getRect()
     const ticksCoords = axis.getTicksCoords()
+    const endY = getVerticalSplitLineEndY(axisView.api, rect)
 
     for (let i = 0; i < ticksCoords.length - 1; i++) {
       const midX = rect.x + (ticksCoords[i].coord + ticksCoords[i + 1].coord) / 2
@@ -139,7 +170,7 @@ const axisElementBuilders: Record<
           x1: midX,
           y1: rect.y,
           x2: midX,
-          y2: rect.y + rect.height,
+          y2: endY,
         },
         style: {
           stroke: '#E2E8ED',
