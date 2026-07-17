@@ -6,6 +6,8 @@ import ComponentModel from '../../model/Component'
 import { Payload } from '../../util/types'
 import { parseRatio } from '../split/SliderSplitView'
 
+const BOARD_ZLEVEL = 999
+
 export interface TaskData {
   id: number
   name?: string
@@ -42,16 +44,13 @@ export default class UnassignedBoardView extends ComponentView {
     this.piModel = piModel
     this.api = api
 
-    // 与 SliderSplitView._resetLocation 完全一致的计算逻辑
-    const BOUNDARY = 2
-    let splitY = api.getHeight() / 2
+    let splitY = api.getHeight()
+
     ;(piModel as any).eachComponent('split', function(splitModel: any) {
       if (splitModel.get('orient') === 'horizontal') {
         const ratio = splitModel.get('ratio')
         if (ratio != null) {
           splitY = api.getHeight() * parseRatio(ratio, 'horizontal')
-        } else {
-          splitY = api.getHeight() - BOUNDARY
         }
       }
     })
@@ -69,22 +68,8 @@ export default class UnassignedBoardView extends ComponentView {
 
       this._splitY = newY
       this.api = api
-
-      // x = 0
-      // y = 水平分割线 y
-      // 宽度 = 整个视口宽度
-      // 高度 = 视口高度 - 水平分割线 y
-      const x = 0
-      const y = this._splitY
-      const width = api.getWidth()
-      const height = api.getHeight() - this._splitY
-
-      ;(this.group as any).attr({ x, y })
-
-      const rect = this.group.childAt(0) as Rect
-      if (rect) {
-        rect.attr({ shape: { x: 0, y: 0, width, height } })
-      }
+      this.group.removeAll()
+      this._renderBoard(this._getUnassignedData())
     }
   }
 
@@ -101,14 +86,12 @@ export default class UnassignedBoardView extends ComponentView {
     const itemGap = 8
     const padding = [16, 16, 16, 16]
 
-    // 宽度 = 整个视口宽度（与 bRect 的 width 一致）
-    // 高度 = 视口高度 - 水平分割线 y
     const x = 0
     const splitY = this._splitY
     const width = api.getWidth()
     const height = api.getHeight() - splitY
 
-    ;(group as any).attr({ z: 9999 })
+    ;(group as any).attr({ z: 0 })
     ;(group as any).attr({ x, y: splitY })
 
     group.add(
@@ -122,7 +105,9 @@ export default class UnassignedBoardView extends ComponentView {
         style: {
           fill: 'rgb(240, 242, 245)',
         },
-        z2: 9999,
+        zlevel: BOARD_ZLEVEL,
+        z: 0,
+        z2: 0,
         silent: true,
       })
     )
@@ -143,6 +128,9 @@ export default class UnassignedBoardView extends ComponentView {
           fill: '#333',
           verticalAlign: 'top',
         },
+        zlevel: BOARD_ZLEVEL,
+        z: 0,
+        z2: 1,
         cursor: 'move',
       })
 
@@ -162,6 +150,9 @@ export default class UnassignedBoardView extends ComponentView {
             align: 'center',
             verticalAlign: 'middle',
           },
+          zlevel: BOARD_ZLEVEL,
+          z: 0,
+          z2: 1,
           silent: true,
         })
       )

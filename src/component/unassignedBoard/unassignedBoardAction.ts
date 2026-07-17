@@ -1,6 +1,7 @@
 import { ExtensionInstallRegisters } from "../../../extension";
 import GlobalModel from "../../model/Global";
 import ExtensionAPI from "../../core/ExtensionAPI";
+import { DATAZOOM_SPLIT_GAP } from '../split/SliderSplitView';
 
 export default function installUnassignedBoardAction(registers: ExtensionInstallRegisters) {
   registers.registerAction({
@@ -20,10 +21,33 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       }
     })
 
+    model.eachComponent('dataZoom', function(dataZoomModel: any) {
+      if (
+        dataZoomModel.subType !== 'slider' ||
+        dataZoomModel.getOrient() !== 'horizontal' ||
+        dataZoomModel.get('show') === false
+      ) {
+        return
+      }
+
+      const height = dataZoomModel.get('height') || 0
+      dataZoomModel.option.bottom = Math.max(api.getHeight() - newY + DATAZOOM_SPLIT_GAP, 0)
+      dataZoomModel.option.top = undefined
+      dataZoomModel.option.height = height
+      api.getViewOfComponentModel(dataZoomModel)?.render?.(
+        dataZoomModel,
+        model,
+        api,
+        { type: 'updateUnassignedBoardPosition', data: { y: newY } }
+      )
+    })
+
     model.eachComponent('unassignedBoard', function(boardModel: any) {
       boardModel.option.splitY = newY
       boardModel.option.verticalSplitX = verticalSplitX
       api.getViewOfComponentModel(boardModel)?.updateLayout?.(boardModel, api, { type: 'updateUnassignedBoardPosition', data: { y: newY } })
     })
+
+    api.getZr().refresh()
   })
 }
