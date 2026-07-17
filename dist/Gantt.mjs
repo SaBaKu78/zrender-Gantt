@@ -90479,7 +90479,7 @@ GridModel.defaultOption = {
   left: "10%",
   top: 60,
   right: "10%",
-  bottom: 70,
+  bottom: 26,
   backgroundColor: "rgba(0,0,0,0)",
   borderWidth: 1,
   borderColor: "#E2E8ED"
@@ -93745,7 +93745,7 @@ function isPath$1(t) {
   return t.shape != null;
 }
 registerShape("rect", zrender.Rect);
-const DEFAULT_SPLIT_GAP = 4, DATAZOOM_SPLIT_GAP = 6, INITIAL_DATAZOOM_SPLIT_GAP = 2, HORIZONTAL_HANDLE_ICON_WIDTH = 30, HORIZONTAL_HANDLE_ICON_HEIGHT = 5, VERTICAL_HANDLE_ICON_WIDTH = 5, VERTICAL_HANDLE_ICON_HEIGHT = 30, DEFAULT_HORIZONTAL_RATIO = 0.8, DEFAULT_VERTICAL_RATIO = 0.2, HORIZONTAL$1 = "horizontal", VERTICAL$1 = "vertical", _SliderSplitView = class Ea extends SplitView {
+const DEFAULT_SPLIT_GAP = 4, DATAZOOM_SPLIT_GAP = 6, INITIAL_DATAZOOM_SPLIT_GAP = 1, HORIZONTAL_HANDLE_ICON_WIDTH = 30, HORIZONTAL_HANDLE_ICON_HEIGHT = 5, VERTICAL_HANDLE_ICON_WIDTH = 5, VERTICAL_HANDLE_ICON_HEIGHT = 30, DEFAULT_HORIZONTAL_RATIO = 0.8, DEFAULT_VERTICAL_RATIO = 0.2, HORIZONTAL$1 = "horizontal", VERTICAL$1 = "vertical", _SliderSplitView = class Ea extends SplitView {
   constructor() {
     super(...arguments), this.type = Ea.type, this._displayables = {};
   }
