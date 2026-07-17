@@ -157,6 +157,20 @@ class SliderZoomView extends DataZoomView {
     this._updateView()
   }
 
+  updateLayout(dataZoomModel: SliderZoomModel, api: ExtensionAPI): void {
+    this.dataZoomModel = dataZoomModel
+    this.api = api
+    this._orient = dataZoomModel.getOrient()
+
+    if (!this._displayables.sliderGroup) {
+      this.render(dataZoomModel, api.getModel(), api, null)
+      return
+    }
+
+    this._resetLocation()
+    this._positionGroup()
+  }
+
   _dispatchZoomAction(realtime: boolean) {
     const range = this._range
     this.api.dispatchAction({

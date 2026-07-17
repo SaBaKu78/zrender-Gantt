@@ -100979,6 +100979,13 @@ const DEFAULT_LOCATION_EDGE_GAP = 7, DEFAULT_FRAME_BORDER_WIDTH = 1, DEFAULT_FIL
     }
     (!o || o.type !== "dataZoom" || o.from !== this.uid) && this._buildView(), this._updateView();
   }
+  updateLayout(e, a) {
+    if (this.dataZoomModel = e, this.api = a, this._orient = e.getOrient(), !this._displayables.sliderGroup) {
+      this.render(e, a.getModel(), a, null);
+      return;
+    }
+    this._resetLocation(), this._positionGroup();
+  }
   _dispatchZoomAction(e) {
     const a = this._range;
     this.api.dispatchAction({
@@ -101950,8 +101957,20 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class qa extends ComponentView 
       const n = (o = r.data) == null ? void 0 : o.y;
       if (n == null)
         return;
-      this._splitY = n, this.api = a, this.group.removeAll(), this._renderBoard(this._getUnassignedData());
+      this._splitY = n, this.api = a, this._updateBoardLayout();
     }
+  }
+  _updateBoardLayout() {
+    const e = this._splitY, a = this.api.getWidth(), r = this.api.getHeight() - e;
+    this.group.attr({ x: 0, y: e }), this._backgroundRect && this._backgroundRect.setShape({
+      x: 0,
+      y: 0,
+      width: a,
+      height: r
+    }), this._emptyText && this._emptyText.setStyle({
+      x: a / 2,
+      y: r / 2
+    });
   }
   _getUnassignedData() {
     var r;
@@ -101960,23 +101979,21 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class qa extends ComponentView 
   }
   _renderBoard(e) {
     const a = this.group, r = this.api, o = 8, n = [16, 16, 16, 16], s = 0, u = this._splitY, d = r.getWidth(), l = r.getHeight() - u;
-    a.attr({ z: 0 }), a.attr({ x: s, y: u }), a.add(
-      new zrender.Rect({
-        shape: {
-          x: 0,
-          y: 0,
-          width: d,
-          height: l
-        },
-        style: {
-          fill: "rgb(240, 242, 245)"
-        },
-        zlevel: BOARD_ZLEVEL,
-        z: 0,
-        z2: 0,
-        silent: !0
-      })
-    );
+    a.attr({ z: 0 }), a.attr({ x: s, y: u }), this._backgroundRect = new zrender.Rect({
+      shape: {
+        x: 0,
+        y: 0,
+        width: d,
+        height: l
+      },
+      style: {
+        fill: "rgb(240, 242, 245)"
+      },
+      zlevel: BOARD_ZLEVEL,
+      z: 0,
+      z2: 0,
+      silent: !0
+    }), a.add(this._backgroundRect);
     let c = n[0];
     const m = d - n[1] - n[3];
     e.forEach((p) => {
@@ -101997,23 +102014,21 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class qa extends ComponentView 
         cursor: "move"
       });
       a.add(T), c += 60 + o;
-    }), e.length === 0 && a.add(
-      new zrender.Text({
-        style: {
-          text: "暂无未分配任务",
-          x: d / 2,
-          y: l / 2,
-          fontSize: 14,
-          fill: "#999",
-          align: "center",
-          verticalAlign: "middle"
-        },
-        zlevel: BOARD_ZLEVEL,
-        z: 0,
-        z2: 1,
-        silent: !0
-      })
-    );
+    }), e.length === 0 && (this._emptyText = new zrender.Text({
+      style: {
+        text: "暂无未分配任务",
+        x: d / 2,
+        y: l / 2,
+        fontSize: 14,
+        fill: "#999",
+        align: "center",
+        verticalAlign: "middle"
+      },
+      zlevel: BOARD_ZLEVEL,
+      z: 0,
+      z2: 1,
+      silent: !0
+    }), a.add(this._emptyText));
   }
 };
 _UnassignedBoardView.type = "unassignedBoard";
@@ -102051,11 +102066,13 @@ function installUnassignedBoardAction(t) {
         d != null && (n = r.getWidth() * d);
       }
     }), a.eachComponent("dataZoom", function(u) {
-      var l, c;
+      var c;
       if (u.subType !== "slider" || u.getOrient() !== "horizontal" || u.get("show") === !1)
         return;
       const d = u.get("height") || 0;
-      u.option.bottom = Math.max(r.getHeight() - o + DATAZOOM_SPLIT_GAP, 0), u.option.top = void 0, u.option.height = d, (c = (l = r.getViewOfComponentModel(u)) == null ? void 0 : l.render) == null || c.call(
+      u.option.bottom = Math.max(r.getHeight() - o + DATAZOOM_SPLIT_GAP, 0), u.option.top = void 0, u.option.height = d;
+      const l = r.getViewOfComponentModel(u);
+      l != null && l.updateLayout ? l.updateLayout(u, r, { type: "updateUnassignedBoardPosition", data: { y: o } }) : (c = l == null ? void 0 : l.render) == null || c.call(
         l,
         u,
         a,
@@ -102065,7 +102082,7 @@ function installUnassignedBoardAction(t) {
     }), a.eachComponent("unassignedBoard", function(u) {
       var d, l;
       u.option.splitY = o, u.option.verticalSplitX = n, (l = (d = r.getViewOfComponentModel(u)) == null ? void 0 : d.updateLayout) == null || l.call(d, u, r, { type: "updateUnassignedBoardPosition", data: { y: o } });
-    }), r.getZr().refresh();
+    });
   });
 }
 function install(t) {
