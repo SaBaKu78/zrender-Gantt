@@ -143,7 +143,7 @@ const axisElementBuilders: Record<
             y2: endY,
           },
           style: {
-            stroke: '#E2E8ED',
+            stroke: '#D6DEE8',
             lineWidth: 1,
             lineDash: null,
           },
@@ -174,7 +174,7 @@ const axisElementBuilders: Record<
           y2: endY,
         },
         style: {
-          stroke: '#E2E8ED',
+          stroke: '#EDF1F5',
           lineWidth: 1,
           lineDash: null,
         },

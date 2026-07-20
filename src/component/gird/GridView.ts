@@ -36,12 +36,11 @@ class GridView extends ComponentView {
     const totalRowCount = max - min
 
     for (let i = 0; i < totalRowCount; i++) {
-      if (i % 2 !== 0) continue
-
       const rowStart = yAxis.toGlobalCoord(yAxis.dataToCoord(min + i))
       const rowEnd = yAxis.toGlobalCoord(yAxis.dataToCoord(min + i + 1))
       const rowY = Math.min(rowStart, rowEnd)
       const rowHeight = Math.abs(rowEnd - rowStart)
+      const rowFill = i % 2 === 0 ? '#FFFFFF' : '#F7F8FA'
 
       this.group.add(
         new Rect({
@@ -52,7 +51,7 @@ class GridView extends ComponentView {
             height: rowHeight,
           },
           style: {
-            fill: '#fff',
+            fill: rowFill,
           },
           z2: -1,
           silent: true,
@@ -74,7 +73,7 @@ class GridView extends ComponentView {
           y2: globalY,
         },
         style: {
-          stroke: '#E2E8ED',
+          stroke: '#EDF1F5',
           lineWidth: 1,
         },
         z2: 0,

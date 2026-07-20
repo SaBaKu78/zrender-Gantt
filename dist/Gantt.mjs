@@ -88195,9 +88195,7 @@ class GridView extends ComponentView {
       return;
     const s = n.model.get("min"), d = n.model.get("max") - s;
     for (let c = 0; c < d; c++) {
-      if (c % 2 !== 0)
-        continue;
-      const m = n.toGlobalCoord(n.dataToCoord(s + c)), p = n.toGlobalCoord(n.dataToCoord(s + c + 1)), g = Math.min(m, p), T = Math.abs(p - m);
+      const m = n.toGlobalCoord(n.dataToCoord(s + c)), p = n.toGlobalCoord(n.dataToCoord(s + c + 1)), g = Math.min(m, p), T = Math.abs(p - m), N = c % 2 === 0 ? "#FFFFFF" : "#F7F8FA";
       this.group.add(
         new zrender.Rect({
           shape: {
@@ -88207,7 +88205,7 @@ class GridView extends ComponentView {
             height: T
           },
           style: {
-            fill: "#fff"
+            fill: N
           },
           z2: -1,
           silent: !0
@@ -88223,7 +88221,7 @@ class GridView extends ComponentView {
           y2: g
         },
         style: {
-          stroke: "#E2E8ED",
+          stroke: "#EDF1F5",
           lineWidth: 1
         },
         z2: 0,
@@ -100368,7 +100366,7 @@ const axisElementBuilders = {
           y2: d
         },
         style: {
-          stroke: "#E2E8ED",
+          stroke: "#D6DEE8",
           lineWidth: 1,
           lineDash: null
         },
@@ -100392,7 +100390,7 @@ const axisElementBuilders = {
           y2: d
         },
         style: {
-          stroke: "#E2E8ED",
+          stroke: "#EDF1F5",
           lineWidth: 1,
           lineDash: null
         },

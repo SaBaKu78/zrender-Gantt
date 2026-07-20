@@ -161,7 +161,8 @@ const TaskRenderItem = function (params, api) {
     gate: createCell(contentX + bottomSideWidth + bottomCenterWidth, contentY + cellHeight, bottomSideWidth, cellHeight),
   }
   const showTime = task.width >= 76
-  const borderColor = '#168BCE'
+  const borderColor = '#2F9EEB'
+  const taskFill = '#F3FAFF'
   const flightStatusDisplay = truncateText(flightStatusText, cells.flight.width - 10, 10)
   const standDisplay = truncateText(standName, cells.stand.width - 8, 11)
   const taskNameDisplay = truncateText(taskName, cells.name.width - 10, 11)
@@ -174,17 +175,17 @@ const TaskRenderItem = function (params, api) {
         type: 'rect',
         shape: task,
         style: {
-          fill: 'rgba(255,255,255,0)',
+          fill: taskFill,
           stroke: borderColor,
           lineWidth: 1,
         },
       },
       showTime && createTextCell(cells.start, startText, {
-        textFill: '#6B7280',
+        textFill: '#64748B',
         fontSize: 10,
       }),
       showTime && createTextCell(cells.end, endText, {
-        textFill: '#6B7280',
+        textFill: '#64748B',
         fontSize: 10,
       }),
       createTextCell(cells.flight, flightStatusDisplay, {
@@ -203,8 +204,8 @@ const ResourceRenderItem = function (params, api) {
   const gridX = params.coordSys.x
   const rectWidth = gridX
   const rectHeight = api.size([0, 1])[1]
-  const rowFill = rowIndex % 2 === 0 ? '#FFFFFF' : '#F1F1F1'
-  const dotSize = 12
+  const rowFill = rowIndex % 2 === 0 ? '#FFFFFF' : '#F7F8FA'
+  const dotSize = 8
   const centerY = rectHeight / 2
   return {
     type: 'group',
@@ -220,14 +221,14 @@ const ResourceRenderItem = function (params, api) {
         },
         style: {
           fill: rowFill,
-          stroke: '#D9DEE4',
+          stroke: '#E5EAF0',
           lineWidth: 1,
         },
       },
       {
         type: 'rect',
         shape: {
-          x: 10,
+          x: 12,
           y: centerY - dotSize / 2,
           width: dotSize,
           height: dotSize,
@@ -248,8 +249,8 @@ const ResourceRenderItem = function (params, api) {
           align: 'left',
           textVerticalAlign: 'middle',
           textAlign: 'left',
-          textFill: '#000',
-          fontSize: 14,
+          textFill: '#1F2937',
+          fontSize: 13,
         },
       },
     ],
@@ -425,7 +426,7 @@ gantt.setOption({
     maxInterval: TWENTY_MINUTES,
     axisTick: {
       lineStyle: {
-        color: '#929ABA',
+        color: '#CBD5E1',
       },
     },
     splitNumber: 24,
