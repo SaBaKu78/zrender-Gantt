@@ -93864,7 +93864,7 @@ const DEFAULT_SPLIT_GAP = 4, DATAZOOM_SPLIT_GAP = 6, INITIAL_DATAZOOM_SPLIT_GAP 
       zlevel: o,
       z2: 10001
     });
-    u.attr(this._getHandleIconPosition(this._hanldeEnd)), e.add(s), e.add(u), e.attr({
+    u.attr(this._getHandleIconPosition(this._hanldeEnd)), this._orient !== HORIZONTAL$1 && e.add(s), e.add(u), e.attr({
       draggable: !0,
       drift: bind$1(this._onDragMove, this),
       ondragend: bind$1(this._onDrageEnd, this)

@@ -244,7 +244,9 @@ export default class SliderSplitView extends SplitView {
       z2: 10001,
     })
     handleIcon.attr(this._getHandleIconPosition(this._hanldeEnd))
-    sliderGroup.add(bRect)
+    if (this._orient !== HORIZONTAL) {
+      sliderGroup.add(bRect)
+    }
     sliderGroup.add(handleIcon)
     sliderGroup.attr({
       draggable: true,
