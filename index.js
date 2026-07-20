@@ -10,6 +10,18 @@ const data2 = await getTask({})
 const resource = (Array.isArray(data1) ? data1 : []).map((r) => [r.displayName, r.id])
 const gantt = init(dom)
 const TWENTY_MINUTES = 20 * 60 * 1000
+const TARGET_RESOURCE_ROW_HEIGHT = 44
+const GRID_TOP = 60
+const GRID_BOTTOM = 26
+const initialYZoomEnd = Math.min(
+  100,
+  Math.max(
+    1,
+    ((Math.max(0, dom.clientHeight - GRID_TOP - GRID_BOTTOM) / TARGET_RESOURCE_ROW_HEIGHT) /
+      Math.max(1, resource.length)) *
+      100,
+  ),
+)
 
 const formatTaskTime = (value) => {
   const date = new Date(value)
@@ -187,9 +199,13 @@ const TaskRenderItem = function (params, api) {
 
 const ResourceRenderItem = function (params, api) {
   var y = api.coord([api.value(2), api.value(0)])[1]
+  const rowIndex = api.value(0)
   const gridX = params.coordSys.x
   const rectWidth = gridX
   const rectHeight = api.size([0, 1])[1]
+  const rowFill = rowIndex % 2 === 0 ? '#FFFFFF' : '#F1F1F1'
+  const dotSize = 12
+  const centerY = rectHeight / 2
   return {
     type: 'group',
     position: [0, y],
@@ -203,20 +219,37 @@ const ResourceRenderItem = function (params, api) {
           height: rectHeight,
         },
         style: {
-          fill: '#fff',
-          stroke: '#E2E8ED',
+          fill: rowFill,
+          stroke: '#D9DEE4',
           lineWidth: 1,
         },
       },
       {
+        type: 'rect',
+        shape: {
+          x: 10,
+          y: centerY - dotSize / 2,
+          width: dotSize,
+          height: dotSize,
+          r: dotSize / 2,
+        },
+        style: {
+          fill: '#F3B33D',
+        },
+        silent: true,
+      },
+      {
         type: 'text',
         style: {
-          x: rectWidth / 2,
-          y: rectHeight / 2,
+          x: 28,
+          y: centerY,
           text: api.value(1),
+          verticalAlign: 'middle',
+          align: 'left',
           textVerticalAlign: 'middle',
-          textAlign: 'center',
+          textAlign: 'left',
           textFill: '#000',
+          fontSize: 14,
         },
       },
     ],
@@ -368,7 +401,7 @@ gantt.setOption({
       top: 70,
       bottom: 20,
       start: 0,
-      end: 10.5,
+      end: initialYZoomEnd,
       handleSize: 0,
       showDetail: false,
     },
@@ -377,7 +410,7 @@ gantt.setOption({
       id: 'insideY',
       yAxisIndex: 0,
       start: 0,
-      end: 5,
+      end: initialYZoomEnd,
       zoomOnMouseWheel: false,
       moveOnMouseMove: true,
       moveOnMouseWheel: true,
