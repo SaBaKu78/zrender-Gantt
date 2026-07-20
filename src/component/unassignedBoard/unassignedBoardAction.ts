@@ -24,20 +24,39 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
     model.eachComponent('dataZoom', function(dataZoomModel: any) {
       if (
         dataZoomModel.subType !== 'slider' ||
-        dataZoomModel.getOrient() !== 'horizontal' ||
         dataZoomModel.get('show') === false
       ) {
         return
       }
 
-      const height = dataZoomModel.get('height') || 0
-      dataZoomModel.option.bottom = Math.max(api.getHeight() - newY + DATAZOOM_SPLIT_GAP, 0)
-      dataZoomModel.option.top = undefined
-      dataZoomModel.option.height = height
+      const orient = dataZoomModel.getOrient()
       const dataZoomView = api.getViewOfComponentModel(dataZoomModel) as any
-      if (dataZoomView?.updateLayout) {
-        dataZoomView.updateLayout(dataZoomModel, api, { type: 'updateUnassignedBoardPosition', data: { y: newY } })
-      } else {
+      const bottom = Math.max(api.getHeight() - newY + DATAZOOM_SPLIT_GAP, 0)
+
+      if (orient === 'horizontal') {
+        const height = dataZoomModel.get('height') || 0
+        dataZoomModel.option.bottom = bottom
+        dataZoomModel.option.top = undefined
+        dataZoomModel.option.height = height
+
+        if (dataZoomView?.updateLayout) {
+          dataZoomView.updateLayout(dataZoomModel, api, { type: 'updateUnassignedBoardPosition', data: { y: newY } })
+        } else {
+          dataZoomView?.render?.(
+            dataZoomModel,
+            model,
+            api,
+            { type: 'updateUnassignedBoardPosition', data: { y: newY } }
+          )
+        }
+      } else if (orient === 'vertical') {
+        const range = dataZoomModel.getPercentRange()
+        dataZoomModel.option.bottom = bottom
+        dataZoomModel.option.height = undefined
+        dataZoomModel.setRawRange({
+          start: range[0],
+          end: range[1],
+        })
         dataZoomView?.render?.(
           dataZoomModel,
           model,

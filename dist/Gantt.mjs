@@ -102066,19 +102066,32 @@ function installUnassignedBoardAction(t) {
         d != null && (n = r.getWidth() * d);
       }
     }), a.eachComponent("dataZoom", function(u) {
-      var c;
-      if (u.subType !== "slider" || u.getOrient() !== "horizontal" || u.get("show") === !1)
+      var m, p;
+      if (u.subType !== "slider" || u.get("show") === !1)
         return;
-      const d = u.get("height") || 0;
-      u.option.bottom = Math.max(r.getHeight() - o + DATAZOOM_SPLIT_GAP, 0), u.option.top = void 0, u.option.height = d;
-      const l = r.getViewOfComponentModel(u);
-      l != null && l.updateLayout ? l.updateLayout(u, r, { type: "updateUnassignedBoardPosition", data: { y: o } }) : (c = l == null ? void 0 : l.render) == null || c.call(
-        l,
-        u,
-        a,
-        r,
-        { type: "updateUnassignedBoardPosition", data: { y: o } }
-      );
+      const d = u.getOrient(), l = r.getViewOfComponentModel(u), c = Math.max(r.getHeight() - o + DATAZOOM_SPLIT_GAP, 0);
+      if (d === "horizontal") {
+        const g = u.get("height") || 0;
+        u.option.bottom = c, u.option.top = void 0, u.option.height = g, l != null && l.updateLayout ? l.updateLayout(u, r, { type: "updateUnassignedBoardPosition", data: { y: o } }) : (m = l == null ? void 0 : l.render) == null || m.call(
+          l,
+          u,
+          a,
+          r,
+          { type: "updateUnassignedBoardPosition", data: { y: o } }
+        );
+      } else if (d === "vertical") {
+        const g = u.getPercentRange();
+        u.option.bottom = c, u.option.height = void 0, u.setRawRange({
+          start: g[0],
+          end: g[1]
+        }), (p = l == null ? void 0 : l.render) == null || p.call(
+          l,
+          u,
+          a,
+          r,
+          { type: "updateUnassignedBoardPosition", data: { y: o } }
+        );
+      }
     }), a.eachComponent("unassignedBoard", function(u) {
       var d, l;
       u.option.splitY = o, u.option.verticalSplitX = n, (l = (d = r.getViewOfComponentModel(u)) == null ? void 0 : d.updateLayout) == null || l.call(d, u, r, { type: "updateUnassignedBoardPosition", data: { y: o } });
