@@ -89030,7 +89030,7 @@ function getHourInterval(t) {
   return t /= ONE_HOUR, t > 12 ? 12 : t > 6 ? 6 : t > 3.5 ? 4 : t > 2 ? 2 : 1;
 }
 function getMinutesAndSecondsInterval(t, e) {
-  return t /= e ? ONE_MINUTE : ONE_SECOND, t > 30 ? 30 : t > 20 ? 20 : t > 15 ? 15 : t > 10 ? 10 : t > 5 ? 5 : t > 2 ? 2 : 1;
+  return t /= e ? ONE_MINUTE : ONE_SECOND, t > 30 ? 30 : t >= 20 ? 20 : t > 15 ? 15 : t >= 10 ? 10 : t > 5 ? 5 : t > 2 ? 2 : 1;
 }
 function getMillisecondsInterval(t) {
   return nice(t, !0);

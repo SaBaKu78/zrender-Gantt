@@ -9,6 +9,7 @@ const data1 = await getResourceList({})
 const data2 = await getTask({})
 const resource = (Array.isArray(data1) ? data1 : []).map((r) => [r.displayName, r.id])
 const gantt = init(dom)
+const TWENTY_MINUTES = 20 * 60 * 1000
 
 const formatTaskTime = (value) => {
   const date = new Date(value)
@@ -101,8 +102,11 @@ const TaskRenderItem = function (params, api) {
   const barWidth = endTime[0] - startTime[0]
   const x = api.coord([api.value(1), categoryIndex])[0]
   const y = api.coord([api.value(1), categoryIndex])[1]
-  const taskHeight = Math.min(44, Math.max(36, rowHeight - 4))
-  const taskY = y + (rowHeight - taskHeight) / 2
+  const laneIndex = api.value(14) || 0
+  const laneCount = Math.max(1, api.value(15) || 1)
+  const laneHeight = rowHeight / laneCount
+  const taskHeight = Math.min(44, Math.max(10, laneHeight - 4))
+  const taskY = y + laneIndex * laneHeight + (laneHeight - taskHeight) / 2
   const task = clipRectByRect(
     {
       x: x,
@@ -223,7 +227,65 @@ const resourceIndexMap = new Map(
   resource.map((item, index) => [item[1], index]),
 )
 
-const task = (Array.isArray(data2) ? data2 : [])
+const assignOverlapLanes = (tasks) => {
+  const byResource = new Map()
+
+  tasks.forEach((taskItem) => {
+    const resourceIndex = taskItem[0]
+    if (!byResource.has(resourceIndex)) {
+      byResource.set(resourceIndex, [])
+    }
+    byResource.get(resourceIndex).push(taskItem)
+  })
+
+  byResource.forEach((items) => {
+    items.sort((a, b) => a[1] - b[1] || a[2] - b[2])
+
+    let component = []
+    let componentEnd = -Infinity
+
+    const flushComponent = () => {
+      if (!component.length) return
+
+      const laneEndTimes = []
+
+      component.forEach((taskItem) => {
+        let laneIndex = laneEndTimes.findIndex((endTime) => endTime <= taskItem[1])
+        if (laneIndex === -1) {
+          laneIndex = laneEndTimes.length
+          laneEndTimes.push(taskItem[2])
+        } else {
+          laneEndTimes[laneIndex] = taskItem[2]
+        }
+
+        taskItem[14] = laneIndex
+      })
+
+      const laneCount = Math.max(1, laneEndTimes.length)
+      component.forEach((taskItem) => {
+        taskItem[15] = laneCount
+      })
+    }
+
+    items.forEach((taskItem) => {
+      if (!component.length || taskItem[1] < componentEnd) {
+        component.push(taskItem)
+        componentEnd = Math.max(componentEnd, taskItem[2])
+        return
+      }
+
+      flushComponent()
+      component = [taskItem]
+      componentEnd = taskItem[2]
+    })
+
+    flushComponent()
+  })
+
+  return tasks
+}
+
+const task = assignOverlapLanes((Array.isArray(data2) ? data2 : [])
   .map((item) => {
     const resourceId = item.taskAssignList?.[0]?.currentResourceId
     const resourceIndex = resourceIndexMap.get(resourceId)
@@ -249,9 +311,11 @@ const task = (Array.isArray(data2) ? data2 : [])
       buildFlightStatusText(item),
       item.flightVo?.standName || '',
       `${item.flightVo?.domGateName || ''}${item.flightVo?.intGateName || ''}`,
+      0,
+      1,
     ]
   })
-  .filter(Boolean)
+  .filter(Boolean))
   
 gantt.setOption({
   title: {
@@ -323,6 +387,9 @@ gantt.setOption({
   xAxis: {
     type: 'time',
     position: 'top',
+    interval: TWENTY_MINUTES,
+    minInterval: TWENTY_MINUTES,
+    maxInterval: TWENTY_MINUTES,
     axisTick: {
       lineStyle: {
         color: '#929ABA',
@@ -370,6 +437,8 @@ gantt.setOption({
         'Flight Status',
         'Stand Name',
         'Gate Name',
+        'Lane Index',
+        'Lane Count',
       ],
       encode: {
         x: [1, 2],
