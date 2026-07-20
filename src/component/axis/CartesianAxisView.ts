@@ -145,6 +145,7 @@ const axisElementBuilders: Record<
           style: {
             stroke: '#E2E8ED',
             lineWidth: 1,
+            lineDash: null,
           },
           z2: 0,
           silent: true,
@@ -175,7 +176,7 @@ const axisElementBuilders: Record<
         style: {
           stroke: '#E2E8ED',
           lineWidth: 1,
-          lineDash: [4, 4],
+          lineDash: null,
         },
         z2: 0,
         silent: true,
