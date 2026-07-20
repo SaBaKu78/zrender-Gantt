@@ -1,7 +1,7 @@
 import GlobalModel from "../../model/Global";
 import ComponentView from "../../view/Component";
 import GridModel from "./GridModel";
-import { Line } from 'zrender'
+import { Line, Rect } from 'zrender'
 
 class GridView extends ComponentView {
   static readonly type = 'grid'
@@ -17,12 +17,48 @@ class GridView extends ComponentView {
     if (!grid) return
 
     const rect = grid.getRect()
+    this.group.setClipPath(
+      new Rect({
+        shape: {
+          x: rect.x,
+          y: rect.y,
+          width: rect.width,
+          height: rect.height,
+        },
+      })
+    )
+
     const yAxis = grid.getCartesians()[0]?.getAxis('y')
     if (!yAxis) return
 
     const min = yAxis.model.get('min') as number
     const max = yAxis.model.get('max') as number
     const totalRowCount = max - min
+
+    for (let i = 0; i < totalRowCount; i++) {
+      if (i % 2 !== 0) continue
+
+      const rowStart = yAxis.toGlobalCoord(yAxis.dataToCoord(min + i))
+      const rowEnd = yAxis.toGlobalCoord(yAxis.dataToCoord(min + i + 1))
+      const rowY = Math.min(rowStart, rowEnd)
+      const rowHeight = Math.abs(rowEnd - rowStart)
+
+      this.group.add(
+        new Rect({
+          shape: {
+            x: rect.x,
+            y: rowY,
+            width: rect.width,
+            height: rowHeight,
+          },
+          style: {
+            fill: '#fff',
+          },
+          z2: -1,
+          silent: true,
+        })
+      )
+    }
 
     // 画水平线：在每行底部，从 grid 左边缘到右边缘
     // 使用 yAxis.dataToCoord + toGlobalCoord 确保跟随 dataZoom 滚动

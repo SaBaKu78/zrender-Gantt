@@ -88179,10 +88179,41 @@ class GridView extends ComponentView {
     const r = e.coordinateSystem;
     if (!r)
       return;
-    const o = r.getRect(), n = (l = r.getCartesians()[0]) == null ? void 0 : l.getAxis("y");
+    const o = r.getRect();
+    this.group.setClipPath(
+      new zrender.Rect({
+        shape: {
+          x: o.x,
+          y: o.y,
+          width: o.width,
+          height: o.height
+        }
+      })
+    );
+    const n = (l = r.getCartesians()[0]) == null ? void 0 : l.getAxis("y");
     if (!n)
       return;
     const s = n.model.get("min"), d = n.model.get("max") - s;
+    for (let c = 0; c < d; c++) {
+      if (c % 2 !== 0)
+        continue;
+      const m = n.toGlobalCoord(n.dataToCoord(s + c)), p = n.toGlobalCoord(n.dataToCoord(s + c + 1)), g = Math.min(m, p), T = Math.abs(p - m);
+      this.group.add(
+        new zrender.Rect({
+          shape: {
+            x: o.x,
+            y: g,
+            width: o.width,
+            height: T
+          },
+          style: {
+            fill: "#fff"
+          },
+          z2: -1,
+          silent: !0
+        })
+      );
+    }
     for (let c = 0; c < d - 1; c++) {
       const m = s + c + 1, p = n.dataToCoord(m), g = n.toGlobalCoord(p), T = new zrender.Line({
         shape: {
@@ -100338,7 +100369,8 @@ const axisElementBuilders = {
         },
         style: {
           stroke: "#E2E8ED",
-          lineWidth: 1
+          lineWidth: 1,
+          lineDash: null
         },
         z2: 0,
         silent: !0
@@ -100362,7 +100394,7 @@ const axisElementBuilders = {
         style: {
           stroke: "#E2E8ED",
           lineWidth: 1,
-          lineDash: [4, 4]
+          lineDash: null
         },
         z2: 0,
         silent: !0
