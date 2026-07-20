@@ -289,11 +289,11 @@ function getMinutesAndSecondsInterval(
   approxInterval /= isMinutes ? ONE_MINUTE : ONE_SECOND
   return approxInterval > 30
     ? 30
-    : approxInterval > 20
+    : approxInterval >= 20
     ? 20
     : approxInterval > 15
     ? 15
-    : approxInterval > 10
+    : approxInterval >= 10
     ? 10
     : approxInterval > 5
     ? 5
