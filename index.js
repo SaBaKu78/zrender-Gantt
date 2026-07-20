@@ -7,7 +7,7 @@ const dom = document.getElementById('main')
 
 const data1 = await getResourceList({})
 const data2 = await getTask({})
-const resource = data1?.map((r) => [r.displayName, r.id])
+const resource = (Array.isArray(data1) ? data1 : []).map((r) => [r.displayName, r.id])
 const gantt = init(dom)
 
 const TaskRenderItem = function (params, api) {
@@ -84,58 +84,36 @@ const ResourceRenderItem = function (params, api) {
   }
 }
 
-const task = [
-  [
-    0,
-    1765123200000, //2025-12-08 00:00
-    1765132380000, //2025-12-08 02:33
-    'M766OG',
-    true,
-    'QW',
-    'QW',
-    'XGF-HAC',
-    'HAC-CFA',
-    1495360800000,
-  ],
+const resourceIndexMap = new Map(
+  resource.map((item, index) => [item[1], index]),
+)
 
-  [
-    1,
-    1765155600000, //2025-12-08 09:00
-    1765158360000, //2025-12-08 09:46
-    'Y3683',
-    true,
-    'AS',
-    'AS',
-    'MGT-HAC',
-    'HAC-YPP',
-    1496830500000,
-  ],
-  [
-    1,
-    1765215960000, //2025-12-9 01:46
-    1765218360000, //2025-12-9 02:26
-    'Y4393',
-    true,
-    'AS',
-    'AS',
-    'GHM-HAC',
-    'HAC-XTL-PIB',
-    1496827800000,
-  ],
-  [
-    2,
-    1765215960000, //2025-12-9 01:46
-    1765218360000, //2025-12-9 02:26
-    'Y4393',
-    true,
-    'AS',
-    'AS',
-    'GHM-HAC',
-    'HAC-XTL-PIB',
-    1496827800000,
-  ],
-]
+const task = (Array.isArray(data2) ? data2 : [])
+  .map((item) => {
+    const resourceId = item.taskAssignList?.[0]?.currentResourceId
+    const resourceIndex = resourceIndexMap.get(resourceId)
+    const scheduleStartTime = item.scheduleStartTime
+    const scheduleEndTime = item.scheduleEndTime
 
+    if (resourceIndex == null || !scheduleStartTime || !scheduleEndTime) {
+      return null
+    }
+
+    return [
+      resourceIndex,
+      new Date(scheduleStartTime).getTime(),
+      new Date(scheduleEndTime).getTime(),
+      item.flightNum || item.taskName || '',
+      item.locked || false,
+      item.currentResourceName || '',
+      item.currentRelatedResourceName || '',
+      item.fromLocation || '',
+      item.toLocation || '',
+      new Date(item.taskTime || scheduleStartTime).getTime(),
+    ]
+  })
+  .filter(Boolean)
+  
 gantt.setOption({
   title: {
     text: 'Enable Gantt',
