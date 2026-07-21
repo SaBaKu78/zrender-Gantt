@@ -92,6 +92,7 @@ import {
   updateSeriesElementSelection,
 } from '../util/states'
 import { isElementRemoved } from '../animation/basicTransition'
+import ZTweenManager from './ztween'
 
 //----------------------------------- 变量 定义区 --------------------------------------------------------
 
@@ -385,6 +386,8 @@ class Gantt extends Eventful<EventDefinition> {
 
   private _containerInstence: Map<string, graphic.Group> = new Map()
 
+  private _ztween: ZTweenManager
+
   private [PENDING_UPDATE]: {
     silent: boolean
     updateParams: UpdateLifecycleParams
@@ -409,6 +412,8 @@ class Gantt extends Eventful<EventDefinition> {
       useCoarsePointer: retrieve2(opts.useCoarsePointer, defaultCoarsePointer),
       pointerSize: opts.pointerSize,
     }))
+
+    this._ztween = new ZTweenManager(() => zr.wakeUp())
 
     this._ssr = opts.ssr
 
@@ -441,15 +446,15 @@ class Gantt extends Eventful<EventDefinition> {
 
     bindMouseEvent(zr, this)
 
-    //test 测试grid大小
-    // this._zr.add(new zrender.Rect({
-    //   shape: {
+    // const rect = new zrender.Rect({
+    //   shape:{
     //     x: 186,
     //     y: 80,
-    //     height: 807,
-    //     width: 1489
+    //     width: 300,
+    //     height: 80
     //   }
-    // }))
+    // })
+    // this._zr.add(rect)
   }
 
   async _initEvents() {
@@ -501,6 +506,10 @@ class Gantt extends Eventful<EventDefinition> {
 
   getZr(): zrender.ZRenderType {
     return this._zr
+  }
+
+  getTweenManager(): ZTweenManager {
+    return this._ztween
   }
 
   getWidth(): number {
@@ -682,6 +691,11 @@ class Gantt extends Eventful<EventDefinition> {
   }
 
   private _onframe(): void {
+    this._ztween.update()
+    if (this._ztween.hasActive()) {
+      this._zr.wakeUp()
+    }
+
     applyChangedStates(this)
     const scheduler = this._scheduler
     if (this[PENDING_UPDATE]) {

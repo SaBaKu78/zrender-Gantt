@@ -22,6 +22,7 @@
     "vite": "^4.4.9"
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^25.0.0",
     "moment": "^2.29.4",
     "zrender": "^5.4.3"
   }
