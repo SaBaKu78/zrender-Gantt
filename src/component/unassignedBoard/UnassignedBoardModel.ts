@@ -10,6 +10,7 @@ export interface UnassignedBoardOption extends ComponentOption {
   borderWidth?: number
   itemGap?: number
   padding?: number[]
+  data?: any[]
 }
 
 export default class UnassignedBoardModel extends ComponentModel<UnassignedBoardOption> {
