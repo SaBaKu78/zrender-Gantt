@@ -13,6 +13,7 @@ const availableMethods: (keyof GanttType)[] = [
   'getHeight',
   'getOption',
   'getComponentViewMap',
+  'getTweenManager',
   'isDisposed',
   'dispatchAction',
 ]

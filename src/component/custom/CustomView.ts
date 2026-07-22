@@ -337,12 +337,54 @@ function doCreateOrUpdateEl(
       seriesModel
     )
   }
+  bindTaskItemShake(api, el, elOption)
   if (toBeReplacedIdx >= 0) {
     group.replaceAt(el, toBeReplacedIdx)
   } else {
     group.add(el)
   }
   return el
+}
+
+function bindTaskItemShake(
+  api: ExtensionAPI,
+  el: Element,
+  elOption: CustomElementOption
+): void {
+  const info = elOption.info as any
+  if (!info?.taskItem || (el as any).__taskShakeBound) {
+    return
+  }
+
+  ;(el as any).__taskShakeBound = true
+  ;(el as any).__taskShakeBasePosition = el.position
+    ? el.position.slice()
+    : [0, 0]
+  el.on('click', function () {
+    const tweenManager = (api as any).getTweenManager?.()
+    if (!tweenManager) return
+
+    const basePosition =
+      (el as any).__taskShakeBasePosition ||
+      ((el as any).__taskShakeBasePosition = el.position
+        ? el.position.slice()
+        : [0, 0])
+
+    const shakeTween = (el as any).__taskShakeTween
+    if (shakeTween) {
+      tweenManager.stop(shakeTween)
+      el.attr({ position: basePosition.slice() })
+      ;(el as any).__taskShakeTween = null
+      return
+    }
+
+    ;(el as any).__taskShakeTween = tweenManager.presets.shakeY(el, {
+      amplitude: 4,
+      duration: 180,
+      loop: true,
+      restore: false,
+    })
+  })
 }
 
 function mergeChildren(

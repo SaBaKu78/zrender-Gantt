@@ -2,14 +2,14 @@ var Qi = Object.defineProperty, Ji = Object.defineProperties;
 var ji = Object.getOwnPropertyDescriptors;
 var Da = Object.getOwnPropertySymbols;
 var er = Object.prototype.hasOwnProperty, ar = Object.prototype.propertyIsEnumerable;
-var Fa = (t, e, a) => e in t ? Qi(t, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[e] = a, te = (t, e) => {
+var Fa = (t, e, a) => e in t ? Qi(t, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[e] = a, ee = (t, e) => {
   for (var a in e || (e = {}))
     er.call(e, a) && Fa(t, a, e[a]);
   if (Da)
     for (var a of Da(e))
       ar.call(e, a) && Fa(t, a, e[a]);
   return t;
-}, pe = (t, e) => Ji(t, ji(e));
+}, ce = (t, e) => Ji(t, ji(e));
 var Za = (t, e, a) => new Promise((r, o) => {
   var n = (d) => {
     try {
@@ -6519,16 +6519,16 @@ var mock = { exports: {} };
               }
               function E(f) {
                 function I(Z, v, w) {
-                  var ne, me;
+                  var ne, pe;
                   for (ne = v; w > ne; ne++)
-                    me = R.charAt(ne), me === `
-` ? (Z.seenCR || Z.line++, Z.column = 1, Z.seenCR = !1) : me === "\r" || me === "\u2028" || me === "\u2029" ? (Z.line++, Z.column = 1, Z.seenCR = !0) : (Z.column++, Z.seenCR = !1);
+                    pe = R.charAt(ne), pe === `
+` ? (Z.seenCR || Z.line++, Z.column = 1, Z.seenCR = !1) : pe === "\r" || pe === "\u2028" || pe === "\u2029" ? (Z.line++, Z.column = 1, Z.seenCR = !0) : (Z.column++, Z.seenCR = !1);
                 }
-                return ce !== f && (ce > f && (ce = 0, be = {
+                return me !== f && (me > f && (me = 0, be = {
                   line: 1,
                   column: 1,
                   seenCR: !1
-                }), I(be, ce, f), ce = f), be;
+                }), I(be, me, f), me = f), be;
               }
               function b(f) {
                 xe > P || (P > xe && (xe = P, Pe = []), Pe.push(f));
@@ -6557,7 +6557,7 @@ var mock = { exports: {} };
               }
               function K() {
                 var f;
-                return f = ue(), f === null && (f = ae(), f === null && (f = tt())), f;
+                return f = ue(), f === null && (f = te(), f === null && (f = tt())), f;
               }
               function G() {
                 var f, I;
@@ -6573,7 +6573,7 @@ var mock = { exports: {} };
               }
               function V() {
                 var f, I, Z;
-                return k++, f = P, I = H(), I !== null ? (Z = ee(), Z === null && (Z = le), Z !== null ? (O = f, I = Pt(I, Z), I === null && (P = f), f = I) : (P = f, f = _)) : (P = f, f = _), k--, f === null && (I = null, k === 0 && b(xt)), f;
+                return k++, f = P, I = H(), I !== null ? (Z = ae(), Z === null && (Z = le), Z !== null ? (O = f, I = Pt(I, Z), I === null && (P = f), f = I) : (P = f, f = _)) : (P = f, f = _), k--, f === null && (I = null, k === 0 && b(xt)), f;
               }
               function H() {
                 var f;
@@ -6603,7 +6603,7 @@ var mock = { exports: {} };
                 var f, I;
                 return f = P, R.charCodeAt(P) === 63 ? (I = ea, P++) : (I = null, k === 0 && b(aa)), I !== null && (O = f, I = Lt()), I === null && (P = f), f = I, f;
               }
-              function ee() {
+              function ae() {
                 var f;
                 return R.charCodeAt(P) === 63 ? (f = ea, P++) : (f = null, k === 0 && b(aa)), f;
               }
@@ -6636,7 +6636,7 @@ var mock = { exports: {} };
                 var f, I, Z;
                 return f = P, R.substr(P, 2) === na ? (I = na, P += 2) : (I = null, k === 0 && b(zt)), I !== null ? (Z = M(), Z !== null ? (O = f, I = qt(Z), I === null && (P = f), f = I) : (P = f, f = _)) : (P = f, f = _), f;
               }
-              function ae() {
+              function te() {
                 var f, I, Z, v, w;
                 if (k++, f = P, R.charCodeAt(P) === 91 ? (I = Xt, P++) : (I = null, k === 0 && b(Qt)), I !== null)
                   if (R.charCodeAt(P) === 94 ? (Z = Ye, P++) : (Z = null, k === 0 && b(Xe)), Z === null && (Z = le), Z !== null) {
@@ -6878,7 +6878,7 @@ var mock = { exports: {} };
                 return new p(f.join(""));
               }, Xi = function() {
                 return new a("null-character");
-              }, P = 0, O = 0, ce = 0, be = {
+              }, P = 0, O = 0, me = 0, be = {
                 line: 1,
                 column: 1,
                 seenCR: !1
@@ -92914,12 +92914,12 @@ var PathProxy$1 = function() {
               break;
             }
             case CMD$4.A:
-              var H = r[A++], q = r[A++], X = r[A++], $ = r[A++], U = r[A++], Y = r[A++], J = r[A++], ee = !r[A++], j = X > $ ? X : $, ue = mathAbs$1(X - $) > 1e-3, ie = U + Y, ge = !1;
+              var H = r[A++], q = r[A++], X = r[A++], $ = r[A++], U = r[A++], Y = r[A++], J = r[A++], ae = !r[A++], j = X > $ ? X : $, ue = mathAbs$1(X - $) > 1e-3, ie = U + Y, ge = !1;
               if (g) {
                 var b = T[C++];
                 h + b > x && (ie = U + Y * (x - h) / b, ge = !0), h += b;
               }
-              if (ue && e.ellipse ? e.ellipse(H, q, X, $, J, U, ie, ee) : e.arc(H, q, j, U, ie, ee), ge)
+              if (ue && e.ellipse ? e.ellipse(H, q, X, $, J, U, ie, ae) : e.arc(H, q, j, U, ie, ae), ge)
                 break e;
               D && (u = mathCos$3(U) * X + H, d = mathSin$3(U) * $ + q), l = mathCos$3(ie) * X + H, c = mathSin$3(ie) * $ + q;
               break;
@@ -92929,8 +92929,8 @@ var PathProxy$1 = function() {
               if (g) {
                 var b = T[C++];
                 if (h + b > x) {
-                  var ae = x - h;
-                  e.moveTo(m, p), e.lineTo(m + mathMin$2(ae, oe), p), ae -= oe, ae > 0 && e.lineTo(m + oe, p + mathMin$2(ae, de)), ae -= de, ae > 0 && e.lineTo(m + mathMax$2(oe - ae, 0), p + de), ae -= oe, ae > 0 && e.lineTo(m, p + mathMax$2(de - ae, 0));
+                  var te = x - h;
+                  e.moveTo(m, p), e.lineTo(m + mathMin$2(te, oe), p), te -= oe, te > 0 && e.lineTo(m + oe, p + mathMin$2(te, de)), te -= de, te > 0 && e.lineTo(m + mathMax$2(oe - te, 0), p + de), te -= oe, te > 0 && e.lineTo(m, p + mathMax$2(de - te, 0));
                   break e;
                 }
                 h += b;
@@ -97873,29 +97873,29 @@ const _PathProxy = class $a {
               break;
             }
             case CMD$1.C: {
-              const $ = r[A++], U = r[A++], Y = r[A++], J = r[A++], ee = r[A++], j = r[A++];
+              const $ = r[A++], U = r[A++], Y = r[A++], J = r[A++], ae = r[A++], j = r[A++];
               if (g) {
                 const ue = T[C++];
                 if (h + ue > x) {
                   const ie = (x - h) / ue;
-                  cubicSubdivide(l, $, Y, ee, ie, tmpOutX), cubicSubdivide(c, U, J, j, ie, tmpOutY), e.bezierCurveTo(tmpOutX[1], tmpOutY[1], tmpOutX[2], tmpOutY[2], tmpOutX[3], tmpOutY[3]);
+                  cubicSubdivide(l, $, Y, ae, ie, tmpOutX), cubicSubdivide(c, U, J, j, ie, tmpOutY), e.bezierCurveTo(tmpOutX[1], tmpOutY[1], tmpOutX[2], tmpOutY[2], tmpOutX[3], tmpOutY[3]);
                   break e;
                 }
                 h += ue;
               }
-              e.bezierCurveTo($, U, Y, J, ee, j), l = ee, c = j;
+              e.bezierCurveTo($, U, Y, J, ae, j), l = ae, c = j;
               break;
             }
             case CMD$1.Q: {
               const $ = r[A++], U = r[A++], Y = r[A++], J = r[A++];
               if (g) {
-                const ee = T[C++];
-                if (h + ee > x) {
-                  const j = (x - h) / ee;
+                const ae = T[C++];
+                if (h + ae > x) {
+                  const j = (x - h) / ae;
                   quadraticSubdivide(l, $, Y, j, tmpOutX), quadraticSubdivide(c, U, J, j, tmpOutY), e.quadraticCurveTo(tmpOutX[1], tmpOutY[1], tmpOutX[2], tmpOutY[2]);
                   break e;
                 }
-                h += ee;
+                h += ae;
               }
               e.quadraticCurveTo($, U, Y, J), l = Y, c = J;
               break;
@@ -99608,7 +99608,27 @@ function doCreateOrUpdateEl(t, e, a, r, o, n) {
     a,
     r,
     o
-  ), s >= 0 ? n.replaceAt(l, s) : n.add(l), l;
+  ), bindTaskItemShake(t, l, r), s >= 0 ? n.replaceAt(l, s) : n.add(l), l;
+}
+function bindTaskItemShake(t, e, a) {
+  const r = a.info;
+  !(r != null && r.taskItem) || e.__taskShakeBound || (e.__taskShakeBound = !0, e.__taskShakeBasePosition = e.position ? e.position.slice() : [0, 0], e.on("click", function() {
+    var u;
+    const o = (u = t.getTweenManager) == null ? void 0 : u.call(t);
+    if (!o)
+      return;
+    const n = e.__taskShakeBasePosition || (e.__taskShakeBasePosition = e.position ? e.position.slice() : [0, 0]), s = e.__taskShakeTween;
+    if (s) {
+      o.stop(s), e.attr({ position: n.slice() }), e.__taskShakeTween = null;
+      return;
+    }
+    e.__taskShakeTween = o.presets.shakeY(e, {
+      amplitude: 4,
+      duration: 180,
+      loop: !0,
+      restore: !1
+    });
+  }));
 }
 function mergeChildren(t, e, a, r, o) {
   const n = r.children, s = n ? n.length : 0, u = r.$mergeChildren, d = u === "byName" || r.diffChildrenByName, l = u === !1;
@@ -102149,6 +102169,7 @@ const availableMethods = [
   "getHeight",
   "getOption",
   "getComponentViewMap",
+  "getTweenManager",
   "isDisposed",
   "dispatchAction"
 ];
@@ -103573,7 +103594,7 @@ class ZTweenManager {
         return this._setElementStyle(a, { opacity: (o = r.fromOpacity) != null ? o : 0 }), this.animateElement(
           a,
           { style: { opacity: (n = r.toOpacity) != null ? n : 1 } },
-          te({ duration: 240 }, r)
+          ee({ duration: 240 }, r)
         );
       },
       fadeOut: (a, r = {}) => {
@@ -103581,7 +103602,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { style: { opacity: (o = r.toOpacity) != null ? o : 0 } },
-          te({ duration: 240 }, r)
+          ee({ duration: 240 }, r)
         );
       },
       pulse: (a, r = {}) => {
@@ -103590,7 +103611,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { style: { opacity: (s = r.minOpacity) != null ? s : 0.35 } },
-          pe(te({
+          ce(ee({
             duration: 700,
             loop: !0,
             yoyo: !0,
@@ -103609,7 +103630,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { scale: [s, u] },
-          pe(te({
+          ce(ee({
             duration: 900,
             loop: !0,
             yoyo: !0,
@@ -103628,7 +103649,7 @@ class ZTweenManager {
         return this._setElementShape(a, { x: s }), this.animateElement(
           a,
           { shape: { x: u } },
-          te({
+          ee({
             duration: 1e3,
             loop: !0,
             easing: Easing.Linear.None
@@ -103646,7 +103667,7 @@ class ZTweenManager {
               opacity: (c = r.opacity) != null ? c : 0.72
             }
           },
-          pe(te({
+          ce(ee({
             duration: 260,
             repeat: 1,
             yoyo: !0,
@@ -103655,6 +103676,25 @@ class ZTweenManager {
             onStop: (m) => {
               var p;
               r.restore !== !1 && this._setElementStyle(a, { lineWidth: n, opacity: s }), (p = r.onStop) == null || p.call(r, m);
+            }
+          })
+        );
+      },
+      shakeY: (a, r = {}) => {
+        var u, d, l;
+        const o = a.position ? a.position.slice() : [0, 0], n = (u = r.fromY) != null ? u : o[1], s = (l = r.toY) != null ? l : n - ((d = r.amplitude) != null ? d : 4);
+        return r.fromY != null && this._setElementAttrs(a, { position: [o[0], n] }), this.animateElement(
+          a,
+          { position: [o[0], s] },
+          ce(ee({
+            duration: 180,
+            loop: !0,
+            yoyo: !0,
+            easing: Easing.Sinusoidal.InOut
+          }, r), {
+            onStop: (c) => {
+              var m;
+              r.restore !== !1 && this._setElementAttrs(a, { position: o }), (m = r.onStop) == null || m.call(r, c);
             }
           })
         );
@@ -103670,7 +103710,7 @@ class ZTweenManager {
   }
   animateElement(e, a, r = {}) {
     const o = this._createElementTweenState(e, a), n = o.to;
-    return this.animate(o.current, n, pe(te({}, r), {
+    return this.animate(o.current, n, ce(ee({}, r), {
       onUpdate: (s, u) => {
         var d;
         this._applyElementTweenState(e, s, o), (d = r.onUpdate) == null || d.call(r, s, u);
@@ -103766,10 +103806,10 @@ class ZTweenManager {
     return e.style || {};
   }
   _setElementShape(e, a) {
-    e.setShape ? e.setShape(a) : e.shape = te(te({}, e.shape || {}), a);
+    e.setShape ? e.setShape(a) : e.shape = ee(ee({}, e.shape || {}), a);
   }
   _setElementStyle(e, a) {
-    e.setStyle ? e.setStyle(a) : e.style = te(te({}, e.style || {}), a);
+    e.setStyle ? e.setStyle(a) : e.style = ee(ee({}, e.style || {}), a);
   }
   _setElementAttrs(e, a) {
     e.attr ? e.attr(a) : Object.assign(e, a);
@@ -103841,15 +103881,6 @@ class Gantt extends Eventful$2 {
     this._ztween = new ZTweenManager(() => s.wakeUp()), this._ssr = a.ssr, this._throttledZrFlush = throttle(bind$1(s.flush, s), 17);
     const u = this._api = createExtensionAPI(this);
     this._locale = createLocaleObject(a.locale || SYSTEM_LANG), this._coordSysMgr = new CoordinateSystemManager(), this._scheduler = new Scheduler(this, u, dataProcessorFuncs, visualFuncs), this._messageCenter = new MessageCenter(), this._initEvents(), this.resize = bind$1(this.resize, this), s.animation.on("frame", this._onframe, this), bindRenderedEvent(s, this), bindMouseEvent(s, this);
-    const d = new zrender.Rect({
-      shape: {
-        x: 186,
-        y: 80,
-        width: 300,
-        height: 80
-      }
-    });
-    this._zr.add(d), this.getTweenManager().presets.breathe(d).start();
   }
   _initEvents() {
     return Za(this, null, function* () {
@@ -104235,9 +104266,9 @@ Gantt.internalField = function() {
     }(t);
   };
 }();
-const echartsProto = Gantt.prototype;
-echartsProto.on = createRegisterEventWithLowercaseECharts("on");
-echartsProto.off = createRegisterEventWithLowercaseECharts("off");
+const ganttProto = Gantt.prototype;
+ganttProto.on = createRegisterEventWithLowercaseECharts("on");
+ganttProto.off = createRegisterEventWithLowercaseECharts("off");
 function disposedWarning(t) {
   warn("Instance " + t + " has been disposed");
 }

@@ -82,6 +82,17 @@ export interface HighlightPresetOptions extends ZTweenOptions<TweenTarget> {
   restore?: boolean
 }
 
+export interface ShakeYPresetOptions extends ZTweenOptions<TweenTarget> {
+  /** 上下抖动幅度，单位 px，默认 4。 */
+  amplitude?: number
+  /** 抖动开始 y 坐标。设置后会先把元素移动到该 y 值。 */
+  fromY?: number
+  /** 抖动目标 y 坐标。设置后优先级高于 amplitude。 */
+  toY?: number
+  /** 停止动画时是否恢复到开始前 position，默认 true。 */
+  restore?: boolean
+}
+
 export class ZTweenManager {
   private _group = new Group()
 
@@ -205,6 +216,37 @@ export class ZTweenManager {
           onStop: (target) => {
             if (options.restore !== false) {
               this._setElementStyle(element, { lineWidth, opacity })
+            }
+            options.onStop?.(target)
+          },
+        }
+      )
+    },
+
+    shakeY: (
+      element: ElementLike,
+      options: ShakeYPresetOptions = {}
+    ) => {
+      const position = element.position ? element.position.slice() : [0, 0]
+      const startY = options.fromY ?? position[1]
+      const targetY = options.toY ?? startY - (options.amplitude ?? 4)
+
+      if (options.fromY != null) {
+        this._setElementAttrs(element, { position: [position[0], startY] })
+      }
+
+      return this.animateElement(
+        element,
+        { position: [position[0], targetY] },
+        {
+          duration: 180,
+          loop: true,
+          yoyo: true,
+          easing: Easing.Sinusoidal.InOut,
+          ...options,
+          onStop: (target) => {
+            if (options.restore !== false) {
+              this._setElementAttrs(element, { position })
             }
             options.onStop?.(target)
           },
