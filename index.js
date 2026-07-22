@@ -322,6 +322,38 @@ const assignOverlapLanes = (tasks) => {
   return tasks
 }
 
+const buildUnassignedTasks = (sourceTasks) => {
+  const unassigned = (Array.isArray(sourceTasks) ? sourceTasks : [])
+    .filter((item) => !Array.isArray(item.taskAssignList) || item.taskAssignList.length === 0)
+    .map((item, index) => ({
+      id: item.id || item.taskId || `unassigned-${index}`,
+      name: item.taskName || item.taskTypeName || `未分配任务${index + 1}`,
+      scheduleStartTime: item.scheduleStartTime,
+      scheduleEndTime: item.scheduleEndTime,
+      taskName: item.taskName || item.taskTypeName || '',
+      flightStatusText: buildFlightStatusText(item),
+      standName: item.flightVo?.standName || '',
+      gateName: `${item.flightVo?.domGateName || ''}${item.flightVo?.intGateName || ''}`,
+    }))
+
+  if (unassigned.length) {
+    return unassigned
+  }
+
+  return (Array.isArray(sourceTasks) ? sourceTasks : [])
+    .slice(0, 3)
+    .map((item, index) => ({
+      id: `mock-unassigned-${index + 1}`,
+      name: item.taskName || item.taskTypeName || `未分配任务${index + 1}`,
+      scheduleStartTime: item.scheduleStartTime,
+      scheduleEndTime: item.scheduleEndTime,
+      taskName: item.taskName || item.taskTypeName || '',
+      flightStatusText: buildFlightStatusText(item),
+      standName: item.flightVo?.standName || '',
+      gateName: `${item.flightVo?.domGateName || ''}${item.flightVo?.intGateName || ''}`,
+    }))
+}
+
 const task = assignOverlapLanes((Array.isArray(data2) ? data2 : [])
   .map((item) => {
     const resourceId = item.taskAssignList?.[0]?.currentResourceId
@@ -353,6 +385,7 @@ const task = assignOverlapLanes((Array.isArray(data2) ? data2 : [])
     ]
   })
   .filter(Boolean))
+const unassignedTask = buildUnassignedTasks(data2)
   
 gantt.setOption({
   title: {
@@ -455,6 +488,7 @@ gantt.setOption({
   },
   unassignedBoard: {
     show: true,
+    data: unassignedTask,
   },
   series: [
     {
