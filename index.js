@@ -13,12 +13,17 @@ const TWENTY_MINUTES = 20 * 60 * 1000
 const TARGET_RESOURCE_ROW_HEIGHT = 44
 const GRID_TOP = 60
 const GRID_BOTTOM = 26
+const DEFAULT_UNASSIGNED_PANEL_RATIO = 0.2
+const VIRTUAL_RESOURCE_PADDING_ROWS = Math.ceil(
+  (dom.clientHeight * DEFAULT_UNASSIGNED_PANEL_RATIO) / TARGET_RESOURCE_ROW_HEIGHT,
+) + 1
+const yAxisTotalRows = resource.length + VIRTUAL_RESOURCE_PADDING_ROWS
 const initialYZoomEnd = Math.min(
   100,
   Math.max(
     1,
     ((Math.max(0, dom.clientHeight - GRID_TOP - GRID_BOTTOM) / TARGET_RESOURCE_ROW_HEIGHT) /
-      Math.max(1, resource.length)) *
+      Math.max(1, yAxisTotalRows)) *
       100,
   ),
 )
@@ -431,7 +436,9 @@ gantt.setOption({
     },
     {
       type: 'slider',
+      id: 'ySlider',
       yAxisIndex: 0,
+      invisible: true,
       zoomLock: true,
       width: 10,
       right: 10,
@@ -484,7 +491,9 @@ gantt.setOption({
     splitNumber: 5,
     inverse: true,
     min: 0,
-    max: resource?.length,
+    resourceCount: resource.length,
+    targetRowHeight: TARGET_RESOURCE_ROW_HEIGHT,
+    max: yAxisTotalRows,
   },
   unassignedBoard: {
     show: true,
