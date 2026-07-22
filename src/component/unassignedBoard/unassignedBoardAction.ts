@@ -50,12 +50,16 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
           )
         }
       } else if (orient === 'vertical') {
-        const range = dataZoomModel.getPercentRange()
+        const nextAxisMax = updateYAxisVirtualPadding(model, api, newY)
+        const valueRange =
+          dataZoomModel.findRepresentativeAxisProxy?.()?.getDataValueWindow?.()
+        const percentRange = dataZoomModel.getPercentRange()
+        const range = getStableValueRange(valueRange, percentRange, nextAxisMax)
         dataZoomModel.option.bottom = bottom
         dataZoomModel.option.height = undefined
         dataZoomModel.setRawRange({
-          start: range[0],
-          end: range[1],
+          startValue: range[0],
+          endValue: range[1],
         })
         dataZoomView?.render?.(
           dataZoomModel,
@@ -72,4 +76,63 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       api.getViewOfComponentModel(boardModel)?.updateLayout?.(boardModel, api, { type: 'updateUnassignedBoardPosition', data: { y: newY } })
     })
   })
+}
+
+function updateYAxisVirtualPadding(
+  model: GlobalModel,
+  api: ExtensionAPI,
+  splitY: number
+): number {
+  let nextMax = 0
+  let grid: any
+
+  model.eachComponent('grid', function(gridModel: any) {
+    if (!grid && gridModel.coordinateSystem) {
+      grid = gridModel.coordinateSystem
+    }
+  })
+
+  model.eachComponent('yAxis', function(axisModel: any) {
+    if (nextMax) return
+
+    const resourceCount = axisModel.option.resourceCount ?? axisModel.get('resourceCount')
+    if (typeof resourceCount !== 'number') return
+
+    const yAxis = grid?.getCartesians?.()[0]?.getAxis?.('y')
+    const measuredRowHeight = Math.abs(
+      yAxis
+        ? yAxis.toGlobalCoord(yAxis.dataToCoord(1)) -
+            yAxis.toGlobalCoord(yAxis.dataToCoord(0))
+        : 0
+    )
+    const rowHeight =
+      measuredRowHeight || axisModel.option.targetRowHeight || axisModel.get('targetRowHeight') || 44
+    const panelHeight = Math.max(0, api.getHeight() - splitY)
+    const paddingRows = Math.max(1, Math.ceil(panelHeight / rowHeight) + 1)
+
+    nextMax = resourceCount + paddingRows
+    axisModel.option.max = nextMax
+  })
+
+  return nextMax
+}
+
+function getStableValueRange(
+  valueRange: number[] | undefined,
+  percentRange: number[] | undefined,
+  nextAxisMax: number
+): number[] {
+  if (!valueRange || valueRange.length < 2 || !nextAxisMax) {
+    return [0, nextAxisMax || 1]
+  }
+
+  const span = Math.max(1, valueRange[1] - valueRange[0])
+  const isAtBottom = Math.abs((percentRange?.[1] ?? 0) - 100) < 0.5
+
+  if (isAtBottom) {
+    return [Math.max(0, nextAxisMax - span), nextAxisMax]
+  }
+
+  const start = Math.max(0, Math.min(valueRange[0], nextAxisMax - span))
+  return [start, Math.min(nextAxisMax, start + span)]
 }

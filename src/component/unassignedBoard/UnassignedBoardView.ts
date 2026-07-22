@@ -5,6 +5,7 @@ import { Group, Line, Rect, Text } from 'zrender'
 import ComponentModel from '../../model/Component'
 import { Payload } from '../../util/types'
 import { parseRatio } from '../split/SliderSplitView'
+import * as eventTool from 'zrender/src/core/event'
 
 const BOARD_ZLEVEL = 999
 
@@ -50,6 +51,30 @@ export default class UnassignedBoardView extends ComponentView {
   private _emptyText: Text
 
   private _gridExtensionGroup: Group
+
+  private _mainScrollbarGroup: Group
+
+  private _taskViewportGroup: Group
+
+  private _taskContentGroup: Group
+
+  private _scrollbarGroup: Group
+
+  private _scrollThumb: Rect
+
+  private _mainScrollThumb: Rect
+
+  private _scrollOffset = 0
+
+  private _scrollMax = 0
+
+  private _scrollDragStartY = 0
+
+  private _scrollDragStartOffset = 0
+
+  private _mainScrollDragStartY = 0
+
+  private _mainScrollDragStartStart = 0
 
   render(model: ComponentModel, piModel: GlobalModel, api: ExtensionAPI, payload?: Payload): void {
     this.group.removeAll()
@@ -108,6 +133,8 @@ export default class UnassignedBoardView extends ComponentView {
     }
 
     this._renderGridExtension()
+    this._renderUnassignedTasks(this._getUnassignedData())
+    this._renderMainVerticalDataZoomMirror()
   }
 
   private _getUnassignedData(): TaskData[] {
@@ -158,21 +185,8 @@ export default class UnassignedBoardView extends ComponentView {
       })
     group.add(this._backgroundRect)
     this._renderGridExtension()
-
-    let yOffset = padding[0]
-    const grid = this._getGrid()
-    const rowHeight = this._getRowHeight()
-
-    tasks.forEach((task: TaskData) => {
-      const itemHeight = Math.min(36, Math.max(24, rowHeight - 8))
-      const taskGroup = this._renderTaskItem(task, grid, yOffset, itemHeight)
-
-      if (taskGroup) {
-        group.add(taskGroup)
-      }
-
-      yOffset += rowHeight + itemGap
-    })
+    this._renderUnassignedTasks(tasks)
+    this._renderMainVerticalDataZoomMirror()
 
     if (tasks.length === 0) {
       this._emptyText = new Text({
@@ -191,6 +205,166 @@ export default class UnassignedBoardView extends ComponentView {
           silent: true,
         })
       group.add(this._emptyText)
+    }
+  }
+
+  private _renderUnassignedTasks(tasks: TaskData[]): void {
+    if (this._taskViewportGroup) {
+      this.group.remove(this._taskViewportGroup)
+    }
+    if (this._taskContentGroup) {
+      this._taskContentGroup = null
+    }
+    if (this._scrollbarGroup) {
+      this.group.remove(this._scrollbarGroup)
+    }
+
+    if (!tasks.length) return
+
+    const grid = this._getGrid()
+    if (!grid) return
+
+    const rect = grid.getRect()
+    const height = Math.max(0, this.api.getHeight() - this._splitY)
+    const rowHeight = this._getRowHeight()
+    const itemGap = 8
+    const itemHeight = Math.min(36, Math.max(24, rowHeight - 8))
+    const contentHeight = tasks.length * rowHeight + Math.max(0, tasks.length - 1) * itemGap
+
+    this._scrollMax = Math.max(0, contentHeight - height)
+    this._scrollOffset = Math.min(this._scrollOffset, this._scrollMax)
+
+    const viewportGroup = (this._taskViewportGroup = new Group())
+    ;(viewportGroup as any).attr({
+      zlevel: BOARD_ZLEVEL,
+      z: 0,
+      z2: 3,
+      x: 0,
+      y: 0,
+    })
+    viewportGroup.setClipPath(
+      new Rect({
+        shape: {
+          x: rect.x,
+          y: 0,
+          width: rect.width,
+          height,
+        },
+      })
+    )
+
+    const contentGroup = (this._taskContentGroup = new Group())
+    ;(contentGroup as any).attr({
+      zlevel: BOARD_ZLEVEL,
+      z: 0,
+      z2: 3,
+      x: 0,
+      y: -this._scrollOffset,
+    })
+
+    tasks.forEach((task: TaskData, index: number) => {
+      const yOffset = index * (rowHeight + itemGap) + 4
+      const taskGroup = this._renderTaskItem(task, grid, yOffset, itemHeight)
+      if (taskGroup) {
+        contentGroup.add(taskGroup)
+      }
+    })
+
+    viewportGroup.add(contentGroup)
+    this.group.add(viewportGroup)
+    this._renderVerticalDataZoom(rect, height, contentHeight)
+  }
+
+  private _renderVerticalDataZoom(
+    rect: { x: number; y: number; width: number; height: number },
+    height: number,
+    contentHeight: number
+  ): void {
+    if (contentHeight <= height || height <= 0) return
+
+    const trackWidth = 8
+    const trackX = rect.x + rect.width + 6
+    const thumbHeight = Math.max(24, (height / contentHeight) * height)
+    const thumbY =
+      this._scrollMax > 0
+        ? (this._scrollOffset / this._scrollMax) * (height - thumbHeight)
+        : 0
+
+    const scrollbarGroup = (this._scrollbarGroup = new Group())
+    ;(scrollbarGroup as any).attr({ zlevel: BOARD_ZLEVEL, z: 0, z2: 5 })
+
+    scrollbarGroup.add(
+      new Rect({
+        shape: {
+          x: trackX,
+          y: 0,
+          width: trackWidth,
+          height,
+          r: 4,
+        },
+        style: {
+          fill: 'rgba(203, 213, 225, 0.35)',
+        },
+        zlevel: BOARD_ZLEVEL,
+        z: 0,
+        z2: 0,
+        silent: true,
+      })
+    )
+
+    this._scrollThumb = new Rect({
+      shape: {
+        x: trackX,
+        y: thumbY,
+        width: trackWidth,
+        height: thumbHeight,
+        r: 4,
+      },
+      style: {
+        fill: '#94A3B8',
+      },
+      zlevel: BOARD_ZLEVEL,
+      z: 0,
+      z2: 1,
+      cursor: 'ns-resize',
+      draggable: true,
+      ondragstart: (event: any) => {
+        this._scrollDragStartY = event.offsetY
+        this._scrollDragStartOffset = this._scrollOffset
+        eventTool.stop(event.event)
+      },
+      drift: (_dx: number, _dy: number, event: any) => {
+        const deltaY = event.offsetY - this._scrollDragStartY
+        const trackMoveHeight = Math.max(1, height - thumbHeight)
+        const nextOffset =
+          this._scrollDragStartOffset +
+          (deltaY / trackMoveHeight) * this._scrollMax
+        this._setScrollOffset(nextOffset)
+        eventTool.stop(event.event)
+      },
+    })
+
+    scrollbarGroup.add(this._scrollThumb)
+    this.group.add(scrollbarGroup)
+  }
+
+  private _setScrollOffset(offset: number): void {
+    this._scrollOffset = Math.max(0, Math.min(this._scrollMax, offset))
+
+    if (this._taskContentGroup) {
+      ;(this._taskContentGroup as any).attr({ y: -this._scrollOffset })
+    }
+
+    if (this._scrollThumb) {
+      const shape = this._scrollThumb.shape
+      const height = Math.max(0, this.api.getHeight() - this._splitY)
+      const trackMoveHeight = Math.max(1, height - shape.height)
+      this._scrollThumb.setShape({
+        y:
+          this._scrollMax > 0
+            ? (this._scrollOffset / this._scrollMax) * trackMoveHeight
+            : 0,
+      })
     }
   }
 
@@ -421,6 +595,90 @@ export default class UnassignedBoardView extends ComponentView {
     this.group.add(gridGroup)
   }
 
+  private _renderMainVerticalDataZoomMirror(): void {
+    if (this._mainScrollbarGroup) {
+      this.group.remove(this._mainScrollbarGroup)
+    }
+
+    const dataZoomModel = this._getVerticalDataZoomModel()
+    const grid = this._getGrid()
+    if (!dataZoomModel || !grid) return
+
+    const rect = grid.getRect()
+    const trackHeight = Math.max(0, this._splitY - rect.y)
+    if (trackHeight <= 0) return
+
+    const range = dataZoomModel.getPercentRange?.() || [0, 100]
+    const span = Math.max(1, Math.min(100, range[1] - range[0]))
+    const movablePercent = Math.max(1, 100 - span)
+    const thumbHeight = Math.max(24, (span / 100) * trackHeight)
+    const trackMoveHeight = Math.max(1, trackHeight - thumbHeight)
+    const thumbY = (Math.max(0, range[0]) / movablePercent) * trackMoveHeight
+    const trackWidth = 8
+    const trackX = rect.x + rect.width + 6
+    const groupOffsetY = -this._splitY
+
+    const scrollbarGroup = (this._mainScrollbarGroup = new Group())
+    ;(scrollbarGroup as any).attr({ zlevel: BOARD_ZLEVEL, z: 0, z2: 6 })
+
+    scrollbarGroup.add(
+      new Rect({
+        shape: {
+          x: trackX,
+          y: rect.y + groupOffsetY,
+          width: trackWidth,
+          height: trackHeight,
+          r: 4,
+        },
+        style: {
+          fill: 'rgba(203, 213, 225, 0.35)',
+        },
+        zlevel: BOARD_ZLEVEL,
+        z: 0,
+        z2: 0,
+        silent: true,
+      })
+    )
+
+    this._mainScrollThumb = new Rect({
+      shape: {
+        x: trackX,
+        y: rect.y + groupOffsetY + thumbY,
+        width: trackWidth,
+        height: thumbHeight,
+        r: 4,
+      },
+      style: {
+        fill: '#94A3B8',
+      },
+      zlevel: BOARD_ZLEVEL,
+      z: 0,
+      z2: 1,
+      cursor: 'ns-resize',
+      draggable: true,
+      ondragstart: (event: any) => {
+        this._mainScrollDragStartY = event.offsetY
+        this._mainScrollDragStartStart = range[0]
+        eventTool.stop(event.event)
+      },
+      drift: (_dx: number, _dy: number, event: any) => {
+        const currentRange =
+          this._getVerticalDataZoomModel()?.getPercentRange?.() || range
+        const currentSpan = Math.max(1, Math.min(100, currentRange[1] - currentRange[0]))
+        const currentMovablePercent = Math.max(1, 100 - currentSpan)
+        const deltaY = event.offsetY - this._mainScrollDragStartY
+        const nextStart =
+          this._mainScrollDragStartStart +
+          (deltaY / trackMoveHeight) * currentMovablePercent
+        this._dispatchVerticalDataZoom(nextStart, nextStart + currentSpan)
+        eventTool.stop(event.event)
+      },
+    })
+
+    scrollbarGroup.add(this._mainScrollThumb)
+    this.group.add(scrollbarGroup)
+  }
+
   private _getGrid(): any {
     let grid: any
     ;(this.piModel as any).eachComponent('grid', function (gridModel: any) {
@@ -429,6 +687,36 @@ export default class UnassignedBoardView extends ComponentView {
       }
     })
     return grid
+  }
+
+  private _getVerticalDataZoomModel(): any {
+    let dataZoomModel: any
+    ;(this.piModel as any).eachComponent('dataZoom', function (dzModel: any) {
+      if (
+        !dataZoomModel &&
+        dzModel.subType === 'slider' &&
+        dzModel.getOrient() === 'vertical'
+      ) {
+        dataZoomModel = dzModel
+      }
+    })
+    return dataZoomModel
+  }
+
+  private _dispatchVerticalDataZoom(start: number, end: number): void {
+    const dataZoomModel = this._getVerticalDataZoomModel()
+    if (!dataZoomModel) return
+
+    const span = Math.max(1, Math.min(100, end - start))
+    const nextStart = Math.max(0, Math.min(100 - span, start))
+    const nextEnd = Math.min(100, nextStart + span)
+    this.api.dispatchAction({
+      type: 'dataZoom',
+      from: dataZoomModel.uid,
+      dataZoomId: dataZoomModel.id,
+      start: nextStart,
+      end: nextEnd,
+    })
   }
 
   private _getRowHeight(): number {
