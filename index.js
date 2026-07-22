@@ -170,6 +170,9 @@ const TaskRenderItem = function (params, api) {
 
   return {
     type: 'group',
+    info: {
+      taskItem: true,
+    },
     children: [
       {
         type: 'rect',

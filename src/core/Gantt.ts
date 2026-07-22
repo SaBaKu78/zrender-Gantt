@@ -1331,9 +1331,9 @@ class Gantt extends Eventful<EventDefinition> {
   })()
 }
 
-const echartsProto = Gantt.prototype
-echartsProto.on = createRegisterEventWithLowercaseECharts('on')
-echartsProto.off = createRegisterEventWithLowercaseECharts('off')
+const ganttProto = Gantt.prototype
+ganttProto.on = createRegisterEventWithLowercaseECharts('on')
+ganttProto.off = createRegisterEventWithLowercaseECharts('off')
 
 function disposedWarning(id: string): void {
   warn('Instance ' + id + ' has been disposed')
