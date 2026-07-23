@@ -6,6 +6,8 @@ import ComponentModel from '../../model/Component'
 import { Payload } from '../../util/types'
 import { parseRatio } from '../split/SliderSplitView'
 import * as eventTool from 'zrender/src/core/event'
+import AssignmentStateMachine from '../../interaction/AssignmentStateMachine'
+import type { Tween } from '@tweenjs/tween.js'
 
 const BOARD_ZLEVEL = 999
 
@@ -75,6 +77,44 @@ export default class UnassignedBoardView extends ComponentView {
   private _mainScrollDragStartY = 0
 
   private _mainScrollDragStartStart = 0
+
+  private _assignmentMachine: AssignmentStateMachine
+
+  private _selectedTaskTweens: Map<string | number, Tween> = new Map()
+
+  private _boundKeyDownHandler: ((e: KeyboardEvent) => void) | null = null
+
+  init(piModel: GlobalModel, api: ExtensionAPI): void {
+    this.api = api
+    this.piModel = piModel
+
+    if (!this._assignmentMachine) {
+      this._assignmentMachine = new AssignmentStateMachine()
+      this._assignmentMachine.on('statechange', () => {
+        if (this.piModel && this.api) {
+          this._renderBoard(this._getUnassignedData())
+        }
+      })
+    }
+
+    if (!this._boundKeyDownHandler && typeof window !== 'undefined') {
+      this._boundKeyDownHandler = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          this._assignmentMachine?.esc()
+        }
+      }
+      window.addEventListener('keydown', this._boundKeyDownHandler)
+    }
+  }
+
+  dispose(): void {
+    if (this._boundKeyDownHandler) {
+      window.removeEventListener('keydown', this._boundKeyDownHandler)
+      this._boundKeyDownHandler = null
+    }
+    this._clearSelectedTaskTweens()
+    this._assignmentMachine?.destroy()
+  }
 
   render(model: ComponentModel, piModel: GlobalModel, api: ExtensionAPI, payload?: Payload): void {
     this.group.removeAll()
@@ -157,6 +197,9 @@ export default class UnassignedBoardView extends ComponentView {
     const group = this.group
     const api = this.api
 
+    this._clearSelectedTaskTweens()
+    group.removeAll()
+
     const itemGap = 8
     const padding = [12, 16, 16, 16]
 
@@ -168,7 +211,7 @@ export default class UnassignedBoardView extends ComponentView {
     ;(group as any).attr({ z: 0 })
     ;(group as any).attr({ x, y: splitY })
 
-    this._backgroundRect = new Rect({
+      this._backgroundRect = new Rect({
         shape: {
           x: 0,
           y: 0,
@@ -264,8 +307,16 @@ export default class UnassignedBoardView extends ComponentView {
 
     tasks.forEach((task: TaskData, index: number) => {
       const yOffset = index * (rowHeight + itemGap) + 4
-      const taskGroup = this._renderTaskItem(task, grid, yOffset, itemHeight)
+      const taskGroup = this._renderTaskItem(
+        task,
+        grid,
+        yOffset,
+        itemHeight,
+        this._isTaskSelected(task)
+      )
       if (taskGroup) {
+        this._bindTaskEvents(taskGroup, task)
+        this._applySelectedTaskEffect(taskGroup, task)
         contentGroup.add(taskGroup)
       }
     })
@@ -372,7 +423,8 @@ export default class UnassignedBoardView extends ComponentView {
     task: TaskData,
     grid: any,
     y: number,
-    height: number
+    height: number,
+    selected = false
   ): Group | null {
     if (!grid) return null
 
@@ -408,9 +460,9 @@ export default class UnassignedBoardView extends ComponentView {
       new Rect({
         shape,
         style: {
-          fill: '#F3FAFF',
-          stroke: '#2F9EEB',
-          lineWidth: 1,
+          fill: selected ? '#E8F4FF' : '#F3FAFF',
+          stroke: selected ? '#1D7FEA' : '#2F9EEB',
+          lineWidth: selected ? 2 : 1,
         },
         zlevel: BOARD_ZLEVEL,
         z: 0,
@@ -498,6 +550,46 @@ export default class UnassignedBoardView extends ComponentView {
     )
 
     return group
+  }
+
+  private _bindTaskEvents(group: Group, task: TaskData): void {
+    ;(group as any).cursor = 'pointer'
+    group.on('click', () => {
+      this._assignmentMachine?.selectTask(task)
+    })
+  }
+
+  private _applySelectedTaskEffect(group: Group, task: TaskData): void {
+    const taskId = task.id
+    if (!this._isTaskSelected(task)) {
+      return
+    }
+
+    const tweenManager = this.api?.getTweenManager?.()
+    if (!tweenManager) {
+      return
+    }
+
+    const tween = tweenManager.presets.shakeY(group, {
+      amplitude: 3,
+      duration: 180,
+      restore: true,
+      loop: true,
+    })
+    this._selectedTaskTweens.set(taskId, tween)
+  }
+
+  private _clearSelectedTaskTweens(): void {
+    const tweenManager = this.api?.getTweenManager?.()
+    if (!tweenManager) {
+      this._selectedTaskTweens.clear()
+      return
+    }
+
+    this._selectedTaskTweens.forEach((tween) => {
+      tweenManager.stop(tween)
+    })
+    this._selectedTaskTweens.clear()
   }
 
   private _renderGridExtension(): void {
@@ -703,6 +795,11 @@ export default class UnassignedBoardView extends ComponentView {
     return dataZoomModel
   }
 
+  private _isTaskSelected(task: TaskData): boolean {
+    const current = this._assignmentMachine?.getContext()
+    return current?.taskId != null && current.taskId === task.id
+  }
+
   private _dispatchVerticalDataZoom(start: number, end: number): void {
     const dataZoomModel = this._getVerticalDataZoomModel()
     if (!dataZoomModel) return
@@ -743,7 +840,11 @@ export default class UnassignedBoardView extends ComponentView {
     const date = new Date(value)
     if (Number.isNaN(date.getTime())) return ''
 
-    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+    return `${this._pad2(date.getHours())}:${this._pad2(date.getMinutes())}`
+  }
+
+  private _pad2(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`
   }
 
   private _truncateText(text: string, maxWidth: number, fontSize = 11): string {
