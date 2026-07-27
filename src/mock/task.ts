@@ -61679,8 +61679,47 @@ const data = [
   },
 ]
 
+export const taskData = Mock.mock(data)
+
+export function assignMockTask(params: any) {
+  const taskId = params?.taskId
+  const newResourceId = params?.newResourceId
+  const target = taskData.find((item: any) => {
+    const id = item.id ?? item.taskId
+    return String(id) === String(taskId)
+  })
+
+  if (!target || !newResourceId) {
+    return {
+      success: false,
+      taskId,
+    }
+  }
+
+  target.taskAssignList = [
+    {
+      id: Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`),
+      taskId: target.id || target.taskId,
+      currentResourceId: newResourceId,
+      currentResourceName: '',
+    },
+  ]
+
+  return {
+    success: true,
+    taskId: target.id || target.taskId,
+  }
+}
+
+export function searchMockTasks(taskIds: Array<string | number>) {
+  const taskIdSet = new Set((taskIds || []).map((id) => String(id)))
+  return taskData.filter((item: any) => {
+    const id = item.id ?? item.taskId
+    return taskIdSet.has(String(id))
+  })
+}
 
 export default {
   code: 200,
-  data: Mock.mock(data),
+  data: taskData,
 }

@@ -13,10 +13,12 @@ const BOARD_ZLEVEL = 999
 
 export interface TaskData {
   id: number | string
+  taskId?: number | string
   name?: string
   assignee?: number | null
   startTime?: string | number
   endTime?: string | number
+  taskDate?: string | number
   scheduleStartTime?: string | number
   scheduleEndTime?: string | number
   taskName?: string
@@ -35,6 +37,13 @@ export interface UnassignedBoardOption {
   splitY?: number
   verticalSplitX?: number
   gridWidth?: number
+  resources?: Array<[string, string | number]>
+  onAssignTask?: (params: {
+    newResourceId: string | number
+    taskId: string | number
+    date: string
+    force: boolean
+  }) => Promise<{ success: boolean }> | { success: boolean }
 }
 
 export default class UnassignedBoardView extends ComponentView {
@@ -60,6 +69,8 @@ export default class UnassignedBoardView extends ComponentView {
 
   private _taskContentGroup: Group
 
+  private _assignmentGhostGroup: Group
+
   private _scrollbarGroup: Group
 
   private _scrollThumb: Rect
@@ -84,14 +95,20 @@ export default class UnassignedBoardView extends ComponentView {
 
   private _boundKeyDownHandler: ((e: KeyboardEvent) => void) | null = null
 
+  private _boundMouseMoveHandler: ((e: any) => void) | null = null
+
+  private _boundClickHandler: ((e: any) => void) | null = null
+
+  private _assigning = false
+
   init(piModel: GlobalModel, api: ExtensionAPI): void {
     this.api = api
     this.piModel = piModel
 
     if (!this._assignmentMachine) {
       this._assignmentMachine = new AssignmentStateMachine()
-      this._assignmentMachine.on('statechange', () => {
-        if (this.piModel && this.api) {
+      this._assignmentMachine.on('statechange', (_context, prevState, nextState) => {
+        if (this.piModel && this.api && prevState !== nextState) {
           this._renderBoard(this._getUnassignedData())
         }
       })
@@ -105,6 +122,16 @@ export default class UnassignedBoardView extends ComponentView {
       }
       window.addEventListener('keydown', this._boundKeyDownHandler)
     }
+
+    if (!this._boundMouseMoveHandler) {
+      this._boundMouseMoveHandler = (e: any) => this._handleGlobalMouseMove(e)
+      api.getZr().on('mousemove', this._boundMouseMoveHandler)
+    }
+
+    if (!this._boundClickHandler) {
+      this._boundClickHandler = (e: any) => this._handleGlobalClick(e)
+      api.getZr().on('click', this._boundClickHandler)
+    }
   }
 
   dispose(): void {
@@ -112,7 +139,16 @@ export default class UnassignedBoardView extends ComponentView {
       window.removeEventListener('keydown', this._boundKeyDownHandler)
       this._boundKeyDownHandler = null
     }
+    if (this._boundMouseMoveHandler) {
+      this.api?.getZr().off('mousemove', this._boundMouseMoveHandler)
+      this._boundMouseMoveHandler = null
+    }
+    if (this._boundClickHandler) {
+      this.api?.getZr().off('click', this._boundClickHandler)
+      this._boundClickHandler = null
+    }
     this._clearSelectedTaskTweens()
+    this._clearAssignmentGhost()
     this._assignmentMachine?.destroy()
   }
 
@@ -121,17 +157,21 @@ export default class UnassignedBoardView extends ComponentView {
     this.piModel = piModel
     this.api = api
 
-    let splitY = api.getHeight()
+    let splitY = (model as any).option?.splitY
+    if (splitY == null) {
+      splitY = api.getHeight()
 
-    ;(piModel as any).eachComponent('split', function(splitModel: any) {
-      if (splitModel.get('orient') === 'horizontal') {
-        const ratio = splitModel.get('ratio')
-        if (ratio != null) {
-          splitY = api.getHeight() * parseRatio(ratio, 'horizontal')
+      ;(piModel as any).eachComponent('split', function(splitModel: any) {
+        if (splitModel.get('orient') === 'horizontal') {
+          const ratio = splitModel.get('ratio')
+          if (ratio != null) {
+            splitY = api.getHeight() * parseRatio(ratio, 'horizontal')
+          }
         }
-      }
-    })
+      })
+    }
     this._splitY = splitY
+    ;(model as any).option.splitY = splitY
 
 
     const unassignedData = this._getUnassignedData()
@@ -257,6 +297,10 @@ export default class UnassignedBoardView extends ComponentView {
     }
     if (this._taskContentGroup) {
       this._taskContentGroup = null
+    }
+    if (this._assignmentGhostGroup) {
+      this.group.remove(this._assignmentGhostGroup)
+      this._assignmentGhostGroup = null
     }
     if (this._scrollbarGroup) {
       this.group.remove(this._scrollbarGroup)
@@ -424,7 +468,8 @@ export default class UnassignedBoardView extends ComponentView {
     grid: any,
     y: number,
     height: number,
-    selected = false
+    selected = false,
+    interactive = true
   ): Group | null {
     if (!grid) return null
 
@@ -549,14 +594,188 @@ export default class UnassignedBoardView extends ComponentView {
       })
     )
 
+    if (interactive) {
+      const hitRect = new Rect({
+        shape,
+        style: {
+          fill: 'rgba(0,0,0,0)',
+        },
+        cursor: 'pointer',
+        zlevel: BOARD_ZLEVEL,
+        z: 0,
+        z2: 20,
+        onclick: (event: any) => {
+          this._assignmentMachine?.selectTask(task)
+          eventTool.stop(event.event)
+        },
+      })
+      group.add(hitRect)
+    }
+
     return group
   }
 
   private _bindTaskEvents(group: Group, task: TaskData): void {
     ;(group as any).cursor = 'pointer'
-    group.on('click', () => {
-      this._assignmentMachine?.selectTask(task)
+  }
+
+  private _handleGlobalMouseMove(event: any): void {
+    const context = this._assignmentMachine?.getContext()
+    const task = context?.taskData as TaskData
+    if (!task || this._assigning) {
+      this._clearAssignmentGhost()
+      return
+    }
+
+    const hit = this._hitMainResourceRow(event.offsetX, event.offsetY)
+    if (!hit) {
+      if (this._assignmentMachine.getState() === 'previewing') {
+        this._assignmentMachine.leaveGrid()
+      }
+      this._clearAssignmentGhost()
+      return
+    }
+
+    if (this._assignmentMachine.getState() === 'selected') {
+      this._assignmentMachine.enterGrid()
+    }
+    this._assignmentMachine.moveHover({
+      hoverResourceId: hit.resourceId,
+      hoverResourceIndex: hit.resourceIndex,
+      hoverY: hit.rowY,
     })
+    this._renderAssignmentGhost(task, hit)
+  }
+
+  private async _handleGlobalClick(event: any): Promise<void> {
+    const context = this._assignmentMachine?.getContext()
+    const task = context?.taskData as TaskData
+    if (!task || this._assigning) return
+
+    const hit = this._hitMainResourceRow(event.offsetX, event.offsetY)
+    if (!hit) return
+
+    if (this._assignmentMachine.getState() === 'selected') {
+      this._assignmentMachine.enterGrid()
+    }
+    this._assignmentMachine.moveHover({
+      hoverResourceId: hit.resourceId,
+      hoverResourceIndex: hit.resourceIndex,
+      hoverY: hit.rowY,
+    })
+
+    if (!this._assignmentMachine.clickGrid()) return
+    await this._assignSelectedTask(task, hit)
+  }
+
+  private async _assignSelectedTask(
+    task: TaskData,
+    hit: {
+      resourceId: string | number
+      resourceIndex: number
+      rowY: number
+      rowHeight: number
+    }
+  ): Promise<void> {
+    const handler = this._getAssignTaskHandler()
+    const taskId = task.id ?? task.taskId
+    if (!handler || taskId == null) return
+
+    this._assigning = true
+    this._assignmentMachine.confirm()
+
+    try {
+      const result = await handler({
+        newResourceId: hit.resourceId,
+        taskId,
+        date: this._formatDate(task.taskDate ?? task.scheduleStartTime ?? task.startTime),
+        force: false,
+      })
+
+      if (result?.success) {
+        console.info('派遣成功')
+        this._assignmentMachine.submitOk()
+        this._assignmentMachine.wsUpdate()
+        this._assignmentMachine.refreshOk()
+        this._clearAssignmentGhost()
+      } else {
+        console.info('派遣失败')
+        this._assignmentMachine.fail('SUBMIT_FAIL', 'assign failed')
+      }
+    } catch (error) {
+      this._assignmentMachine.fail('SUBMIT_FAIL', error as Error)
+    } finally {
+      this._assigning = false
+    }
+  }
+
+  private _hitMainResourceRow(x: number, y: number): {
+    resourceId: string | number
+    resourceIndex: number
+    rowY: number
+    rowHeight: number
+  } | null {
+    const grid = this._getGrid()
+    const resources = this._getBoardResources()
+    if (!grid || !resources.length) return null
+
+    const rect = grid.getRect()
+    if (x < rect.x || x > rect.x + rect.width || y < rect.y || y > this._splitY) {
+      return null
+    }
+
+    const yAxis = grid.getCartesians()[0]?.getAxis('y')
+    if (!yAxis) return null
+
+    for (let index = 0; index < resources.length; index++) {
+      const start = yAxis.toGlobalCoord(yAxis.dataToCoord(index))
+      const end = yAxis.toGlobalCoord(yAxis.dataToCoord(index + 1))
+      const rowY = Math.min(start, end)
+      const rowHeight = Math.abs(end - start)
+      const rowBottom = rowY + rowHeight
+
+      if (y >= rowY && y <= rowBottom && rowBottom > rect.y && rowY < this._splitY) {
+        return {
+          resourceId: resources[index][1],
+          resourceIndex: index,
+          rowY,
+          rowHeight,
+        }
+      }
+    }
+
+    return null
+  }
+
+  private _renderAssignmentGhost(
+    task: TaskData,
+    hit: {
+      rowY: number
+      rowHeight: number
+    }
+  ): void {
+    this._clearAssignmentGhost()
+
+    const grid = this._getGrid()
+    if (!grid) return
+
+    const itemHeight = Math.min(36, Math.max(24, hit.rowHeight - 8))
+    const y = hit.rowY - this._splitY + (hit.rowHeight - itemHeight) / 2
+    const ghost = this._renderTaskItem(task, grid, y, itemHeight, true, false)
+    if (!ghost) return
+
+    ;(ghost as any).silent = true
+    ;(ghost as any).attr({ zlevel: BOARD_ZLEVEL, z: 0, z2: 20 })
+    this._setGroupOpacity(ghost, 0.48)
+    this._assignmentGhostGroup = ghost
+    this.group.add(ghost)
+  }
+
+  private _clearAssignmentGhost(): void {
+    if (!this._assignmentGhostGroup) return
+
+    this.group.remove(this._assignmentGhostGroup)
+    this._assignmentGhostGroup = null
   }
 
   private _applySelectedTaskEffect(group: Group, task: TaskData): void {
@@ -795,6 +1014,22 @@ export default class UnassignedBoardView extends ComponentView {
     return dataZoomModel
   }
 
+  private _getBoardResources(): Array<[string, string | number]> {
+    let resources: Array<[string, string | number]> = []
+    ;(this.piModel as any).eachComponent('unassignedBoard', function (boardModel: any) {
+      resources = boardModel.get('resources') || []
+    })
+    return resources
+  }
+
+  private _getAssignTaskHandler(): UnassignedBoardOption['onAssignTask'] {
+    let handler: UnassignedBoardOption['onAssignTask']
+    ;(this.piModel as any).eachComponent('unassignedBoard', function (boardModel: any) {
+      handler = boardModel.get('onAssignTask')
+    })
+    return handler
+  }
+
   private _isTaskSelected(task: TaskData): boolean {
     const current = this._assignmentMachine?.getContext()
     return current?.taskId != null && current.taskId === task.id
@@ -845,6 +1080,25 @@ export default class UnassignedBoardView extends ComponentView {
 
   private _pad2(value: number): string {
     return value < 10 ? `0${value}` : `${value}`
+  }
+
+  private _formatDate(value: string | number | undefined): string {
+    const date = value == null ? new Date() : new Date(value)
+    if (Number.isNaN(date.getTime())) {
+      return this._formatDate(undefined)
+    }
+
+    return `${date.getFullYear()}-${this._pad2(date.getMonth() + 1)}-${this._pad2(date.getDate())}`
+  }
+
+  private _setGroupOpacity(group: Group, opacity: number): void {
+    group.traverse((el: any) => {
+      if (el.setStyle) {
+        el.setStyle({
+          opacity,
+        })
+      }
+    })
   }
 
   private _truncateText(text: string, maxWidth: number, fontSize = 11): string {

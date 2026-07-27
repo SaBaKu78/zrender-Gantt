@@ -112,6 +112,10 @@ export default class AssignmentStateMachine extends BaseStateMachine<
       return true
     }
 
+    if (this.getState() !== 'idle') {
+      this.reset()
+    }
+
     return this.transition('SELECT_TASK', {
       taskId,
       taskData,

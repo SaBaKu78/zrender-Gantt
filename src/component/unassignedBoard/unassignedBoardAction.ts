@@ -5,6 +5,34 @@ import { DATAZOOM_SPLIT_GAP } from '../split/SliderSplitView';
 
 export default function installUnassignedBoardAction(registers: ExtensionInstallRegisters) {
   registers.registerAction({
+    type: 'updateTaskData',
+    update: 'none',
+  }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
+    const assignedData = payload.assignedData || []
+    const unassignedData = payload.unassignedData || []
+    model.eachSeries(function(seriesModel: any) {
+      if (seriesModel.id !== 'assignedTasks') return
+
+      seriesModel.updateData?.(assignedData, model)
+      api.refreshSeries('assignedTasks', payload)
+    })
+
+    model.eachComponent('unassignedBoard', function(boardModel: any) {
+      if (boardModel.id !== 'unassignedBoard') return
+
+      boardModel.option.data = unassignedData
+      api.getViewOfComponentModel(boardModel)?.render?.(
+        boardModel,
+        model,
+        api,
+        payload
+      )
+    })
+
+    api.getZr().refresh()
+  })
+
+  registers.registerAction({
     type: 'updateUnassignedBoardPosition',
   }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
     const newY = payload.data?.y

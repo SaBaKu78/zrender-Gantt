@@ -87,7 +87,25 @@ class SeriesModel<
     zrUtil.merge(option, this.getDefaultOption())
   }
 
-  mergeOption(newSeriesOption: Opt, piModel: GlobalModel) {}
+  mergeOption(newSeriesOption: Opt, piModel: GlobalModel) {
+    zrUtil.merge(this.option, newSeriesOption, true)
+    this.updateData(this.option.data, piModel)
+  }
+
+  updateData(dataOption: Opt['data'], piModel: GlobalModel) {
+    this.option.data = dataOption
+    const sourceManager = inner(this).sourceManager as any
+    if (sourceManager) {
+      sourceManager._dirty = true
+      sourceManager.prepareSource()
+    }
+    const data = this.getInitialData(this.option, piModel)
+    wrapData(data, this)
+    this.dataTask.context.data = data
+    inner(this).dataBeforeProcessed = data
+    inner(this).data = data
+    this.dataTask?.dirty()
+  }
 
   private _initSelectedMapFromData(data: SeriesData) {
     // Ignore select info in data if selectedMap exists.
