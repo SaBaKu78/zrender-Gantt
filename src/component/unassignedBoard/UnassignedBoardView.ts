@@ -240,7 +240,6 @@ export default class UnassignedBoardView extends ComponentView {
     this._clearSelectedTaskTweens()
     group.removeAll()
 
-    const itemGap = 8
     const padding = [12, 16, 16, 16]
 
     const x = 0
@@ -316,7 +315,7 @@ export default class UnassignedBoardView extends ComponentView {
     const rowHeight = this._getRowHeight()
     const itemGap = 8
     const itemHeight = Math.min(36, Math.max(24, rowHeight - 8))
-    const contentHeight = tasks.length * rowHeight + Math.max(0, tasks.length - 1) * itemGap
+    const contentHeight = tasks.length * rowHeight
 
     this._scrollMax = Math.max(0, contentHeight - height)
     this._scrollOffset = Math.min(this._scrollOffset, this._scrollMax)
@@ -350,7 +349,7 @@ export default class UnassignedBoardView extends ComponentView {
     })
 
     tasks.forEach((task: TaskData, index: number) => {
-      const yOffset = index * (rowHeight + itemGap) + 4
+      const yOffset = index * rowHeight + (rowHeight - itemHeight) / 2
       const taskGroup = this._renderTaskItem(
         task,
         grid,

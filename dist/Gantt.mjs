@@ -102324,16 +102324,16 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class Ja extends ComponentView 
     const a = this._getGrid();
     if (!a)
       return;
-    const r = a.getRect(), o = Math.max(0, this.api.getHeight() - this._splitY), n = this._getRowHeight(), s = 8, u = Math.min(36, Math.max(24, n - 8)), d = e.length * n + Math.max(0, e.length - 1) * s;
-    this._scrollMax = Math.max(0, d - o), this._scrollOffset = Math.min(this._scrollOffset, this._scrollMax);
-    const l = this._taskViewportGroup = new zrender.Group();
-    l.attr({
+    const r = a.getRect(), o = Math.max(0, this.api.getHeight() - this._splitY), n = this._getRowHeight(), s = Math.min(36, Math.max(24, n - 8)), u = e.length * n;
+    this._scrollMax = Math.max(0, u - o), this._scrollOffset = Math.min(this._scrollOffset, this._scrollMax);
+    const d = this._taskViewportGroup = new zrender.Group();
+    d.attr({
       zlevel: BOARD_ZLEVEL,
       z: 0,
       z2: 3,
       x: 0,
       y: 0
-    }), l.setClipPath(
+    }), d.setClipPath(
       new zrender.Rect({
         shape: {
           x: r.x,
@@ -102343,23 +102343,23 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class Ja extends ComponentView 
         }
       })
     );
-    const c = this._taskContentGroup = new zrender.Group();
-    c.attr({
+    const l = this._taskContentGroup = new zrender.Group();
+    l.attr({
       zlevel: BOARD_ZLEVEL,
       z: 0,
       z2: 3,
       x: 0,
       y: -this._scrollOffset
-    }), e.forEach((m, p) => {
-      const g = p * (n + s) + 4, T = this._renderTaskItem(
-        m,
+    }), e.forEach((c, m) => {
+      const p = m * n + (n - s) / 2, g = this._renderTaskItem(
+        c,
         a,
-        g,
-        u,
-        this._isTaskSelected(m)
+        p,
+        s,
+        this._isTaskSelected(c)
       );
-      T && (this._bindTaskEvents(T, m), this._applySelectedTaskEffect(T, m), c.add(T));
-    }), l.add(c), this.group.add(l), this._renderVerticalDataZoom(r, o, d);
+      g && (this._bindTaskEvents(g, c), this._applySelectedTaskEffect(g, c), l.add(g));
+    }), d.add(l), this.group.add(d), this._renderVerticalDataZoom(r, o, u);
   }
   _renderVerticalDataZoom(e, a, r) {
     if (r <= a || a <= 0)
