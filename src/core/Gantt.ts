@@ -528,6 +528,24 @@ class Gantt extends Eventful<EventDefinition> {
     return this._componentsViews
   }
 
+  refreshSeries(seriesId: string, payload?: Payload): void {
+    if (!this._model) return
+
+    this._model.eachSeries((seriesModel) => {
+      if (seriesModel.id !== seriesId) return
+
+      const chartView = this._chartsViewsMap[seriesModel.__viewId]
+      if (!chartView) return
+
+      seriesModel.dataTask.perform()
+      ;(chartView as any)._data = null
+      chartView.group.removeAll()
+      chartView.render(seriesModel, this._model, this._api, payload)
+    })
+
+    this._zr.refresh()
+  }
+
   getDevicePixelRatio(): number {
     return (
       (this._zr.painter as CanvasPainter).dpr || window.devicePixelRatio || 1
