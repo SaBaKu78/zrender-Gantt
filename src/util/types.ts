@@ -28,6 +28,7 @@ import {
   RectLike,
 } from 'zrender'
 import { createHashMap } from 'zrender/src/core/util'
+import type { WsOption } from '../ws/types'
 
 export type RendererType = 'canvas' | 'svg'
 
@@ -711,6 +712,7 @@ export interface NormalizedEventQuery {
 }
 
 export type GanttUnitOption = {
+  ws?: WsOption
   // Exclude these reserved word for `ECOption` to avoid to infer to "any".
   baseOption?: unknown
   options?: unknown

@@ -11,6 +11,15 @@ const resource = (Array.isArray(data1) ? data1 : []).map((r) => [r.displayName, 
 let currentTaskData = Array.isArray(data2) ? data2.slice() : []
 const gantt = init(dom)
 const TWENTY_MINUTES = 20 * 60 * 1000
+const createDefaultXAxisRange = () => {
+  const start = new Date()
+  start.setHours(4, 0, 0, 0)
+
+  const end = new Date(start)
+  end.setDate(end.getDate() + 1)
+
+  return [start.getTime(), end.getTime()]
+}
 const TARGET_RESOURCE_ROW_HEIGHT = 44
 const GRID_TOP = 60
 const GRID_BOTTOM = 26
@@ -401,6 +410,7 @@ const buildResourceSeriesData = () => resource.map(function (item, index) {
 })
 
 const task = buildAssignedTasks(currentTaskData)
+const defaultXAxisRange = createDefaultXAxisRange()
 const unassignedTask = buildUnassignedTasks(currentTaskData)
 const applyTaskData = () => {
   gantt.dispatchAction({
@@ -454,6 +464,13 @@ const handleAssignTask = async ({ newResourceId, taskId, date, force }) => {
 }
   
 gantt.setOption({
+  ws: {
+    enabled: true,
+    url: `wss://gfgop-sit.airchina.com.cn/api2/ips/websocket/?subsystem=bs4PEK&uid=${Date.now()}&EIO=3&transport=websocket`,
+    reconnect: true,
+    reconnectDelay: 1000,
+    maxReconnectDelay: 10000,
+  },
   title: {
     text: 'Enable Gantt',
   },
@@ -529,6 +546,8 @@ gantt.setOption({
     interval: TWENTY_MINUTES,
     minInterval: TWENTY_MINUTES,
     maxInterval: TWENTY_MINUTES,
+    min: task.length ? null : defaultXAxisRange[0],
+    max: task.length ? null : defaultXAxisRange[1],
     axisTick: {
       lineStyle: {
         color: '#CBD5E1',
