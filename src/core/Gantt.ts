@@ -93,6 +93,10 @@ import {
 } from '../util/states'
 import { isElementRemoved } from '../animation/basicTransition'
 import ZTweenManager from './ztween'
+import WsManager from '../ws/WsManager'
+import type { WsRuntime } from '../ws/installWsPush'
+import type { WsOption } from '../ws/types'
+import { installTaskWsHandlers } from '../ws/task/installTaskWsPush'
 
 //----------------------------------- 变量 定义区 --------------------------------------------------------
 
@@ -388,6 +392,12 @@ class Gantt extends Eventful<EventDefinition> {
 
   private _ztween: ZTweenManager
 
+  private _wsManager: WsManager
+
+  private _taskWsRuntime: WsRuntime | null = null
+
+  private _disposeTaskWsHandlers: (() => void) | null = null
+
   private [PENDING_UPDATE]: {
     silent: boolean
     updateParams: UpdateLifecycleParams
@@ -414,6 +424,7 @@ class Gantt extends Eventful<EventDefinition> {
     }))
 
     this._ztween = new ZTweenManager(() => zr.wakeUp())
+    this._wsManager = new WsManager()
 
     this._ssr = opts.ssr
 
@@ -524,6 +535,24 @@ class Gantt extends Eventful<EventDefinition> {
     return this._model?.getOption()
   }
 
+  /** 当前通用 WS 运行时，任务、资源排班等业务域均可注册消息处理器。 */
+  getWsRuntime(): WsRuntime | null {
+    return this._wsManager.getRuntime()
+  }
+
+  private syncTaskWsHandlers(): void {
+    const runtime = this._wsManager.getRuntime()
+    if (runtime === this._taskWsRuntime) return
+
+    this._disposeTaskWsHandlers?.()
+    this._disposeTaskWsHandlers = null
+    this._taskWsRuntime = runtime
+
+    if (runtime) {
+      this._disposeTaskWsHandlers = installTaskWsHandlers(runtime)
+    }
+  }
+
   getComponentViewMap(): ComponentView[] {
     return this._componentsViews
   }
@@ -615,6 +644,8 @@ class Gantt extends Eventful<EventDefinition> {
       piModel.init(null, null, null, this._locale, optionManager)
     }
     this._model.setOption(option, { replaceMerge })
+    this._wsManager.configure(this._model.getOption().ws as WsOption | undefined)
+    this.syncTaskWsHandlers()
     const updateParams = {
       seriesTransition: transitionOpt,
       optionChanged: true,
