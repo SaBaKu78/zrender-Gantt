@@ -357,22 +357,23 @@ function bindTaskItemShake(
   }
 
   ;(el as any).__taskShakeBound = true
-  ;(el as any).__taskShakeBasePosition = el.position
-    ? el.position.slice()
+  ;(el as any).__taskShakeBasePosition = el['position']
+    ? el['position'].slice()
     : [0, 0]
-  el.on('click', function () {
+  el.on('dblclick', function () {
     const tweenManager = (api as any).getTweenManager?.()
     if (!tweenManager) return
 
     const basePosition =
       (el as any).__taskShakeBasePosition ||
-      ((el as any).__taskShakeBasePosition = el.position
-        ? el.position.slice()
+      ((el as any).__taskShakeBasePosition = el['position']
+        ? el['position'].slice()
         : [0, 0])
 
     const shakeTween = (el as any).__taskShakeTween
     if (shakeTween) {
       tweenManager.stop(shakeTween)
+      //@ts-ignore
       el.attr({ position: basePosition.slice() })
       ;(el as any).__taskShakeTween = null
       return
