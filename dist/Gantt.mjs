@@ -99677,7 +99677,7 @@ function doCreateOrUpdateEl(t, e, a, r, o, n) {
 }
 function bindTaskItemShake(t, e, a) {
   const r = a.info;
-  !(r != null && r.taskItem) || e.__taskShakeBound || (e.__taskShakeBound = !0, e.__taskShakeBasePosition = e.position ? e.position.slice() : [0, 0], e.on("click", function() {
+  !(r != null && r.taskItem) || e.__taskShakeBound || (e.__taskShakeBound = !0, e.__taskShakeBasePosition = e.position ? e.position.slice() : [0, 0], e.on("dblclick", function() {
     var u;
     const o = (u = t.getTweenManager) == null ? void 0 : u.call(t);
     if (!o)
@@ -102534,7 +102534,7 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
         zlevel: BOARD_ZLEVEL,
         z: 0,
         z2: 20,
-        onclick: (v) => {
+        ondblclick: (v) => {
           var M;
           (M = this._assignmentMachine) == null || M.selectTask(e), stop(v.event);
         }

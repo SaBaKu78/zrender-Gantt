@@ -603,7 +603,7 @@ export default class UnassignedBoardView extends ComponentView {
         zlevel: BOARD_ZLEVEL,
         z: 0,
         z2: 20,
-        onclick: (event: any) => {
+        ondblclick: (event: any) => {
           this._assignmentMachine?.selectTask(task)
           eventTool.stop(event.event)
         },
