@@ -59,12 +59,12 @@ export const assignOverlapLanes = (tasks) => {
           laneEndTimes[laneIndex] = taskItem[3]
         }
 
-        taskItem[15] = laneIndex
+        taskItem[8] = laneIndex
       })
 
       const laneCount = Math.max(1, laneEndTimes.length)
       component.forEach((taskItem) => {
-        taskItem[16] = laneCount
+        taskItem[9] = laneCount
       })
     }
 
@@ -115,13 +115,6 @@ const toAssignedTaskRow = (item, resourceMaps, buildFlightStatusText) => {
     resourceIndex,
     startTime,
     endTime,
-    item.flightNum || '',
-    item.locked || false,
-    item.currentResourceName || '',
-    item.currentRelatedResourceName || '',
-    item.fromLocation || '',
-    item.toLocation || '',
-    reportTime,
     item.taskName || item.taskTypeName || '',
     buildFlightStatusText(item),
     item.flightVo?.standName || '',

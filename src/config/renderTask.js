@@ -66,8 +66,8 @@ export const TaskRenderItem = function (params, api) {
   const barWidth = endTime[0] - startTime[0]
   const x = api.coord([api.value(2), categoryIndex])[0]
   const y = api.coord([api.value(2), categoryIndex])[1]
-  const laneIndex = api.value(15) || 0
-  const laneCount = Math.max(1, api.value(16) || 1)
+  const laneIndex = api.value(8) || 0
+  const laneCount = Math.max(1, api.value(9) || 1)
   const laneHeight = rowHeight / laneCount
   const taskHeight = Math.min(44, Math.max(10, laneHeight - 4))
   const taskY = y + laneIndex * laneHeight + (laneHeight - taskHeight) / 2
@@ -88,10 +88,10 @@ export const TaskRenderItem = function (params, api) {
   if (!task || task.width <= 0 || task.height <= 0) return
   task.r = 3
 
-  const taskName = api.value(11) || ''
-  const flightStatusText = api.value(12) || ''
-  const standName = api.value(13) || ''
-  const gateName = api.value(14) || ''
+  const taskName = api.value(4) || ''
+  const flightStatusText = api.value(5) || ''
+  const standName = api.value(6) || ''
+  const gateName = api.value(7) || ''
   const startText = formatTaskTime(api.value(2))
   const endText = formatTaskTime(api.value(3))
   const contentInset = 5
