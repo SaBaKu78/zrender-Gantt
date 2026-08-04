@@ -192,6 +192,7 @@ export const createGanttOption = ({
       top: 34,
       right: 96,
       width: 280,
+      conditions: ['\u4efb\u52a1\u540d', '\u8d44\u6e90\u540d', '\u822a\u73ed\u53f7', '\u8fdb\u51fa\u6e2f'],
     },
     liquidGlassLayer: {
       id: 'liquidGlassLayer',
