@@ -3,7 +3,8 @@ import { TaskRenderItem } from './renderTask'
 
 const TWENTY_MINUTES = 20 * 60 * 1000
 const TARGET_RESOURCE_ROW_HEIGHT = 44
-const GRID_TOP = 60
+const LAYOUT_OFFSET_TOP = 60
+const GRID_TOP = 60 + LAYOUT_OFFSET_TOP
 const GRID_BOTTOM = 26
 const DEFAULT_UNASSIGNED_PANEL_RATIO = 0.2
 const WS_URL = `wss://gfgop-sit.airchina.com.cn/api2/ips/websocket/?subsystem=bs4PEK&uid=${Date.now()}&EIO=3&transport=websocket`
@@ -71,7 +72,6 @@ export const createGanttOption = ({
       maxReconnectDelay: 10000,
     },
     title: {
-      text: 'Enable Gantt',
     },
     split: [
       {
@@ -139,7 +139,9 @@ export const createGanttOption = ({
         moveOnMouseWheel: true,
       },
     ],
-    grid: {},
+    grid: {
+      top: GRID_TOP,
+    },
     xAxis: {
       type: 'time',
       position: 'top',
@@ -182,6 +184,14 @@ export const createGanttOption = ({
       show: true,
       resources: resource,
       onChange: resourceFilterOnChange,
+    },
+    ganttQuery: {
+      id: 'ganttQuery',
+      show: true,
+      placeholder: 'Search',
+      top: 34,
+      right: 96,
+      width: 280,
     },
     unassignedBoard: {
       id: 'unassignedBoard',
