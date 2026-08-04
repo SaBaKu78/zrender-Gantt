@@ -1,15 +1,15 @@
-var tr = Object.defineProperty, ir = Object.defineProperties;
-var rr = Object.getOwnPropertyDescriptors;
+var nr = Object.defineProperty, sr = Object.defineProperties;
+var ur = Object.getOwnPropertyDescriptors;
 var ye = Object.getOwnPropertySymbols;
 var Za = Object.prototype.hasOwnProperty, ka = Object.prototype.propertyIsEnumerable;
-var Ea = (t, e, a) => e in t ? tr(t, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[e] = a, K = (t, e) => {
+var Ea = (t, e, a) => e in t ? nr(t, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[e] = a, H = (t, e) => {
   for (var a in e || (e = {}))
     Za.call(e, a) && Ea(t, a, e[a]);
   if (ye)
     for (var a of ye(e))
       ka.call(e, a) && Ea(t, a, e[a]);
   return t;
-}, le = (t, e) => ir(t, rr(e));
+}, le = (t, e) => sr(t, ur(e));
 var va = (t, e) => {
   var a = {};
   for (var r in t)
@@ -6490,7 +6490,7 @@ var mock = { exports: {} };
             }
             function A(R, D, F, Z, b) {
               function v(M, W) {
-                function H(J) {
+                function K(J) {
                   function V(z) {
                     return z.charCodeAt(0).toString(16).toUpperCase();
                   }
@@ -6515,7 +6515,7 @@ var mock = { exports: {} };
                   default:
                     $ = M.slice(0, -1).join(", ") + " or " + M[M.length - 1];
                 }
-                return q = W ? '"' + H(W) + '"' : "end of input", "Expected " + $ + " but " + q + " found.";
+                return q = W ? '"' + K(W) + '"' : "end of input", "Expected " + $ + " but " + q + " found.";
               }
               this.expected = R, this.found = D, this.offset = F, this.line = Z, this.column = b, this.name = "SyntaxError", this.message = v(R, D);
             }
@@ -6549,40 +6549,40 @@ var mock = { exports: {} };
               }
               function M() {
                 var N, I, E, L, U;
-                return N = P, I = W(), I !== null ? (E = P, R.charCodeAt(P) === 124 ? (L = ft, P++) : (L = null, k === 0 && b(Nt)), L !== null ? (U = M(), U !== null ? (L = [L, U], E = L) : (P = E, E = _)) : (P = E, E = _), E === null && (E = ce), E !== null ? (O = N, I = Ct(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, I = W(), I !== null ? (E = P, R.charCodeAt(P) === 124 ? (L = xt, P++) : (L = null, k === 0 && b(Pt)), L !== null ? (U = M(), U !== null ? (L = [L, U], E = L) : (P = E, E = _)) : (P = E, E = _), E === null && (E = ce), E !== null ? (O = N, I = yt(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function W() {
                 var N, I, E, L, U;
                 if (N = P, I = $(), I === null && (I = ce), I !== null)
                   if (E = P, k++, L = V(), k--, L === null ? E = ce : (P = E, E = _), E !== null) {
-                    for (L = [], U = J(), U === null && (U = H()); U !== null; )
-                      L.push(U), U = J(), U === null && (U = H());
-                    L !== null ? (U = q(), U === null && (U = ce), U !== null ? (O = N, I = It(I, L, U), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _);
+                    for (L = [], U = J(), U === null && (U = K()); U !== null; )
+                      L.push(U), U = J(), U === null && (U = K());
+                    L !== null ? (U = q(), U === null && (U = ce), U !== null ? (O = N, I = St(I, L, U), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _);
                   } else
                     P = N, N = _;
                 else
                   P = N, N = _;
                 return N;
               }
-              function H() {
+              function K() {
                 var N;
-                return N = ue(), N === null && (N = te(), N === null && (N = ut())), N;
+                return N = ue(), N === null && (N = te(), N === null && (N = pt())), N;
               }
               function $() {
                 var N, I;
-                return N = P, R.charCodeAt(P) === 94 ? (I = Qe, P++) : (I = null, k === 0 && b(Je)), I !== null && (O = N, I = xt()), I === null && (P = N), N = I, N;
+                return N = P, R.charCodeAt(P) === 94 ? (I = Qe, P++) : (I = null, k === 0 && b(Je)), I !== null && (O = N, I = At()), I === null && (P = N), N = I, N;
               }
               function q() {
                 var N, I;
-                return N = P, R.charCodeAt(P) === 36 ? (I = Pt, P++) : (I = null, k === 0 && b(yt)), I !== null && (O = N, I = St()), I === null && (P = N), N = I, N;
+                return N = P, R.charCodeAt(P) === 36 ? (I = Rt, P++) : (I = null, k === 0 && b(Bt)), I !== null && (O = N, I = bt()), I === null && (P = N), N = I, N;
               }
               function J() {
                 var N, I, E;
-                return N = P, I = H(), I !== null ? (E = V(), E !== null ? (O = N, I = At(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, I = K(), I !== null ? (E = V(), E !== null ? (O = N, I = Dt(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function V() {
                 var N, I, E;
-                return k++, N = P, I = z(), I !== null ? (E = ae(), E === null && (E = ce), E !== null ? (O = N, I = Bt(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (I = null, k === 0 && b(Rt)), N;
+                return k++, N = P, I = z(), I !== null ? (E = ae(), E === null && (E = ce), E !== null ? (O = N, I = Et(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (I = null, k === 0 && b(Ft)), N;
               }
               function z() {
                 var N;
@@ -6590,27 +6590,27 @@ var mock = { exports: {} };
               }
               function Y() {
                 var N, I, E, L, U, ne;
-                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 44 ? (L = bt, P++) : (L = null, k === 0 && b(Dt)), L !== null ? (U = ee(), U !== null ? (R.charCodeAt(P) === 125 ? (ne = je, P++) : (ne = null, k === 0 && b(ea)), ne !== null ? (O = N, I = Ft(E, U), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 44 ? (L = Zt, P++) : (L = null, k === 0 && b(kt)), L !== null ? (U = ee(), U !== null ? (R.charCodeAt(P) === 125 ? (ne = je, P++) : (ne = null, k === 0 && b(ea)), ne !== null ? (O = N, I = vt(E, U), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function Q() {
                 var N, I, E, L;
-                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.substr(P, 2) === aa ? (L = aa, P += 2) : (L = null, k === 0 && b(Et)), L !== null ? (O = N, I = Zt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.substr(P, 2) === aa ? (L = aa, P += 2) : (L = null, k === 0 && b(Lt)), L !== null ? (O = N, I = _t(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function G() {
                 var N, I, E, L;
-                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 125 ? (L = je, P++) : (L = null, k === 0 && b(ea)), L !== null ? (O = N, I = kt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 125 ? (L = je, P++) : (L = null, k === 0 && b(ea)), L !== null ? (O = N, I = Ot(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function w() {
                 var N, I;
-                return N = P, R.charCodeAt(P) === 43 ? (I = vt, P++) : (I = null, k === 0 && b(Lt)), I !== null && (O = N, I = _t()), I === null && (P = N), N = I, N;
+                return N = P, R.charCodeAt(P) === 43 ? (I = Mt, P++) : (I = null, k === 0 && b(wt)), I !== null && (O = N, I = Ut()), I === null && (P = N), N = I, N;
               }
               function X() {
                 var N, I;
-                return N = P, R.charCodeAt(P) === 42 ? (I = Ot, P++) : (I = null, k === 0 && b(Mt)), I !== null && (O = N, I = wt()), I === null && (P = N), N = I, N;
+                return N = P, R.charCodeAt(P) === 42 ? (I = Wt, P++) : (I = null, k === 0 && b(Gt)), I !== null && (O = N, I = $t()), I === null && (P = N), N = I, N;
               }
               function j() {
                 var N, I;
-                return N = P, R.charCodeAt(P) === 63 ? (I = ta, P++) : (I = null, k === 0 && b(ia)), I !== null && (O = N, I = Ut()), I === null && (P = N), N = I, N;
+                return N = P, R.charCodeAt(P) === 63 ? (I = ta, P++) : (I = null, k === 0 && b(ia)), I !== null && (O = N, I = Vt()), I === null && (P = N), N = I, N;
               }
               function ae() {
                 var N;
@@ -6623,136 +6623,136 @@ var mock = { exports: {} };
                     I.push(E), ra.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(oa));
                 else
                   I = _;
-                return I !== null && (O = N, I = Wt(I)), I === null && (P = N), N = I, N;
+                return I !== null && (O = N, I = Ht(I)), I === null && (P = N), N = I, N;
               }
               function ue() {
                 var N, I, E, L;
-                return N = P, R.charCodeAt(P) === 40 ? (I = Gt, P++) : (I = null, k === 0 && b($t)), I !== null ? (E = oe(), E === null && (E = de(), E === null && (E = ge(), E === null && (E = ie()))), E !== null ? (R.charCodeAt(P) === 41 ? (L = Vt, P++) : (L = null, k === 0 && b(Kt)), L !== null ? (O = N, I = Ht(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.charCodeAt(P) === 40 ? (I = Kt, P++) : (I = null, k === 0 && b(zt)), I !== null ? (E = oe(), E === null && (E = de(), E === null && (E = ge(), E === null && (E = ie()))), E !== null ? (R.charCodeAt(P) === 41 ? (L = qt, P++) : (L = null, k === 0 && b(Yt)), L !== null ? (O = N, I = Xt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function ie() {
                 var N, I;
-                return N = P, I = M(), I !== null && (O = N, I = zt(I)), I === null && (P = N), N = I, N;
+                return N = P, I = M(), I !== null && (O = N, I = Qt(I)), I === null && (P = N), N = I, N;
               }
               function ge() {
                 var N, I, E;
-                return N = P, R.substr(P, 2) === na ? (I = na, P += 2) : (I = null, k === 0 && b(qt)), I !== null ? (E = M(), E !== null ? (O = N, I = Yt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.substr(P, 2) === na ? (I = na, P += 2) : (I = null, k === 0 && b(Jt)), I !== null ? (E = M(), E !== null ? (O = N, I = jt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function oe() {
                 var N, I, E;
-                return N = P, R.substr(P, 2) === sa ? (I = sa, P += 2) : (I = null, k === 0 && b(Xt)), I !== null ? (E = M(), E !== null ? (O = N, I = Qt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.substr(P, 2) === sa ? (I = sa, P += 2) : (I = null, k === 0 && b(ei)), I !== null ? (E = M(), E !== null ? (O = N, I = ai(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function de() {
                 var N, I, E;
-                return N = P, R.substr(P, 2) === ua ? (I = ua, P += 2) : (I = null, k === 0 && b(Jt)), I !== null ? (E = M(), E !== null ? (O = N, I = jt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.substr(P, 2) === ua ? (I = ua, P += 2) : (I = null, k === 0 && b(ti)), I !== null ? (E = M(), E !== null ? (O = N, I = ii(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function te() {
                 var N, I, E, L, U;
-                if (k++, N = P, R.charCodeAt(P) === 91 ? (I = ai, P++) : (I = null, k === 0 && b(ti)), I !== null)
+                if (k++, N = P, R.charCodeAt(P) === 91 ? (I = oi, P++) : (I = null, k === 0 && b(ni)), I !== null)
                   if (R.charCodeAt(P) === 94 ? (E = Qe, P++) : (E = null, k === 0 && b(Je)), E === null && (E = ce), E !== null) {
                     for (L = [], U = Ee(), U === null && (U = Te()); U !== null; )
                       L.push(U), U = Ee(), U === null && (U = Te());
-                    L !== null ? (R.charCodeAt(P) === 93 ? (U = ii, P++) : (U = null, k === 0 && b(ri)), U !== null ? (O = N, I = oi(E, L), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _);
+                    L !== null ? (R.charCodeAt(P) === 93 ? (U = si, P++) : (U = null, k === 0 && b(ui)), U !== null ? (O = N, I = di(E, L), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _);
                   } else
                     P = N, N = _;
                 else
                   P = N, N = _;
-                return k--, N === null && (I = null, k === 0 && b(ei)), N;
+                return k--, N === null && (I = null, k === 0 && b(ri)), N;
               }
               function Ee() {
                 var N, I, E, L;
-                return k++, N = P, I = Te(), I !== null ? (R.charCodeAt(P) === 45 ? (E = si, P++) : (E = null, k === 0 && b(ui)), E !== null ? (L = Te(), L !== null ? (O = N, I = di(I, L), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (I = null, k === 0 && b(ni)), N;
+                return k++, N = P, I = Te(), I !== null ? (R.charCodeAt(P) === 45 ? (E = ci, P++) : (E = null, k === 0 && b(mi)), E !== null ? (L = Te(), L !== null ? (O = N, I = pi(I, L), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (I = null, k === 0 && b(li)), N;
               }
               function Te() {
                 var N;
-                return k++, N = st(), N === null && (N = nt()), k--, N === null && k === 0 && b(li), N;
-              }
-              function nt() {
-                var N, I;
-                return N = P, ci.test(R.charAt(P)) ? (I = R.charAt(P), P++) : (I = null, k === 0 && b(mi)), I !== null && (O = N, I = De(I)), I === null && (P = N), N = I, N;
-              }
-              function st() {
-                var N;
-                return N = pt(), N === null && (N = $e(), N === null && (N = Ze(), N === null && (N = ke(), N === null && (N = ve(), N === null && (N = Le(), N === null && (N = _e(), N === null && (N = Oe(), N === null && (N = Me(), N === null && (N = we(), N === null && (N = Ue(), N === null && (N = We(), N === null && (N = Ge(), N === null && (N = Ve(), N === null && (N = Ke(), N === null && (N = He(), N === null && (N = ze(), N === null && (N = qe()))))))))))))))))), N;
-              }
-              function ut() {
-                var N;
-                return N = dt(), N === null && (N = mt(), N === null && (N = ct())), N;
-              }
-              function dt() {
-                var N, I;
-                return N = P, R.charCodeAt(P) === 46 ? (I = pi, P++) : (I = null, k === 0 && b(gi)), I !== null && (O = N, I = Ti()), I === null && (P = N), N = I, N;
+                return k++, N = mt(), N === null && (N = ct()), k--, N === null && k === 0 && b(gi), N;
               }
               function ct() {
                 var N, I;
-                return k++, N = P, fi.test(R.charAt(P)) ? (I = R.charAt(P), P++) : (I = null, k === 0 && b(Ni)), I !== null && (O = N, I = De(I)), I === null && (P = N), N = I, k--, N === null && (I = null, k === 0 && b(hi)), N;
+                return N = P, Ti.test(R.charAt(P)) ? (I = R.charAt(P), P++) : (I = null, k === 0 && b(hi)), I !== null && (O = N, I = De(I)), I === null && (P = N), N = I, N;
               }
               function mt() {
                 var N;
-                return N = gt(), N === null && (N = Tt(), N === null && (N = $e(), N === null && (N = Ze(), N === null && (N = ke(), N === null && (N = ve(), N === null && (N = Le(), N === null && (N = _e(), N === null && (N = Oe(), N === null && (N = Me(), N === null && (N = we(), N === null && (N = Ue(), N === null && (N = We(), N === null && (N = Ge(), N === null && (N = ht(), N === null && (N = Ve(), N === null && (N = Ke(), N === null && (N = He(), N === null && (N = ze(), N === null && (N = qe()))))))))))))))))))), N;
+                return N = ft(), N === null && (N = $e(), N === null && (N = Ze(), N === null && (N = ke(), N === null && (N = ve(), N === null && (N = Le(), N === null && (N = _e(), N === null && (N = Oe(), N === null && (N = Me(), N === null && (N = we(), N === null && (N = Ue(), N === null && (N = We(), N === null && (N = Ge(), N === null && (N = Ve(), N === null && (N = He(), N === null && (N = Ke(), N === null && (N = ze(), N === null && (N = qe()))))))))))))))))), N;
               }
               function pt() {
-                var N, I;
-                return N = P, R.substr(P, 2) === fe ? (I = fe, P += 2) : (I = null, k === 0 && b(da)), I !== null && (O = N, I = Ci()), I === null && (P = N), N = I, N;
+                var N;
+                return N = gt(), N === null && (N = ht(), N === null && (N = Tt())), N;
               }
               function gt() {
                 var N, I;
-                return N = P, R.substr(P, 2) === fe ? (I = fe, P += 2) : (I = null, k === 0 && b(da)), I !== null && (O = N, I = Ii()), I === null && (P = N), N = I, N;
+                return N = P, R.charCodeAt(P) === 46 ? (I = fi, P++) : (I = null, k === 0 && b(Ni)), I !== null && (O = N, I = Ci()), I === null && (P = N), N = I, N;
               }
               function Tt() {
                 var N, I;
-                return N = P, R.substr(P, 2) === la ? (I = la, P += 2) : (I = null, k === 0 && b(xi)), I !== null && (O = N, I = Pi()), I === null && (P = N), N = I, N;
+                return k++, N = P, xi.test(R.charAt(P)) ? (I = R.charAt(P), P++) : (I = null, k === 0 && b(Pi)), I !== null && (O = N, I = De(I)), I === null && (P = N), N = I, k--, N === null && (I = null, k === 0 && b(Ii)), N;
+              }
+              function ht() {
+                var N;
+                return N = Nt(), N === null && (N = Ct(), N === null && (N = $e(), N === null && (N = Ze(), N === null && (N = ke(), N === null && (N = ve(), N === null && (N = Le(), N === null && (N = _e(), N === null && (N = Oe(), N === null && (N = Me(), N === null && (N = we(), N === null && (N = Ue(), N === null && (N = We(), N === null && (N = Ge(), N === null && (N = It(), N === null && (N = Ve(), N === null && (N = He(), N === null && (N = Ke(), N === null && (N = ze(), N === null && (N = qe()))))))))))))))))))), N;
+              }
+              function ft() {
+                var N, I;
+                return N = P, R.substr(P, 2) === fe ? (I = fe, P += 2) : (I = null, k === 0 && b(da)), I !== null && (O = N, I = yi()), I === null && (P = N), N = I, N;
+              }
+              function Nt() {
+                var N, I;
+                return N = P, R.substr(P, 2) === fe ? (I = fe, P += 2) : (I = null, k === 0 && b(da)), I !== null && (O = N, I = Si()), I === null && (P = N), N = I, N;
+              }
+              function Ct() {
+                var N, I;
+                return N = P, R.substr(P, 2) === la ? (I = la, P += 2) : (I = null, k === 0 && b(Ai)), I !== null && (O = N, I = Ri()), I === null && (P = N), N = I, N;
               }
               function Ze() {
                 var N, I;
-                return N = P, R.substr(P, 2) === ca ? (I = ca, P += 2) : (I = null, k === 0 && b(yi)), I !== null && (O = N, I = Si()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === ca ? (I = ca, P += 2) : (I = null, k === 0 && b(Bi)), I !== null && (O = N, I = bi()), I === null && (P = N), N = I, N;
               }
               function ke() {
                 var N, I;
-                return N = P, R.substr(P, 2) === ma ? (I = ma, P += 2) : (I = null, k === 0 && b(Ai)), I !== null && (O = N, I = Ri()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === ma ? (I = ma, P += 2) : (I = null, k === 0 && b(Di)), I !== null && (O = N, I = Fi()), I === null && (P = N), N = I, N;
               }
               function ve() {
                 var N, I;
-                return N = P, R.substr(P, 2) === pa ? (I = pa, P += 2) : (I = null, k === 0 && b(Bi)), I !== null && (O = N, I = bi()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === pa ? (I = pa, P += 2) : (I = null, k === 0 && b(Ei)), I !== null && (O = N, I = Zi()), I === null && (P = N), N = I, N;
               }
               function Le() {
                 var N, I;
-                return N = P, R.substr(P, 2) === ga ? (I = ga, P += 2) : (I = null, k === 0 && b(Di)), I !== null && (O = N, I = Fi()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === ga ? (I = ga, P += 2) : (I = null, k === 0 && b(ki)), I !== null && (O = N, I = vi()), I === null && (P = N), N = I, N;
               }
               function _e() {
                 var N, I;
-                return N = P, R.substr(P, 2) === Ta ? (I = Ta, P += 2) : (I = null, k === 0 && b(Ei)), I !== null && (O = N, I = Zi()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === Ta ? (I = Ta, P += 2) : (I = null, k === 0 && b(Li)), I !== null && (O = N, I = _i()), I === null && (P = N), N = I, N;
               }
               function Oe() {
                 var N, I;
-                return N = P, R.substr(P, 2) === ha ? (I = ha, P += 2) : (I = null, k === 0 && b(ki)), I !== null && (O = N, I = vi()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === ha ? (I = ha, P += 2) : (I = null, k === 0 && b(Oi)), I !== null && (O = N, I = Mi()), I === null && (P = N), N = I, N;
               }
               function Me() {
                 var N, I;
-                return N = P, R.substr(P, 2) === fa ? (I = fa, P += 2) : (I = null, k === 0 && b(Li)), I !== null && (O = N, I = _i()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === fa ? (I = fa, P += 2) : (I = null, k === 0 && b(wi)), I !== null && (O = N, I = Ui()), I === null && (P = N), N = I, N;
               }
               function we() {
                 var N, I;
-                return N = P, R.substr(P, 2) === Na ? (I = Na, P += 2) : (I = null, k === 0 && b(Oi)), I !== null && (O = N, I = Mi()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === Na ? (I = Na, P += 2) : (I = null, k === 0 && b(Wi)), I !== null && (O = N, I = Gi()), I === null && (P = N), N = I, N;
               }
               function Ue() {
                 var N, I;
-                return N = P, R.substr(P, 2) === Ca ? (I = Ca, P += 2) : (I = null, k === 0 && b(wi)), I !== null && (O = N, I = Ui()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === Ca ? (I = Ca, P += 2) : (I = null, k === 0 && b($i)), I !== null && (O = N, I = Vi()), I === null && (P = N), N = I, N;
               }
               function We() {
                 var N, I;
-                return N = P, R.substr(P, 2) === Ia ? (I = Ia, P += 2) : (I = null, k === 0 && b(Wi)), I !== null && (O = N, I = Gi()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === Ia ? (I = Ia, P += 2) : (I = null, k === 0 && b(Hi)), I !== null && (O = N, I = Ki()), I === null && (P = N), N = I, N;
               }
               function Ge() {
                 var N, I;
-                return N = P, R.substr(P, 2) === xa ? (I = xa, P += 2) : (I = null, k === 0 && b($i)), I !== null && (O = N, I = Vi()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === xa ? (I = xa, P += 2) : (I = null, k === 0 && b(zi)), I !== null && (O = N, I = qi()), I === null && (P = N), N = I, N;
               }
               function $e() {
                 var N, I, E;
-                return N = P, R.substr(P, 2) === Pa ? (I = Pa, P += 2) : (I = null, k === 0 && b(Ki)), I !== null ? (R.length > P ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(ya)), E !== null ? (O = N, I = Hi(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.substr(P, 2) === Pa ? (I = Pa, P += 2) : (I = null, k === 0 && b(Yi)), I !== null ? (R.length > P ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(ya)), E !== null ? (O = N, I = Xi(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
               }
-              function ht() {
+              function It() {
                 var N, I, E;
-                return N = P, R.charCodeAt(P) === 92 ? (I = Sa, P++) : (I = null, k === 0 && b(Aa)), I !== null ? (zi.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(qi)), E !== null ? (O = N, I = Yi(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                return N = P, R.charCodeAt(P) === 92 ? (I = Sa, P++) : (I = null, k === 0 && b(Aa)), I !== null ? (Qi.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(Ji)), E !== null ? (O = N, I = ji(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function Ve() {
                 var N, I, E, L;
@@ -6762,40 +6762,40 @@ var mock = { exports: {} };
                       E.push(L), Ba.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(ba));
                   else
                     E = _;
-                  E !== null ? (O = N, I = Xi(E), I === null && (P = N), N = I) : (P = N, N = _);
-                } else
-                  P = N, N = _;
-                return N;
-              }
-              function Ke() {
-                var N, I, E, L;
-                if (N = P, R.substr(P, 2) === Da ? (I = Da, P += 2) : (I = null, k === 0 && b(Qi)), I !== null) {
-                  if (E = [], Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie)), L !== null)
-                    for (; L !== null; )
-                      E.push(L), Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie));
-                  else
-                    E = _;
-                  E !== null ? (O = N, I = Ji(E), I === null && (P = N), N = I) : (P = N, N = _);
+                  E !== null ? (O = N, I = er(E), I === null && (P = N), N = I) : (P = N, N = _);
                 } else
                   P = N, N = _;
                 return N;
               }
               function He() {
                 var N, I, E, L;
-                if (N = P, R.substr(P, 2) === Fa ? (I = Fa, P += 2) : (I = null, k === 0 && b(ji)), I !== null) {
+                if (N = P, R.substr(P, 2) === Da ? (I = Da, P += 2) : (I = null, k === 0 && b(ar)), I !== null) {
                   if (E = [], Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie)), L !== null)
                     for (; L !== null; )
                       E.push(L), Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie));
                   else
                     E = _;
-                  E !== null ? (O = N, I = er(E), I === null && (P = N), N = I) : (P = N, N = _);
+                  E !== null ? (O = N, I = tr(E), I === null && (P = N), N = I) : (P = N, N = _);
+                } else
+                  P = N, N = _;
+                return N;
+              }
+              function Ke() {
+                var N, I, E, L;
+                if (N = P, R.substr(P, 2) === Fa ? (I = Fa, P += 2) : (I = null, k === 0 && b(ir)), I !== null) {
+                  if (E = [], Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie)), L !== null)
+                    for (; L !== null; )
+                      E.push(L), Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie));
+                  else
+                    E = _;
+                  E !== null ? (O = N, I = rr(E), I === null && (P = N), N = I) : (P = N, N = _);
                 } else
                   P = N, N = _;
                 return N;
               }
               function ze() {
                 var N, I;
-                return N = P, R.substr(P, 2) === Ne ? (I = Ne, P += 2) : (I = null, k === 0 && b(Ra)), I !== null && (O = N, I = ar()), I === null && (P = N), N = I, N;
+                return N = P, R.substr(P, 2) === Ne ? (I = Ne, P += 2) : (I = null, k === 0 && b(Ra)), I !== null && (O = N, I = or()), I === null && (P = N), N = I, N;
               }
               function qe() {
                 var N, I, E;
@@ -6803,89 +6803,89 @@ var mock = { exports: {} };
               }
               var Re, he = arguments.length > 1 ? arguments[1] : {}, Ye = {
                 regexp: M
-              }, Xe = M, _ = null, ce = "", ft = "|", Nt = '"|"', Ct = function(N, I) {
+              }, Xe = M, _ = null, ce = "", xt = "|", Pt = '"|"', yt = function(N, I) {
                 return I ? new r(N, I[1]) : N;
-              }, It = function(N, I, E) {
+              }, St = function(N, I, E) {
                 return new o([N].concat(I).concat([E]));
-              }, Qe = "^", Je = '"^"', xt = function() {
+              }, Qe = "^", Je = '"^"', At = function() {
                 return new a("start");
-              }, Pt = "$", yt = '"$"', St = function() {
+              }, Rt = "$", Bt = '"$"', bt = function() {
                 return new a("end");
-              }, At = function(N, I) {
+              }, Dt = function(N, I) {
                 return new u(N, I);
-              }, Rt = "Quantifier", Bt = function(N, I) {
+              }, Ft = "Quantifier", Et = function(N, I) {
                 return I && (N.greedy = !1), N;
-              }, Be = "{", be = '"{"', bt = ",", Dt = '","', je = "}", ea = '"}"', Ft = function(N, I) {
+              }, Be = "{", be = '"{"', Zt = ",", kt = '","', je = "}", ea = '"}"', vt = function(N, I) {
                 return new d(N, I);
-              }, aa = ",}", Et = '",}"', Zt = function(N) {
+              }, aa = ",}", Lt = '",}"', _t = function(N) {
                 return new d(N, 1 / 0);
-              }, kt = function(N) {
+              }, Ot = function(N) {
                 return new d(N, N);
-              }, vt = "+", Lt = '"+"', _t = function() {
+              }, Mt = "+", wt = '"+"', Ut = function() {
                 return new d(1, 1 / 0);
-              }, Ot = "*", Mt = '"*"', wt = function() {
+              }, Wt = "*", Gt = '"*"', $t = function() {
                 return new d(0, 1 / 0);
-              }, ta = "?", ia = '"?"', Ut = function() {
+              }, ta = "?", ia = '"?"', Vt = function() {
                 return new d(0, 1);
-              }, ra = /^[0-9]/, oa = "[0-9]", Wt = function(N) {
+              }, ra = /^[0-9]/, oa = "[0-9]", Ht = function(N) {
                 return +N.join("");
-              }, Gt = "(", $t = '"("', Vt = ")", Kt = '")"', Ht = function(N) {
+              }, Kt = "(", zt = '"("', qt = ")", Yt = '")"', Xt = function(N) {
                 return N;
-              }, zt = function(N) {
+              }, Qt = function(N) {
                 return new s(N);
-              }, na = "?:", qt = '"?:"', Yt = function(N) {
+              }, na = "?:", Jt = '"?:"', jt = function(N) {
                 return new n("non-capture-group", N);
-              }, sa = "?=", Xt = '"?="', Qt = function(N) {
+              }, sa = "?=", ei = '"?="', ai = function(N) {
                 return new n("positive-lookahead", N);
-              }, ua = "?!", Jt = '"?!"', jt = function(N) {
+              }, ua = "?!", ti = '"?!"', ii = function(N) {
                 return new n("negative-lookahead", N);
-              }, ei = "CharacterSet", ai = "[", ti = '"["', ii = "]", ri = '"]"', oi = function(N, I) {
+              }, ri = "CharacterSet", oi = "[", ni = '"["', si = "]", ui = '"]"', di = function(N, I) {
                 return new l(!!N, I);
-              }, ni = "CharacterRange", si = "-", ui = '"-"', di = function(N, I) {
+              }, li = "CharacterRange", ci = "-", mi = '"-"', pi = function(N, I) {
                 return new c(N, I);
-              }, li = "Character", ci = /^[^\\\]]/, mi = "[^\\\\\\]]", De = function(N) {
+              }, gi = "Character", Ti = /^[^\\\]]/, hi = "[^\\\\\\]]", De = function(N) {
                 return new m(N);
-              }, pi = ".", gi = '"."', Ti = function() {
+              }, fi = ".", Ni = '"."', Ci = function() {
                 return new a("any-character");
-              }, hi = "Literal", fi = /^[^|\\\/.[()?+*$\^]/, Ni = "[^|\\\\\\/.[()?+*$\\^]", fe = "\\b", da = '"\\\\b"', Ci = function() {
+              }, Ii = "Literal", xi = /^[^|\\\/.[()?+*$\^]/, Pi = "[^|\\\\\\/.[()?+*$\\^]", fe = "\\b", da = '"\\\\b"', yi = function() {
                 return new a("backspace");
-              }, Ii = function() {
+              }, Si = function() {
                 return new a("word-boundary");
-              }, la = "\\B", xi = '"\\\\B"', Pi = function() {
+              }, la = "\\B", Ai = '"\\\\B"', Ri = function() {
                 return new a("non-word-boundary");
-              }, ca = "\\d", yi = '"\\\\d"', Si = function() {
+              }, ca = "\\d", Bi = '"\\\\d"', bi = function() {
                 return new a("digit");
-              }, ma = "\\D", Ai = '"\\\\D"', Ri = function() {
+              }, ma = "\\D", Di = '"\\\\D"', Fi = function() {
                 return new a("non-digit");
-              }, pa = "\\f", Bi = '"\\\\f"', bi = function() {
+              }, pa = "\\f", Ei = '"\\\\f"', Zi = function() {
                 return new a("form-feed");
-              }, ga = "\\n", Di = '"\\\\n"', Fi = function() {
+              }, ga = "\\n", ki = '"\\\\n"', vi = function() {
                 return new a("line-feed");
-              }, Ta = "\\r", Ei = '"\\\\r"', Zi = function() {
+              }, Ta = "\\r", Li = '"\\\\r"', _i = function() {
                 return new a("carriage-return");
-              }, ha = "\\s", ki = '"\\\\s"', vi = function() {
+              }, ha = "\\s", Oi = '"\\\\s"', Mi = function() {
                 return new a("white-space");
-              }, fa = "\\S", Li = '"\\\\S"', _i = function() {
+              }, fa = "\\S", wi = '"\\\\S"', Ui = function() {
                 return new a("non-white-space");
-              }, Na = "\\t", Oi = '"\\\\t"', Mi = function() {
+              }, Na = "\\t", Wi = '"\\\\t"', Gi = function() {
                 return new a("tab");
-              }, Ca = "\\v", wi = '"\\\\v"', Ui = function() {
+              }, Ca = "\\v", $i = '"\\\\v"', Vi = function() {
                 return new a("vertical-tab");
-              }, Ia = "\\w", Wi = '"\\\\w"', Gi = function() {
+              }, Ia = "\\w", Hi = '"\\\\w"', Ki = function() {
                 return new a("word");
-              }, xa = "\\W", $i = '"\\\\W"', Vi = function() {
+              }, xa = "\\W", zi = '"\\\\W"', qi = function() {
                 return new a("non-word");
-              }, Pa = "\\c", Ki = '"\\\\c"', ya = "any character", Hi = function(N) {
+              }, Pa = "\\c", Yi = '"\\\\c"', ya = "any character", Xi = function(N) {
                 return new h(N);
-              }, Sa = "\\", Aa = '"\\\\"', zi = /^[1-9]/, qi = "[1-9]", Yi = function(N) {
+              }, Sa = "\\", Aa = '"\\\\"', Qi = /^[1-9]/, Ji = "[1-9]", ji = function(N) {
                 return new f(N);
-              }, Ne = "\\0", Ra = '"\\\\0"', Ba = /^[0-7]/, ba = "[0-7]", Xi = function(N) {
+              }, Ne = "\\0", Ra = '"\\\\0"', Ba = /^[0-7]/, ba = "[0-7]", er = function(N) {
                 return new T(N.join(""));
-              }, Da = "\\x", Qi = '"\\\\x"', Ce = /^[0-9a-fA-F]/, Ie = "[0-9a-fA-F]", Ji = function(N) {
+              }, Da = "\\x", ar = '"\\\\x"', Ce = /^[0-9a-fA-F]/, Ie = "[0-9a-fA-F]", tr = function(N) {
                 return new g(N.join(""));
-              }, Fa = "\\u", ji = '"\\\\u"', er = function(N) {
+              }, Fa = "\\u", ir = '"\\\\u"', rr = function(N) {
                 return new p(N.join(""));
-              }, ar = function() {
+              }, or = function() {
                 return new a("null-character");
               }, P = 0, O = 0, me = 0, Fe = {
                 line: 1,
@@ -90641,7 +90641,7 @@ _TitleModel.defaultOption = {
   }
 };
 let TitleModel = _TitleModel;
-function install$a(t) {
+function install$e(t) {
   t.registerComponentModel(TitleModel), t.registerComponentView(TitleView);
 }
 function installSliderSplitXAction(t) {
@@ -92907,8 +92907,8 @@ var PathProxy$1 = function() {
           break;
         case CMD$4.R: {
           u = n = e[p++], d = s = e[p++];
-          var H = e[p++], $ = e[p++];
-          f = H * 2 + $ * 2;
+          var K = e[p++], $ = e[p++];
+          f = K * 2 + $ * 2;
           break;
         }
         case CMD$4.Z: {
@@ -92951,31 +92951,31 @@ var PathProxy$1 = function() {
               break;
             }
             case CMD$4.C: {
-              var W = r[B++], H = r[B++], $ = r[B++], q = r[B++], J = r[B++], V = r[B++];
+              var W = r[B++], K = r[B++], $ = r[B++], q = r[B++], J = r[B++], V = r[B++];
               if (g) {
                 var b = T[C++];
                 if (h + b > x) {
                   var v = (x - h) / b;
-                  cubicSubdivide$1(l, W, $, J, v, tmpOutX$1), cubicSubdivide$1(c, H, q, V, v, tmpOutY$1), e.bezierCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2], tmpOutX$1[3], tmpOutY$1[3]);
+                  cubicSubdivide$1(l, W, $, J, v, tmpOutX$1), cubicSubdivide$1(c, K, q, V, v, tmpOutY$1), e.bezierCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2], tmpOutX$1[3], tmpOutY$1[3]);
                   break e;
                 }
                 h += b;
               }
-              e.bezierCurveTo(W, H, $, q, J, V), l = J, c = V;
+              e.bezierCurveTo(W, K, $, q, J, V), l = J, c = V;
               break;
             }
             case CMD$4.Q: {
-              var W = r[B++], H = r[B++], $ = r[B++], q = r[B++];
+              var W = r[B++], K = r[B++], $ = r[B++], q = r[B++];
               if (g) {
                 var b = T[C++];
                 if (h + b > x) {
                   var v = (x - h) / b;
-                  quadraticSubdivide$1(l, W, $, v, tmpOutX$1), quadraticSubdivide$1(c, H, q, v, tmpOutY$1), e.quadraticCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2]);
+                  quadraticSubdivide$1(l, W, $, v, tmpOutX$1), quadraticSubdivide$1(c, K, q, v, tmpOutY$1), e.quadraticCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2]);
                   break e;
                 }
                 h += b;
               }
-              e.quadraticCurveTo(W, H, $, q), l = $, c = q;
+              e.quadraticCurveTo(W, K, $, q), l = $, c = q;
               break;
             }
             case CMD$4.A:
@@ -94110,7 +94110,7 @@ _SliderSplitModel.defaultOption = inheritDefaultOption(
   }
 );
 let SliderSplitModel = _SliderSplitModel;
-function install$9(t) {
+function install$d(t) {
   t.registerComponentModel(SliderSplitModel), t.registerComponentView(SliderSplitView), installCommon$1(t), t.registerSubTypeDefaulter("split", function() {
     return "slider";
   });
@@ -97622,7 +97622,7 @@ function normalizeArcAngles(t, e) {
   let r = a - t[0], o = t[1];
   o += r, !e && o - a >= PI2$3 ? o = a + PI2$3 : e && a - o >= PI2$3 ? o = a - PI2$3 : !e && a > o ? o = a + (PI2$3 - modPI2(a - o)) : e && a < o && (o = a - (PI2$3 - modPI2(o - a))), t[0] = a, t[1] = o;
 }
-const _PathProxy = class Ka {
+const _PathProxy = class Ha {
   constructor(e) {
     this.dpr = 1, this._xi = 0, this._yi = 0, this._x0 = 0, this._y0 = 0, this._len = 0, e && (this._saveData = !1), this._saveData && (this.data = []);
   }
@@ -97968,13 +97968,13 @@ const _PathProxy = class Ka {
             case CMD$1.A:
               const F = r[B++], Z = r[B++], b = r[B++], v = r[B++];
               let M = r[B++], W = r[B++];
-              const H = r[B++], $ = !r[B++], q = b > v ? b : v, J = mathAbs(b - v) > 1e-3;
+              const K = r[B++], $ = !r[B++], q = b > v ? b : v, J = mathAbs(b - v) > 1e-3;
               let V = M + W, z = !1;
               if (g) {
                 const G = T[C++];
                 h + G > x && (V = M + W * (x - h) / G, z = !0), h += G;
               }
-              if (J && e.ellipse ? e.ellipse(F, Z, b, v, H, M, V, $) : e.arc(F, Z, q, M, V, $), z)
+              if (J && e.ellipse ? e.ellipse(F, Z, b, v, K, M, V, $) : e.arc(F, Z, q, M, V, $), z)
                 break e;
               D && (u = mathCos(M) * b + F, d = mathSin(M) * v + Z), l = mathCos(V) * b + F, c = mathSin(V) * v + Z;
               break;
@@ -98007,7 +98007,7 @@ const _PathProxy = class Ka {
         }
   }
   clone() {
-    const e = new Ka(), a = this.data;
+    const e = new Ha(), a = this.data;
     return e.data = a.slice ? a.slice() : Array.prototype.slice.call(a), e._len = this._len, e;
   }
 };
@@ -99090,15 +99090,15 @@ function createOrUpdatePatternFromDecal(t, e) {
       for (; F < S.height; ) {
         if (Z % 2 === 0) {
           const W = b / 2 % f.length;
-          let H = 0, $ = 0, q = 0;
-          for (; H < S.width * 2; ) {
+          let K = 0, $ = 0, q = 0;
+          for (; K < S.width * 2; ) {
             let J = 0;
             for (let V = 0; V < g[v].length; ++V)
               J += g[v][V];
             if (J <= 0)
               break;
             if ($ % 2 === 0) {
-              const V = (1 - s.symbolSize) * 0.5, z = H + g[v][$] * V, Y = F + T[Z] * V, Q = g[v][$] * s.symbolSize, G = T[Z] * s.symbolSize, w = q / 2 % f[W].length;
+              const V = (1 - s.symbolSize) * 0.5, z = K + g[v][$] * V, Y = F + T[Z] * V, Q = g[v][$] * s.symbolSize, G = T[Z] * s.symbolSize, w = q / 2 % f[W].length;
               M(
                 z,
                 Y,
@@ -99107,17 +99107,17 @@ function createOrUpdatePatternFromDecal(t, e) {
                 f[W][w]
               );
             }
-            H += g[v][$], ++q, ++$, $ === g[v].length && ($ = 0);
+            K += g[v][$], ++q, ++$, $ === g[v].length && ($ = 0);
           }
           ++v, v === g.length && (v = 0);
         }
         F += T[Z], ++b, ++Z, Z === T.length && (Z = 0);
       }
-      function M(W, H, $, q, J) {
+      function M(W, K, $, q, J) {
         const V = o ? 1 : a, z = createSymbol(
           J,
           W * V,
-          H * V,
+          K * V,
           $ * V,
           q * V,
           s.color,
@@ -99537,9 +99537,9 @@ const DEFAULT_TRANSITION = ["x", "y"], EMPHASIS = "emphasis", NORMAL = "normal",
   emphasis: {},
   blur: {},
   select: {}
-}, _CustomSeriesView = class Ha extends ChartView {
+}, _CustomSeriesView = class Ka extends ChartView {
   constructor() {
-    super(...arguments), this.type = Ha.type;
+    super(...arguments), this.type = Ka.type;
   }
   render(e, a, r, o) {
     this._progressiveEls = null;
@@ -99871,7 +99871,7 @@ function getPathData(t) {
 function hasOwnPathData(t) {
   return t && (hasOwn$1(t, "pathData") || hasOwn$1(t, "d"));
 }
-function install$8(t) {
+function install$c(t) {
   t.registerChartView(CustomSeriesView), t.registerSeriesModel(CustomSeriesModel);
 }
 let uidBase = 0;
@@ -100516,7 +100516,7 @@ const extraOption = {
   // gridId: '',
   offset: 0
 };
-function install$7(t) {
+function install$b(t) {
   axisModelCreator(
     t,
     "x",
@@ -101747,7 +101747,7 @@ _SliderZoomModel.defaultOption = inheritDefaultOption(
   }
 );
 let SliderZoomModel = _SliderZoomModel;
-function install$6(t) {
+function install$a(t) {
   t.registerComponentModel(SliderZoomModel), t.registerComponentView(SliderZoomView), installCommon(t);
 }
 const ATTR = "\0_pi_interaction_mutex";
@@ -102062,41 +102062,41 @@ _InsideZoomModel.defaultOption = inheritDefaultOption(
   }
 );
 let InsideZoomModel = _InsideZoomModel;
-function install$5(t) {
+function install$9(t) {
   installCommon(t), t.registerComponentModel(InsideZoomModel), t.registerComponentView(InsideZoomView), installDataZoomRoamProcessor(t);
 }
-function install$4(t) {
-  use(install$5), use(install$6);
+function install$8(t) {
+  use(install$9), use(install$a);
 }
 class BaseStateMachine {
   constructor(e) {
-    this.listeners = /* @__PURE__ */ new Map(), this.initialState = e.initialState, this.initialContext = K({}, e.initialContext), this.state = e.initialState, this.context = K({}, e.initialContext), this.transitions = e.transitions, this.guards = e.guards || {};
+    this.listeners = /* @__PURE__ */ new Map(), this.initialState = e.initialState, this.initialContext = H({}, e.initialContext), this.state = e.initialState, this.context = H({}, e.initialContext), this.transitions = e.transitions, this.guards = e.guards || {};
   }
   getState() {
     return this.state;
   }
   getContext() {
-    return K({}, this.context);
+    return H({}, this.context);
   }
   setContext(e) {
     const a = this.state;
-    this.context = K(K({}, this.context), e), this.emit("contextchange", a, this.state);
+    this.context = H(H({}, this.context), e), this.emit("contextchange", a, this.state);
   }
   can(e, a) {
     var s;
-    const r = a ? K(K({}, this.context), a) : this.context, o = this.guards[e];
+    const r = a ? H(H({}, this.context), a) : this.context, o = this.guards[e];
     return !!((s = this.transitions[this.state]) == null ? void 0 : s[e]) && (!o || o(r));
   }
   transition(e, a) {
     var u;
     if (!this.can(e, a))
       return this.emit("blocked", this.state, this.state), !1;
-    const r = this.state, o = a ? K(K({}, this.context), a) : this.context, n = (u = this.transitions[r]) == null ? void 0 : u[e], s = this._resolveTransition(n, o);
+    const r = this.state, o = a ? H(H({}, this.context), a) : this.context, n = (u = this.transitions[r]) == null ? void 0 : u[e], s = this._resolveTransition(n, o);
     return s == null ? (this.emit("blocked", r, r), !1) : (this.context = o, s !== r && (this.emit("exit", r, s), this.state = s, this.emit("enter", r, s)), this.emit("statechange", r, this.state), !0);
   }
   reset(e) {
     const a = this.state;
-    this.state = this.initialState, this.context = K(K({}, this.initialContext), e || {}), this.emit("reset", a, this.state), this.emit("statechange", a, this.state);
+    this.state = this.initialState, this.context = H(H({}, this.initialContext), e || {}), this.emit("reset", a, this.state), this.emit("statechange", a, this.state);
   }
   on(e, a) {
     this.listeners.has(e) || this.listeners.set(e, /* @__PURE__ */ new Set()), this.listeners.get(e).add(a);
@@ -102885,7 +102885,7 @@ _UnassignedBoardModel.defaultOption = {
   padding: [16, 16, 16, 16]
 };
 let UnassignedBoardModel = _UnassignedBoardModel;
-function install$3(t) {
+function install$7(t) {
   t.registerComponentModel(UnassignedBoardModel), t.registerComponentView(UnassignedBoardView);
 }
 function installUnassignedBoardAction(t) {
@@ -102998,8 +102998,8 @@ function getStableValueRange(t, e, a) {
   const n = Math.max(0, Math.min(t[0], a - r));
   return [n, Math.min(a, n + r)];
 }
-function install$2(t) {
-  install$3(t), installUnassignedBoardAction(t);
+function install$6(t) {
+  install$7(t), installUnassignedBoardAction(t);
 }
 const TEXT = {
   filter: "资源过滤",
@@ -103009,7 +103009,7 @@ const TEXT = {
   all: "全部资源",
   reset: "重置",
   apply: "应用"
-}, FUNNEL_PATH = "M435.6 590.6L206.6 247v-76.3h610.8V247l-229 343.6v229L435.6 896V590.6z", createElement = (t, e, a) => {
+}, FUNNEL_PATH = "M435.6 590.6L206.6 247v-76.3h610.8V247l-229 343.6v229L435.6 896V590.6z", createElement$2 = (t, e, a) => {
   const r = document.createElement(t);
   return e && (r.className = e), a && (r.textContent = a), r;
 }, createFunnelIcon = (t) => {
@@ -103017,7 +103017,7 @@ const TEXT = {
   e.setAttribute("viewBox", "0 0 1024 1024"), e.setAttribute("width", "16"), e.setAttribute("height", "16"), e.setAttribute("aria-hidden", "true");
   const a = document.createElementNS("http://www.w3.org/2000/svg", "path");
   return a.setAttribute("d", FUNNEL_PATH), a.setAttribute("fill", t ? "#1296db" : "#8a8a8a"), e.appendChild(a), e;
-}, injectStyle = () => {
+}, injectStyle$2 = () => {
   if (document.getElementById("resource-filter-style"))
     return;
   const t = document.createElement("style");
@@ -103177,9 +103177,9 @@ const TEXT = {
     var n, s, u, d, l;
     if (this._host)
       return;
-    injectStyle();
+    injectStyle$2();
     const a = e.getZr(), r = a.dom || ((s = (n = a.painter) == null ? void 0 : n.getViewportRoot) == null ? void 0 : s.call(n)) || ((l = (d = (u = a.painter) == null ? void 0 : u.getViewportRootOffset) == null ? void 0 : d.call(u)) == null ? void 0 : l.dom), o = (r == null ? void 0 : r.parentElement) || document.body;
-    o !== document.body && window.getComputedStyle(o).position === "static" && (o.style.position = "relative"), this._host = createElement("div", "resource-filter-host"), o.appendChild(this._host);
+    o !== document.body && window.getComputedStyle(o).position === "static" && (o.style.position = "relative"), this._host = createElement$2("div", "resource-filter-host"), o.appendChild(this._host);
   }
   _readCurrentValue(e, a) {
     const r = e.get("value");
@@ -103204,11 +103204,11 @@ const TEXT = {
   _renderControl(e, a, r) {
     if (!this._host)
       return;
-    const o = createElement("div", "resource-filter"), n = createElement("button", "resource-filter__button"), s = createElement("span", "", TEXT.filter), u = createElement("span", "resource-filter__status"), d = !!this._currentResourceId && this._currentResourceId !== r, l = this._getVisibleResources(a, r, this._currentResourceId);
+    const o = createElement$2("div", "resource-filter"), n = createElement$2("button", "resource-filter__button"), s = createElement$2("span", "", TEXT.filter), u = createElement$2("span", "resource-filter__status"), d = !!this._currentResourceId && this._currentResourceId !== r, l = this._getVisibleResources(a, r, this._currentResourceId);
     n.type = "button", n.append(createFunnelIcon(d), s), n.onclick = () => this._openModal(e, a, r), u.textContent = String(l.length), u.title = d ? TEXT.active : TEXT.inactive, o.append(n, u), this._host.replaceChildren(o);
   }
   _openModal(e, a, r) {
-    const o = createElement("div", "resource-filter__backdrop"), n = createElement("div", "resource-filter__modal"), s = createElement("div", "resource-filter__modal-header"), u = createElement("span", "", TEXT.filter), d = createElement("button", "resource-filter__close", "×"), l = createElement("div", "resource-filter__body"), c = createElement("label", "resource-filter__field"), m = createElement("span", "", TEXT.name), p = createElement("select", "resource-filter__select"), g = createElement("div", "resource-filter__actions"), T = createElement("button", "resource-filter__action", TEXT.reset), f = createElement("button", "resource-filter__action resource-filter__action--primary", TEXT.apply);
+    const o = createElement$2("div", "resource-filter__backdrop"), n = createElement$2("div", "resource-filter__modal"), s = createElement$2("div", "resource-filter__modal-header"), u = createElement$2("span", "", TEXT.filter), d = createElement$2("button", "resource-filter__close", "×"), l = createElement$2("div", "resource-filter__body"), c = createElement$2("label", "resource-filter__field"), m = createElement$2("span", "", TEXT.name), p = createElement$2("select", "resource-filter__select"), g = createElement$2("div", "resource-filter__actions"), T = createElement$2("button", "resource-filter__action", TEXT.reset), f = createElement$2("button", "resource-filter__action resource-filter__action--primary", TEXT.apply);
     d.type = "button", T.type = "button", f.type = "button";
     const h = document.createElement("option");
     h.value = r, h.textContent = TEXT.all, p.appendChild(h), a.forEach(([x, y]) => {
@@ -103244,8 +103244,353 @@ _ResourceFilterModel.defaultOption = {
   storageKey: "gantt.resourceFilter"
 };
 let ResourceFilterModel = _ResourceFilterModel;
-function install$1(t) {
+function install$5(t) {
   t.registerComponentModel(ResourceFilterModel), t.registerComponentView(ResourceFilterView);
+}
+function install$4(t) {
+  install$5(t);
+}
+const SEARCH_PATH = "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", createSearchIcon = () => {
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  t.setAttribute("viewBox", "0 0 24 24"), t.setAttribute("width", "18"), t.setAttribute("height", "18"), t.setAttribute("aria-hidden", "true");
+  const e = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  return e.setAttribute("d", SEARCH_PATH), e.setAttribute("fill", "#334155"), t.appendChild(e), t;
+}, createElement$1 = (t, e) => {
+  const a = document.createElement(t);
+  return e && (a.className = e), a;
+}, injectLiquidGlassFilter = () => {
+  if (document.getElementById("gantt-query-liquid-glass-svg"))
+    return;
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  t.setAttribute("id", "gantt-query-liquid-glass-svg"), t.setAttribute("width", "0"), t.setAttribute("height", "0"), t.setAttribute("aria-hidden", "true"), t.style.position = "absolute", t.style.pointerEvents = "none", t.innerHTML = `
+    <defs>
+      <filter id="gantt-query-liquid-glass-filter" x="-20%" y="-70%" width="140%" height="240%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.018 0.085" numOctaves="2" seed="8" result="noise" />
+        <feGaussianBlur in="noise" stdDeviation="3" result="softNoise" />
+        <feDisplacementMap in="SourceGraphic" in2="softNoise" scale="6" xChannelSelector="R" yChannelSelector="G" result="refracted" />
+        <feColorMatrix in="refracted" type="saturate" values="1.26" />
+      </filter>
+    </defs>
+  `, document.body.appendChild(t);
+}, injectStyle$1 = () => {
+  if (injectLiquidGlassFilter(), document.getElementById("gantt-query-style"))
+    return;
+  const t = document.createElement("style");
+  t.id = "gantt-query-style", t.textContent = `
+    .gantt-query-host {
+      position: absolute;
+      z-index: 20;
+      box-sizing: border-box;
+      max-width: calc(100% - 96px);
+      isolation: isolate;
+    }
+    .gantt-query {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      box-sizing: border-box;
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      border-radius: 22px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(236, 244, 249, 0.28)),
+        rgba(255, 255, 255, 0.32);
+      box-shadow:
+        0 14px 28px rgba(71, 85, 105, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.86),
+        inset 0 -12px 22px rgba(148, 163, 184, 0.12);
+      transition:
+        box-shadow 180ms ease,
+        background 180ms ease,
+        border-color 180ms ease;
+      backdrop-filter: url(#gantt-query-liquid-glass-filter) blur(8px) saturate(1.35);
+      -webkit-backdrop-filter: url(#gantt-query-liquid-glass-filter) blur(8px) saturate(1.35);
+    }
+    .gantt-query-host {
+      transition: width 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .gantt-query-host:focus-within {
+      width: 360px !important;
+    }
+    .gantt-query:focus-within {
+      box-shadow:
+        0 18px 34px rgba(71, 85, 105, 0.18),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9),
+        inset 0 -12px 22px rgba(148, 163, 184, 0.12);
+    }
+    .gantt-query::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.95), transparent 32%),
+        linear-gradient(115deg, rgba(255, 255, 255, 0.38), transparent 42%);
+      opacity: 0.72;
+      mix-blend-mode: screen;
+    }
+    .gantt-query::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      box-shadow:
+        inset 1px 0 2px rgba(255, 255, 255, 0.7),
+        inset -1px 0 2px rgba(148, 163, 184, 0.24),
+        inset 0 -1px 1px rgba(15, 23, 42, 0.08);
+    }
+    .gantt-query__icon {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gantt-query__input {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #334155;
+      font: 14px Arial, sans-serif;
+    }
+    .gantt-query__input::placeholder {
+      color: #94A3B8;
+      opacity: 1;
+    }
+  `, document.head.appendChild(t);
+}, _GanttQueryView = class nt extends ComponentView {
+  constructor() {
+    super(...arguments), this.type = nt.type, this._host = null;
+  }
+  render(e, a, r) {
+    var u, d;
+    if (this._ensureHost(r), !this._host)
+      return;
+    this._host.style.display = e.get("show") ? "block" : "none", this._host.style.width = `${e.get("width") || 336}px`, this._host.style.top = `${(u = e.get("top")) != null ? u : 80}px`, this._host.style.right = `${(d = e.get("right")) != null ? d : 18}px`;
+    const o = createElement$1("div", "gantt-query"), n = createElement$1("span", "gantt-query__icon"), s = createElement$1("input", "gantt-query__input");
+    s.type = "search", s.placeholder = e.get("placeholder") || "Search", s.value = e.get("value") || "", n.appendChild(createSearchIcon()), o.append(n, s), this._host.replaceChildren(o);
+  }
+  dispose() {
+    var e;
+    (e = this._host) == null || e.remove(), this._host = null;
+  }
+  _ensureHost(e) {
+    var n, s;
+    if (this._host)
+      return;
+    injectStyle$1();
+    const a = e.getZr(), r = a.dom || ((s = (n = a.painter) == null ? void 0 : n.getViewportRoot) == null ? void 0 : s.call(n)), o = (r == null ? void 0 : r.parentElement) || document.body;
+    o !== document.body && window.getComputedStyle(o).position === "static" && (o.style.position = "relative"), this._host = createElement$1("div", "gantt-query-host"), o.appendChild(this._host);
+  }
+};
+_GanttQueryView.type = "ganttQuery";
+let GanttQueryView = _GanttQueryView;
+const _GanttQueryModel = class st extends ComponentModel {
+  constructor() {
+    super(...arguments), this.type = st.type;
+  }
+};
+_GanttQueryModel.type = "ganttQuery";
+_GanttQueryModel.defaultOption = {
+  show: !0,
+  placeholder: "Search",
+  value: "",
+  width: 280,
+  top: 34,
+  right: 96
+};
+let GanttQueryModel = _GanttQueryModel;
+function install$3(t) {
+  t.registerComponentModel(GanttQueryModel), t.registerComponentView(GanttQueryView);
+}
+function install$2(t) {
+  install$3(t);
+}
+const GLASS_WIDTH = 210, GLASS_HEIGHT = 150, GLASS_RADIUS = 75, createElement = (t, e) => {
+  const a = document.createElement(t);
+  return e && (a.className = e), a;
+}, createMapDataUri = (t) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="${GLASS_WIDTH}" height="${GLASS_HEIGHT}" viewBox="0 0 ${GLASS_WIDTH} ${GLASS_HEIGHT}">
+      ${t === "magnify" ? `
+        <defs>
+          <radialGradient id="m" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="rgb(128,128,128)" />
+            <stop offset="52%" stop-color="rgb(160,112,128)" />
+            <stop offset="100%" stop-color="rgb(128,128,128)" />
+          </radialGradient>
+        </defs>
+        <rect width="210" height="150" fill="rgb(128,128,128)" />
+        <ellipse cx="105" cy="75" rx="86" ry="58" fill="url(#m)" />
+      ` : t === "edge" ? `
+        <defs>
+          <radialGradient id="d" cx="50%" cy="50%" r="64%">
+            <stop offset="0%" stop-color="rgb(128,128,128)" />
+            <stop offset="56%" stop-color="rgb(128,128,128)" />
+            <stop offset="82%" stop-color="rgb(230,36,128)" />
+            <stop offset="100%" stop-color="rgb(38,220,128)" />
+          </radialGradient>
+        </defs>
+        <rect width="210" height="150" fill="rgb(128,128,128)" />
+        <ellipse cx="105" cy="75" rx="104" ry="74" fill="url(#d)" />
+      ` : `
+        <defs>
+          <radialGradient id="s" cx="28%" cy="12%" r="92%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.95)" />
+            <stop offset="30%" stop-color="rgba(255,255,255,0.45)" />
+            <stop offset="72%" stop-color="rgba(255,255,255,0.08)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+          </radialGradient>
+        </defs>
+        <rect width="210" height="150" fill="rgba(0,0,0,0)" />
+        <ellipse cx="105" cy="75" rx="101" ry="72" fill="url(#s)" />
+      `}
+    </svg>
+  `)}`, injectStyle = () => {
+  if (document.getElementById("liquid-glass-layer-style"))
+    return;
+  const t = document.createElement("style");
+  t.id = "liquid-glass-layer-style", t.textContent = `
+    .liquid-glass-layer-host {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .liquid-glass-widget {
+      position: absolute;
+      pointer-events: auto;
+      box-sizing: border-box;
+      width: ${GLASS_WIDTH}px;
+      height: ${GLASS_HEIGHT}px;
+      border-radius: ${GLASS_RADIUS}px;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transform: scaleY(0.8);
+      transform-origin: center;
+      transition: transform 160ms ease;
+    }
+    .liquid-glass-widget:active {
+      cursor: grabbing;
+      transform: scaleY(0.8) scale(1.035);
+    }
+    .liquid-glass-widget__lens {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      backdrop-filter: url(#magnifying-glass-filter);
+      -webkit-backdrop-filter: url(#magnifying-glass-filter);
+      box-shadow:
+        rgba(0, 0, 0, 0.16) 0 4px 9px,
+        rgba(0, 0, 0, 0.2) 0 2px 24px inset,
+        rgba(255, 255, 255, 0.2) 0 -2px 24px inset;
+    }
+    .liquid-glass-widget__content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(51, 65, 85, 0.72);
+      font: 600 13px Arial, sans-serif;
+      pointer-events: none;
+    }
+  `, document.head.appendChild(t);
+}, createFilterSvg = () => {
+  const t = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  return t.setAttribute("color-interpolation-filters", "sRGB"), t.style.display = "none", t.innerHTML = `
+    <defs>
+      <filter id="magnifying-glass-filter">
+        <feImage href="${createMapDataUri("magnify")}" x="0" y="0" width="${GLASS_WIDTH}" height="${GLASS_HEIGHT}" result="magnifying_displacement_map" />
+        <feDisplacementMap in="SourceGraphic" in2="magnifying_displacement_map" xChannelSelector="R" yChannelSelector="G" result="magnified_source" scale="24" />
+        <feGaussianBlur in="magnified_source" stdDeviation="0" result="blurred_source" />
+        <feImage href="${createMapDataUri("edge")}" x="0" y="0" width="${GLASS_WIDTH}" height="${GLASS_HEIGHT}" result="displacement_map" />
+        <feDisplacementMap in="blurred_source" in2="displacement_map" xChannelSelector="R" yChannelSelector="G" result="displaced" scale="98" />
+        <feColorMatrix in="displaced" type="saturate" result="displaced_saturated" values="9" />
+        <feImage href="${createMapDataUri("specular")}" x="0" y="0" width="${GLASS_WIDTH}" height="${GLASS_HEIGHT}" result="specular_layer" />
+        <feComposite in="displaced_saturated" in2="specular_layer" operator="in" result="specular_saturated" />
+        <feComponentTransfer in="specular_layer" result="specular_faded">
+          <feFuncA type="linear" slope="0.5" />
+        </feComponentTransfer>
+        <feBlend in="specular_saturated" in2="displaced" mode="normal" result="withSaturation" />
+        <feBlend in="specular_faded" in2="withSaturation" mode="normal" />
+      </filter>
+    </defs>
+  `, t;
+}, _LiquidGlassLayerView = class ut extends ComponentView {
+  constructor() {
+    super(...arguments), this.type = ut.type, this._host = null, this._widget = null, this._filterSvg = null, this._dragStartX = 0, this._dragStartY = 0, this._startLeft = 0, this._startTop = 0;
+  }
+  render(e, a, r) {
+    var s, u;
+    if (this._ensureHost(r, e), !this._host || !this._widget)
+      return;
+    this._host.style.display = e.get("show") ? "block" : "none", this._host.style.zIndex = String(e.get("zIndex") || 40), this._widget.style.width = `${e.get("width") || GLASS_WIDTH}px`, this._widget.style.height = `${e.get("height") || GLASS_HEIGHT}px`, this._widget.style.borderRadius = `${(e.get("height") || GLASS_HEIGHT) / 2}px`, this._widget.style.left = `${(s = e.get("left")) != null ? s : 24}px`, this._widget.style.top = `${(u = e.get("top")) != null ? u : 24}px`;
+    const o = createElement("div", "liquid-glass-widget__lens"), n = createElement("div", "liquid-glass-widget__content");
+    n.textContent = e.get("title") || "", this._widget.replaceChildren(this._filterSvg, o, n);
+  }
+  dispose() {
+    var e;
+    (e = this._host) == null || e.remove(), this._host = null, this._widget = null, this._filterSvg = null;
+  }
+  _ensureHost(e, a) {
+    var s, u;
+    if (this._host && this._widget)
+      return;
+    injectStyle();
+    const r = e.getZr(), o = r.dom || ((u = (s = r.painter) == null ? void 0 : s.getViewportRoot) == null ? void 0 : u.call(s)), n = (o == null ? void 0 : o.parentElement) || document.body;
+    n !== document.body && window.getComputedStyle(n).position === "static" && (n.style.position = "relative"), this._host = createElement("div", "liquid-glass-layer-host"), this._widget = createElement("div", "liquid-glass-widget"), this._filterSvg = createFilterSvg(), this._bindDrag(a), this._host.appendChild(this._widget), n.appendChild(this._host);
+  }
+  _bindDrag(e) {
+    this._widget && (this._widget.onpointerdown = (a) => {
+      this._widget && (this._dragStartX = a.clientX, this._dragStartY = a.clientY, this._startLeft = parseFloat(this._widget.style.left || `${e.get("left") || 24}`), this._startTop = parseFloat(this._widget.style.top || `${e.get("top") || 24}`), this._widget.setPointerCapture(a.pointerId));
+    }, this._widget.onpointermove = (a) => {
+      if (!this._widget || !this._widget.hasPointerCapture(a.pointerId))
+        return;
+      const r = this._startLeft + a.clientX - this._dragStartX, o = this._startTop + a.clientY - this._dragStartY;
+      this._widget.style.left = `${Math.max(0, r)}px`, this._widget.style.top = `${Math.max(0, o)}px`;
+    }, this._widget.onpointerup = (a) => {
+      var r;
+      (r = this._widget) == null || r.releasePointerCapture(a.pointerId);
+    }, this._widget.onpointercancel = (a) => {
+      var r;
+      (r = this._widget) == null || r.releasePointerCapture(a.pointerId);
+    });
+  }
+};
+_LiquidGlassLayerView.type = "liquidGlassLayer";
+let LiquidGlassLayerView = _LiquidGlassLayerView;
+const _LiquidGlassLayerModel = class dt extends ComponentModel {
+  constructor() {
+    super(...arguments), this.type = dt.type;
+  }
+};
+_LiquidGlassLayerModel.type = "liquidGlassLayer";
+_LiquidGlassLayerModel.defaultOption = {
+  show: !1,
+  width: 210,
+  height: 150,
+  left: 24,
+  top: 24,
+  zIndex: 40,
+  title: ""
+};
+let LiquidGlassLayerModel = _LiquidGlassLayerModel;
+function install$1(t) {
+  t.registerComponentModel(LiquidGlassLayerModel), t.registerComponentView(LiquidGlassLayerView);
 }
 function install(t) {
   install$1(t);
@@ -104090,8 +104435,8 @@ var CanvasPainter = function() {
           viewHeight: o._height
         };
         for (D = y; D < h.__endIndex; D++) {
-          var H = e[D];
-          if (H.__inHover && (m = !0), o._doPaintEl(H, h, s, M, W, D === h.__endIndex - 1), S) {
+          var K = e[D];
+          if (K.__inHover && (m = !0), o._doPaintEl(K, h, s, M, W, D === h.__endIndex - 1), S) {
             var $ = Date.now() - A;
             if ($ > 15)
               break;
@@ -104682,7 +105027,7 @@ class ZTweenManager {
         return this._setElementStyle(a, { opacity: (o = r.fromOpacity) != null ? o : 0 }), this.animateElement(
           a,
           { style: { opacity: (n = r.toOpacity) != null ? n : 1 } },
-          K({ duration: 240 }, r)
+          H({ duration: 240 }, r)
         );
       },
       fadeOut: (a, r = {}) => {
@@ -104690,7 +105035,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { style: { opacity: (o = r.toOpacity) != null ? o : 0 } },
-          K({ duration: 240 }, r)
+          H({ duration: 240 }, r)
         );
       },
       pulse: (a, r = {}) => {
@@ -104699,7 +105044,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { style: { opacity: (s = r.minOpacity) != null ? s : 0.35 } },
-          le(K({
+          le(H({
             duration: 700,
             loop: !0,
             yoyo: !0,
@@ -104718,7 +105063,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { scale: [s, u] },
-          le(K({
+          le(H({
             duration: 900,
             loop: !0,
             yoyo: !0,
@@ -104737,7 +105082,7 @@ class ZTweenManager {
         return this._setElementShape(a, { x: s }), this.animateElement(
           a,
           { shape: { x: u } },
-          K({
+          H({
             duration: 1e3,
             loop: !0,
             easing: Easing.Linear.None
@@ -104755,7 +105100,7 @@ class ZTweenManager {
               opacity: (c = r.opacity) != null ? c : 0.72
             }
           },
-          le(K({
+          le(H({
             duration: 260,
             repeat: 1,
             yoyo: !0,
@@ -104774,7 +105119,7 @@ class ZTweenManager {
         return r.fromY != null && this._setElementAttrs(a, { position: [o[0], n] }), this.animateElement(
           a,
           { position: [o[0], s] },
-          le(K({
+          le(H({
             duration: 180,
             loop: !0,
             yoyo: !0,
@@ -104798,7 +105143,7 @@ class ZTweenManager {
   }
   animateElement(e, a, r = {}) {
     const o = this._createElementTweenState(e, a), n = o.to;
-    return this.animate(o.current, n, le(K({}, r), {
+    return this.animate(o.current, n, le(H({}, r), {
       onUpdate: (s, u) => {
         var d;
         this._applyElementTweenState(e, s, o), (d = r.onUpdate) == null || d.call(r, s, u);
@@ -104894,10 +105239,10 @@ class ZTweenManager {
     return e.style || {};
   }
   _setElementShape(e, a) {
-    e.setShape ? e.setShape(a) : e.shape = K(K({}, e.shape || {}), a);
+    e.setShape ? e.setShape(a) : e.shape = H(H({}, e.shape || {}), a);
   }
   _setElementStyle(e, a) {
-    e.setStyle ? e.setStyle(a) : e.style = K(K({}, e.style || {}), a);
+    e.setStyle ? e.setStyle(a) : e.style = H(H({}, e.style || {}), a);
   }
   _setElementAttrs(e, a) {
     e.attr ? e.attr(a) : Object.assign(e, a);
@@ -104906,7 +105251,7 @@ class ZTweenManager {
 const DEFAULT_RECONNECT_DELAY = 1e3, DEFAULT_MAX_RECONNECT_DELAY = 1e4, DEFAULT_HEARTBEAT_INTERVAL = 3e4;
 class WebSocketClient {
   constructor(e) {
-    this.socket = null, this.status = "idle", this.reconnectAttempts = 0, this.reconnectTimer = null, this.heartbeatTimer = null, this.manuallyClosed = !1, this.messageHandlers = /* @__PURE__ */ new Set(), this.rawMessageHandlers = /* @__PURE__ */ new Set(), this.statusHandlers = /* @__PURE__ */ new Set(), this.options = K({
+    this.socket = null, this.status = "idle", this.reconnectAttempts = 0, this.reconnectTimer = null, this.heartbeatTimer = null, this.manuallyClosed = !1, this.messageHandlers = /* @__PURE__ */ new Set(), this.rawMessageHandlers = /* @__PURE__ */ new Set(), this.statusHandlers = /* @__PURE__ */ new Set(), this.options = H({
       reconnect: !0,
       reconnectDelay: DEFAULT_RECONNECT_DELAY,
       maxReconnectDelay: DEFAULT_MAX_RECONNECT_DELAY,
@@ -105049,12 +105394,12 @@ class WsManager {
     this.runtime = null, this.configKey = "disabled";
   }
   configure(e) {
-    const a = e || {}, r = a.enabled === !0 && !!a.url, o = r ? JSON.stringify(le(K({}, a), {
+    const a = e || {}, r = a.enabled === !0 && !!a.url, o = r ? JSON.stringify(le(H({}, a), {
       heartbeatMessage: typeof a.heartbeatMessage == "function" ? "[function]" : a.heartbeatMessage
     })) : "disabled";
     if (o === this.configKey || (this.disposeRuntime(), this.configKey = o, !r))
       return;
-    const l = a, { enabled: n, url: s } = l, u = va(l, ["enabled", "url"]), d = new WebSocketClient(K({
+    const l = a, { enabled: n, url: s } = l, u = va(l, ["enabled", "url"]), d = new WebSocketClient(H({
       url: s
     }, u));
     this.runtime = installWsPush(d), d.connect();
@@ -105168,11 +105513,13 @@ zrender.registerPainter("canvas", CanvasPainter$1);
 extensionRegisters.registerComponentModel(GlobalModel);
 extensionRegisters.registerComponentView(GridView);
 extensionRegisters.registerComponentModel(GridModel);
-use(install$a);
-use(install$9);
-use(install$8);
+use(install$e);
+use(install$d);
+use(install$c);
 registerCoordinateSystem("cartesian2d", Grid);
-use(install$7);
+use(install$b);
+use(install$8);
+use(install$6);
 use(install$4);
 use(install$2);
 use(install);
