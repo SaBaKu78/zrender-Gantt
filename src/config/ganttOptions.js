@@ -116,6 +116,7 @@ export const createGanttOption = ({
         type: 'slider',
         id: 'ySlider',
         yAxisIndex: 0,
+        show: false,
         invisible: true,
         zoomLock: true,
         width: 10,
