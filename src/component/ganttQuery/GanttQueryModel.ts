@@ -10,6 +10,7 @@ export interface GanttQueryOption extends ComponentOption {
   width?: number
   top?: number
   right?: number
+  conditions?: string[]
 }
 
 export default class GanttQueryModel extends ComponentModel<GanttQueryOption> {
@@ -23,6 +24,7 @@ export default class GanttQueryModel extends ComponentModel<GanttQueryOption> {
     width: 280,
     top: 34,
     right: 96,
+    conditions: ['\u4efb\u52a1\u540d', '\u8d44\u6e90\u540d', '\u822a\u73ed\u53f7', '\u8fdb\u51fa\u6e2f'],
   }
 }
 

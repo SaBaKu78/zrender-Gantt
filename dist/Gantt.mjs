@@ -103250,7 +103250,12 @@ function install$5(t) {
 function install$4(t) {
   install$5(t);
 }
-const SEARCH_PATH = "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", createSearchIcon = () => {
+const SWITCH_PATH = "M7.41 8.59 12 4l4.59 4.59L18 7.17l-6-6-6 6 1.41 1.42zM16.59 15.41 12 20l-4.59-4.59L6 16.83l6 6 6-6-1.41-1.42z", SEARCH_PATH = "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", createSvgIcon = (t, e = 18) => {
+  const a = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  a.setAttribute("viewBox", "0 0 24 24"), a.setAttribute("width", String(e)), a.setAttribute("height", String(e)), a.setAttribute("aria-hidden", "true");
+  const r = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  return r.setAttribute("d", t), r.setAttribute("fill", "#334155"), a.appendChild(r), a;
+}, createSearchIcon = () => {
   const t = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   t.setAttribute("viewBox", "0 0 24 24"), t.setAttribute("width", "18"), t.setAttribute("height", "18"), t.setAttribute("aria-hidden", "true");
   const e = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -103286,13 +103291,13 @@ const SEARCH_PATH = "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109
     }
     .gantt-query {
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       width: 100%;
       height: 44px;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 0 16px;
+      padding: 0 8px 0 16px;
       box-sizing: border-box;
       border: 1px solid rgba(255, 255, 255, 0.58);
       border-radius: 22px;
@@ -103369,18 +103374,64 @@ const SEARCH_PATH = "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109
       color: #94A3B8;
       opacity: 1;
     }
+    .gantt-query__condition-chip {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      max-width: 86px;
+      height: 22px;
+      padding: 0 7px;
+      border: 1px solid rgba(148, 163, 184, 0.58);
+      border-radius: 4px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.52), rgba(241, 245, 249, 0.3)),
+        rgba(255, 255, 255, 0.34);
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.7),
+        0 2px 6px rgba(71, 85, 105, 0.08);
+      color: #64748B;
+      font: 700 10px Arial, sans-serif;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gantt-query__condition-switch {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      width: 26px;
+      height: 30px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 160ms ease;
+    }
+    .gantt-query__condition-switch:hover {
+      background: rgba(255, 255, 255, 0.34);
+    }
   `, document.head.appendChild(t);
 }, _GanttQueryView = class nt extends ComponentView {
   constructor() {
-    super(...arguments), this.type = nt.type, this._host = null;
+    super(...arguments), this.type = nt.type, this._host = null, this._conditionIndex = 0;
   }
   render(e, a, r) {
-    var u, d;
+    var c, m;
     if (this._ensureHost(r), !this._host)
       return;
-    this._host.style.display = e.get("show") ? "block" : "none", this._host.style.width = `${e.get("width") || 336}px`, this._host.style.top = `${(u = e.get("top")) != null ? u : 80}px`, this._host.style.right = `${(d = e.get("right")) != null ? d : 18}px`;
-    const o = createElement$1("div", "gantt-query"), n = createElement$1("span", "gantt-query__icon"), s = createElement$1("input", "gantt-query__input");
-    s.type = "search", s.placeholder = e.get("placeholder") || "Search", s.value = e.get("value") || "", n.appendChild(createSearchIcon()), o.append(n, s), this._host.replaceChildren(o);
+    this._host.style.display = e.get("show") ? "block" : "none", this._host.style.width = `${e.get("width") || 336}px`, this._host.style.top = `${(c = e.get("top")) != null ? c : 80}px`, this._host.style.right = `${(m = e.get("right")) != null ? m : 18}px`;
+    const o = createElement$1("div", "gantt-query"), n = createElement$1("span", "gantt-query__icon"), s = createElement$1("input", "gantt-query__input"), u = createElement$1("span", "gantt-query__condition-chip"), d = createElement$1("button", "gantt-query__condition-switch"), l = e.get("conditions") || ["任务名", "资源名", "航班号", "进出港"];
+    s.type = "search", s.placeholder = e.get("placeholder") || "Search", s.value = e.get("value") || "", this._conditionIndex >= l.length && (this._conditionIndex = 0), u.textContent = l[this._conditionIndex], d.type = "button", d.title = "切换搜索条件", d.appendChild(createSvgIcon(SWITCH_PATH, 16)), d.onclick = () => {
+      this._conditionIndex = (this._conditionIndex + 1) % l.length, this.render(e, a, r);
+    }, n.appendChild(createSearchIcon()), o.append(n, s, u, d), this._host.replaceChildren(o);
   }
   dispose() {
     var e;
@@ -103409,7 +103460,8 @@ _GanttQueryModel.defaultOption = {
   value: "",
   width: 280,
   top: 34,
-  right: 96
+  right: 96,
+  conditions: ["任务名", "资源名", "航班号", "进出港"]
 };
 let GanttQueryModel = _GanttQueryModel;
 function install$3(t) {
