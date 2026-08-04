@@ -61,6 +61,7 @@ import { install as DataZoomInstall } from '../component/dataZoom/install'
 import { install as UnassignedBoardInstall } from '../component/unassignedBoard/install'
 import { install as ResourceFilterInstall } from '../component/resourceFilter/install'
 import { install as GanttQueryInstall } from '../component/ganttQuery/install'
+import { install as LiquidGlassLayerInstall } from '../component/liquidGlassLayer/install'
 import ExtensionAPI from './ExtensionAPI'
 import EventController from './EventController'
 import { getResourceList } from '../api/resource'
@@ -308,6 +309,7 @@ use(DataZoomInstall)
 use(UnassignedBoardInstall)
 use(ResourceFilterInstall)
 use(GanttQueryInstall)
+use(LiquidGlassLayerInstall)
 registerVisual(PRIORITY_VISUAL_CHART_DATA_CUSTOM, dataSymbolTask)
 
 //----------------------------------- 注册实例区 --------------------------------------------------------

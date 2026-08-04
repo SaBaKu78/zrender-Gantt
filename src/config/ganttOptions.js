@@ -193,6 +193,16 @@ export const createGanttOption = ({
       right: 96,
       width: 280,
     },
+    liquidGlassLayer: {
+      id: 'liquidGlassLayer',
+      show: false,
+      width: 210,
+      height: 150,
+      left: 360,
+      top: 20,
+      zIndex: 35,
+      title: '',
+    },
     unassignedBoard: {
       id: 'unassignedBoard',
       show: true,

@@ -4,13 +4,13 @@ import ExtensionAPI from '../../core/ExtensionAPI'
 import ResourceFilterModel, { ResourceFilterResource } from './ResourceFilterModel'
 
 const TEXT = {
-  filter: '\u8d44\u6e90\u8fc7\u6ee4',
-  active: '\u5f53\u524d\u5df2\u6709\u8fc7\u6ee4\u6761\u4ef6',
-  inactive: '\u5f53\u524d\u6ca1\u6709\u8fc7\u6ee4\u6761\u4ef6',
-  name: '\u59d3\u540d',
-  all: '\u5168\u90e8\u8d44\u6e90',
-  reset: '\u91cd\u7f6e',
-  apply: '\u5e94\u7528',
+  filter: '资源过滤',
+  active: '当前已有过滤条件',
+  inactive: '当前没有过滤条件',
+  name: '姓名',
+  all: '全部资源',
+  reset: '重置',
+  apply: '应用',
 }
 
 const FUNNEL_PATH = 'M435.6 590.6L206.6 247v-76.3h610.8V247l-229 343.6v229L435.6 896V590.6z'
@@ -288,7 +288,7 @@ export default class ResourceFilterView extends ComponentView {
     const modal = createElement('div', 'resource-filter__modal')
     const header = createElement('div', 'resource-filter__modal-header')
     const title = createElement('span', '', TEXT.filter)
-    const closeButton = createElement('button', 'resource-filter__close', '\u00d7') as HTMLButtonElement
+    const closeButton = createElement('button', 'resource-filter__close', '×') as HTMLButtonElement
     const body = createElement('div', 'resource-filter__body')
     const field = createElement('label', 'resource-filter__field')
     const fieldTitle = createElement('span', '', TEXT.name)
