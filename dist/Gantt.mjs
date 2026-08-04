@@ -102601,24 +102601,25 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
     });
   }
   _hitMainResourceRow(e, a) {
-    var u;
+    var l;
     const r = this._getGrid(), o = this._getBoardResources();
     if (!r || !o.length)
       return null;
     const n = r.getRect();
     if (e < n.x || e > n.x + n.width || a < n.y || a > this._splitY)
       return null;
-    const s = (u = r.getCartesians()[0]) == null ? void 0 : u.getAxis("y");
+    const s = (l = r.getCartesians()[0]) == null ? void 0 : l.getAxis("y");
     if (!s)
       return null;
-    for (let d = 0; d < o.length; d++) {
-      const l = s.toGlobalCoord(s.dataToCoord(d)), c = s.toGlobalCoord(s.dataToCoord(d + 1)), m = Math.min(l, c), p = Math.abs(c - l), g = m + p;
-      if (a >= m && a <= g && g > n.y && m < this._splitY)
+    const u = this.piModel.getComponent("unassignedBoard"), d = (u == null ? void 0 : u.get("resourceRowOffset")) || 0;
+    for (let c = 0; c < o.length; c++) {
+      const m = c + d, p = s.toGlobalCoord(s.dataToCoord(m)), g = s.toGlobalCoord(s.dataToCoord(m + 1)), T = Math.min(p, g), f = Math.abs(g - p), h = T + f;
+      if (a >= T && a <= h && h > n.y && T < this._splitY)
         return {
-          resourceId: o[d][1],
-          resourceIndex: d,
-          rowY: m,
-          rowHeight: p
+          resourceId: o[c][1],
+          resourceIndex: c,
+          rowY: T,
+          rowHeight: f
         };
     }
     return null;
@@ -102889,6 +102890,24 @@ function install$1(t) {
 }
 function installUnassignedBoardAction(t) {
   t.registerAction({
+    type: "updateResourceFilter",
+    update: "none"
+  }, function(e, a, r) {
+    const o = e.assignedData || [], n = e.unassignedData || [], s = e.resourceData || [], u = e.resources || [];
+    a.eachSeries(function(d) {
+      var l, c;
+      d.id === "assignedTasks" && ((l = d.updateData) == null || l.call(d, o, a), r.refreshSeries("assignedTasks", e)), d.id === "resourceRows" && ((c = d.updateData) == null || c.call(d, s, a), r.refreshSeries("resourceRows", e));
+    }), a.eachComponent("unassignedBoard", function(d) {
+      var l, c;
+      d.id === "unassignedBoard" && (d.option.data = n, d.option.resources = u, (c = (l = r.getViewOfComponentModel(d)) == null ? void 0 : l.render) == null || c.call(
+        l,
+        d,
+        a,
+        r,
+        e
+      ));
+    }), r.getZr().refresh();
+  }), t.registerAction({
     type: "updateTaskData",
     update: "none"
   }, function(e, a, r) {

@@ -726,9 +726,13 @@ export default class UnassignedBoardView extends ComponentView {
     const yAxis = grid.getCartesians()[0]?.getAxis('y')
     if (!yAxis) return null
 
+    const boardModel = this.piModel.getComponent('unassignedBoard') as any
+    const resourceRowOffset = boardModel?.get('resourceRowOffset') || 0
+
     for (let index = 0; index < resources.length; index++) {
-      const start = yAxis.toGlobalCoord(yAxis.dataToCoord(index))
-      const end = yAxis.toGlobalCoord(yAxis.dataToCoord(index + 1))
+      const dataIndex = index + resourceRowOffset
+      const start = yAxis.toGlobalCoord(yAxis.dataToCoord(dataIndex))
+      const end = yAxis.toGlobalCoord(yAxis.dataToCoord(dataIndex + 1))
       const rowY = Math.min(start, end)
       const rowHeight = Math.abs(end - start)
       const rowBottom = rowY + rowHeight

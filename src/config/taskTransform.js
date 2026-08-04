@@ -99,7 +99,7 @@ const getResourceIndex = (resourceId, resourceMaps) => {
   return resourceMaps.byId.get(resourceId) ?? resourceMaps.byStringId.get(String(resourceId)) ?? null
 }
 
-const toAssignedTaskRow = (item, resourceMaps, buildFlightStatusText) => {
+const toAssignedTaskRow = (item, resourceMaps, buildFlightStatusText, resourceRowOffset = 0) => {
   const resourceId = item.taskAssignList?.[0]?.currentResourceId
   const resourceIndex = getResourceIndex(resourceId, resourceMaps)
   const startTime = toTimestamp(item.scheduleStartTime)
@@ -112,7 +112,7 @@ const toAssignedTaskRow = (item, resourceMaps, buildFlightStatusText) => {
 
   return [
     item.id ?? item.taskId,
-    resourceIndex,
+    resourceIndex + resourceRowOffset,
     startTime,
     endTime,
     item.taskName || item.taskTypeName || '',
@@ -124,9 +124,9 @@ const toAssignedTaskRow = (item, resourceMaps, buildFlightStatusText) => {
   ]
 }
 
-export const buildAssignedTasks = (sourceTasks, resourceMaps) => assignOverlapLanes(
+export const buildAssignedTasks = (sourceTasks, resourceMaps, resourceRowOffset = 0) => assignOverlapLanes(
   (Array.isArray(sourceTasks) ? sourceTasks : [])
-    .map((item) => toAssignedTaskRow(item, resourceMaps, buildFlightStatusText))
+    .map((item) => toAssignedTaskRow(item, resourceMaps, buildFlightStatusText, resourceRowOffset))
     .filter(Boolean)
 )
 export const buildUnassignedTasks = (sourceTasks) => {
