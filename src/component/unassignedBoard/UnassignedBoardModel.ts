@@ -11,6 +11,7 @@ export interface UnassignedBoardOption extends ComponentOption {
   itemGap?: number
   padding?: number[]
   data?: any[]
+  resourceRowOffset?: number
 }
 
 export default class UnassignedBoardModel extends ComponentModel<UnassignedBoardOption> {

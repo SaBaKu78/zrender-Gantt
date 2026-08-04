@@ -5,10 +5,16 @@ export const createTaskController = ({
   gantt,
   initialTasks,
   resourceIndexMaps,
+  resourceRowOffset = 0,
 }) => {
   let currentTaskData = Array.isArray(initialTasks) ? initialTasks.slice() : []
+  let currentResourceIndexMaps = resourceIndexMaps
 
-  const getAssignedTasks = () => buildAssignedTasks(currentTaskData, resourceIndexMaps)
+  const setResourceIndexMaps = (nextResourceIndexMaps) => {
+    currentResourceIndexMaps = nextResourceIndexMaps
+  }
+
+  const getAssignedTasks = () => buildAssignedTasks(currentTaskData, currentResourceIndexMaps, resourceRowOffset)
 
   const getUnassignedTasks = () => buildUnassignedTasks(currentTaskData)
 
@@ -64,6 +70,7 @@ export const createTaskController = ({
   }
 
   return {
+    setResourceIndexMaps,
     getAssignedTasks,
     getUnassignedTasks,
     assignSelectedTask,

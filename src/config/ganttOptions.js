@@ -6,6 +6,7 @@ const TARGET_RESOURCE_ROW_HEIGHT = 44
 const GRID_TOP = 60
 const GRID_BOTTOM = 26
 const DEFAULT_UNASSIGNED_PANEL_RATIO = 0.2
+const WS_URL = `wss://gfgop-sit.airchina.com.cn/api2/ips/websocket/?subsystem=bs4PEK&uid=${Date.now()}&EIO=3&transport=websocket`
 
 const createDefaultXAxisRange = () => {
   const start = new Date()
@@ -17,8 +18,21 @@ const createDefaultXAxisRange = () => {
   return [start.getTime(), end.getTime()]
 }
 
-const buildResourceSeriesData = (resource) => resource.map(function (item, index) {
-  return [index].concat(item)
+const createTaskXAxisRange = (task) => {
+  const defaultRange = createDefaultXAxisRange()
+  const values = (Array.isArray(task) ? task : [])
+    .flatMap((item) => [item?.[2], item?.[3]])
+    .filter((value) => Number.isFinite(value))
+
+  if (!values.length) {
+    return defaultRange
+  }
+
+  return [Math.min(...values), Math.max(...values)]
+}
+
+const buildResourceSeriesData = (resource, resourceRowOffset = 0) => resource.map(function (item, index) {
+  return [index + resourceRowOffset].concat(item)
 })
 
 const getInitialYZoomEnd = (dom, yAxisTotalRows) => Math.min(
@@ -37,18 +51,20 @@ export const createGanttOption = ({
   task,
   unassignedTask,
   onAssignTask,
+  resourceRowOffset = 0,
+  resourceTotalCount = resource.length,
 }) => {
   const virtualResourcePaddingRows = Math.ceil(
     (dom.clientHeight * DEFAULT_UNASSIGNED_PANEL_RATIO) / TARGET_RESOURCE_ROW_HEIGHT,
   ) + 1
-  const yAxisTotalRows = resource.length + virtualResourcePaddingRows
+  const yAxisTotalRows = resourceTotalCount + resourceRowOffset + virtualResourcePaddingRows
   const initialYZoomEnd = getInitialYZoomEnd(dom, yAxisTotalRows)
-  const defaultXAxisRange = createDefaultXAxisRange()
+  const xAxisRange = createTaskXAxisRange(task)
 
   return {
     ws: {
       enabled: true,
-      url: `wss://gfgop-sit.airchina.com.cn/api2/ips/websocket/?subsystem=bs4PEK&uid=${Date.now()}&EIO=3&transport=websocket`,
+      url: WS_URL,
       reconnect: true,
       reconnectDelay: 1000,
       maxReconnectDelay: 10000,
@@ -128,8 +144,8 @@ export const createGanttOption = ({
       interval: TWENTY_MINUTES,
       minInterval: TWENTY_MINUTES,
       maxInterval: TWENTY_MINUTES,
-      min: task.length ? null : defaultXAxisRange[0],
-      max: task.length ? null : defaultXAxisRange[1],
+      min: xAxisRange[0],
+      max: xAxisRange[1],
       axisTick: {
         lineStyle: {
           color: '#CBD5E1',
@@ -155,6 +171,7 @@ export const createGanttOption = ({
       inverse: true,
       min: 0,
       resourceCount: resource.length,
+      resourceRowOffset,
       targetRowHeight: TARGET_RESOURCE_ROW_HEIGHT,
       max: yAxisTotalRows,
     },
@@ -163,6 +180,7 @@ export const createGanttOption = ({
       show: true,
       data: unassignedTask,
       resources: resource,
+      resourceRowOffset,
       onAssignTask,
     },
     series: [
@@ -197,7 +215,7 @@ export const createGanttOption = ({
           y: 0,
         },
         renderItem: ResourceRenderItem,
-        data: buildResourceSeriesData(resource),
+        data: buildResourceSeriesData(resource, resourceRowOffset),
       },
     ],
   }
