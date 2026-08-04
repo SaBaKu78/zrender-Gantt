@@ -2,13 +2,11 @@ import { getResourceList } from './src/api/resource'
 import { getTask } from './src/api/task'
 import { init } from './src/core/Gantt'
 import { createGanttOption } from './src/config/ganttOptions'
-import { installResourceFilterControl } from './src/config/resourceFilterControl'
 import { createTaskController } from './src/config/taskController'
 import { createResourceIndexMaps } from './src/config/taskTransform'
 
 const RESOURCE_ROW_OFFSET = 0
 const dom = document.getElementById('main')
-const filterRoot = document.getElementById('resourceFilterRoot')
 
 const data1 = await getResourceList({})
 const data2 = await getTask({})
@@ -54,10 +52,7 @@ gantt.setOption(createGanttOption({
   onAssignTask: taskController.assignSelectedTask,
   resourceRowOffset: RESOURCE_ROW_OFFSET,
   resourceTotalCount: resource.length,
+  resourceFilterOnChange: ({ visibleResources }) => applyResourceFilter(visibleResources),
 }))
 
-installResourceFilterControl({
-  root: filterRoot,
-  resources: resource,
-  onChange: ({ visibleResources }) => applyResourceFilter(visibleResources),
-})
+

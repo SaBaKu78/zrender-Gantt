@@ -53,6 +53,7 @@ export const createGanttOption = ({
   onAssignTask,
   resourceRowOffset = 0,
   resourceTotalCount = resource.length,
+  resourceFilterOnChange,
 }) => {
   const virtualResourcePaddingRows = Math.ceil(
     (dom.clientHeight * DEFAULT_UNASSIGNED_PANEL_RATIO) / TARGET_RESOURCE_ROW_HEIGHT,
@@ -174,6 +175,12 @@ export const createGanttOption = ({
       resourceRowOffset,
       targetRowHeight: TARGET_RESOURCE_ROW_HEIGHT,
       max: yAxisTotalRows,
+    },
+    resourceFilter: {
+      id: 'resourceFilter',
+      show: true,
+      resources: resource,
+      onChange: resourceFilterOnChange,
     },
     unassignedBoard: {
       id: 'unassignedBoard',

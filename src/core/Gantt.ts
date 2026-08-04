@@ -59,6 +59,7 @@ import { install as CustomSeriesInstall } from '../component/custom/install'
 import { install as AxisInstall } from '../component/axis/install'
 import { install as DataZoomInstall } from '../component/dataZoom/install'
 import { install as UnassignedBoardInstall } from '../component/unassignedBoard/install'
+import { install as ResourceFilterInstall } from '../component/resourceFilter/install'
 import ExtensionAPI from './ExtensionAPI'
 import EventController from './EventController'
 import { getResourceList } from '../api/resource'
@@ -304,6 +305,7 @@ registerCoordinateSystem('cartesian2d', Grid)
 use(AxisInstall)
 use(DataZoomInstall)
 use(UnassignedBoardInstall)
+use(ResourceFilterInstall)
 registerVisual(PRIORITY_VISUAL_CHART_DATA_CUSTOM, dataSymbolTask)
 
 //----------------------------------- 注册实例区 --------------------------------------------------------
