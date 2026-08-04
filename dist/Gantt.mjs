@@ -103025,7 +103025,7 @@ const TEXT = {
     .resource-filter-host {
       position: absolute;
       left: 0;
-      top: 20px;
+      top: 80px;
       width: 10%;
       min-width: 180px;
       max-width: 320px;
