@@ -4,7 +4,6 @@ import SeriesModel from '../../model/Series'
 import DataZoomModel, { DataZoomExtendedAxisBaseModel } from './DataZoomModel'
 import { DataZoomAxisDimension, getAxisMainType } from './helper'
 import AxisProxy from './AxisProxy'
-import ExtensionAPI from '../../core/ExtensionAPI'
 import GlobalModel from '../../model/Global'
 
 const dataZoomProcessor: StageHandler = {
@@ -73,19 +72,6 @@ const dataZoomProcessor: StageHandler = {
       })
     })
   },
-}
-
-export function applyDataZoomFilter(
-  piModel: GlobalModel,
-  api: ExtensionAPI
-): void {
-  piModel.eachComponent('dataZoom', function (dataZoomModel: DataZoomModel) {
-    dataZoomModel.eachTargetAxis(function (axisDim, axisIndex) {
-      dataZoomModel
-        .getAxisProxy(axisDim, axisIndex)
-        .filterData(dataZoomModel, api)
-    })
-  })
 }
 
 export default dataZoomProcessor

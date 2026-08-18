@@ -2,12 +2,11 @@ import { ExtensionInstallRegisters } from "../../../extension";
 import GlobalModel from "../../model/Global";
 import ExtensionAPI from "../../core/ExtensionAPI";
 import { DATAZOOM_SPLIT_GAP } from '../split/SliderSplitView';
-import { applyDataZoomFilter } from '../dataZoom/dataZoomProcessor';
 
 export default function installUnassignedBoardAction(registers: ExtensionInstallRegisters) {
   registers.registerAction({
     type: 'updateResourceFilter',
-    update: 'none',
+    update: 'update',
   }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
     const assignedData = payload.assignedData || []
     const unassignedData = payload.unassignedData || []
@@ -17,12 +16,9 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
     model.eachSeries(function(seriesModel: any) {
       if (seriesModel.id === 'assignedTasks') {
         seriesModel.updateData?.(assignedData, model)
-        applyDataZoomFilter(model, api)
-        api.refreshSeries('assignedTasks', payload)
       }
       if (seriesModel.id === 'resourceRows') {
         seriesModel.updateData?.(resourceData, model)
-        api.refreshSeries('resourceRows', payload)
       }
     })
 
@@ -31,20 +27,12 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
 
       boardModel.option.data = unassignedData
       boardModel.option.resources = resources
-      api.getViewOfComponentModel(boardModel)?.render?.(
-        boardModel,
-        model,
-        api,
-        payload
-      )
     })
-
-    api.getZr().refresh()
   })
 
   registers.registerAction({
     type: 'updateTaskData',
-    update: 'none',
+    update: 'update',
   }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
     const assignedData = payload.assignedData || []
     const unassignedData = payload.unassignedData || []
@@ -52,23 +40,13 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       if (seriesModel.id !== 'assignedTasks') return
 
       seriesModel.updateData?.(assignedData, model)
-      applyDataZoomFilter(model, api)
-      api.refreshSeries('assignedTasks', payload)
     })
 
     model.eachComponent('unassignedBoard', function(boardModel: any) {
       if (boardModel.id !== 'unassignedBoard') return
 
       boardModel.option.data = unassignedData
-      api.getViewOfComponentModel(boardModel)?.render?.(
-        boardModel,
-        model,
-        api,
-        payload
-      )
     })
-
-    api.getZr().refresh()
   })
 
   registers.registerAction({
