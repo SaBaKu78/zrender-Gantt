@@ -101063,6 +101063,13 @@ const dataZoomProcessor = {
     });
   }
 };
+function applyDataZoomFilter(t, e) {
+  t.eachComponent("dataZoom", function(a) {
+    a.eachTargetAxis(function(r, o) {
+      a.getAxisProxy(r, o).filterData(a, e);
+    });
+  });
+}
 let installed = !1;
 function installCommon(t) {
   installed || (installed = !0, t.registerProcessor(t.PRIORITY.PROCESSOR.FILTER, dataZoomProcessor), installDataZoomAction(t), t.registerSubTypeDefaulter("dataZoom", function() {
@@ -102896,7 +102903,7 @@ function installUnassignedBoardAction(t) {
     const o = e.assignedData || [], n = e.unassignedData || [], s = e.resourceData || [], u = e.resources || [];
     a.eachSeries(function(d) {
       var l, c;
-      d.id === "assignedTasks" && ((l = d.updateData) == null || l.call(d, o, a), r.refreshSeries("assignedTasks", e)), d.id === "resourceRows" && ((c = d.updateData) == null || c.call(d, s, a), r.refreshSeries("resourceRows", e));
+      d.id === "assignedTasks" && ((l = d.updateData) == null || l.call(d, o, a), applyDataZoomFilter(a, r), r.refreshSeries("assignedTasks", e)), d.id === "resourceRows" && ((c = d.updateData) == null || c.call(d, s, a), r.refreshSeries("resourceRows", e));
     }), a.eachComponent("unassignedBoard", function(d) {
       var l, c;
       d.id === "unassignedBoard" && (d.option.data = n, d.option.resources = u, (c = (l = r.getViewOfComponentModel(d)) == null ? void 0 : l.render) == null || c.call(
@@ -102914,7 +102921,7 @@ function installUnassignedBoardAction(t) {
     const o = e.assignedData || [], n = e.unassignedData || [];
     a.eachSeries(function(s) {
       var u;
-      s.id === "assignedTasks" && ((u = s.updateData) == null || u.call(s, o, a), r.refreshSeries("assignedTasks", e));
+      s.id === "assignedTasks" && ((u = s.updateData) == null || u.call(s, o, a), applyDataZoomFilter(a, r), r.refreshSeries("assignedTasks", e));
     }), a.eachComponent("unassignedBoard", function(s) {
       var u, d;
       s.id === "unassignedBoard" && (s.option.data = n, (d = (u = r.getViewOfComponentModel(s)) == null ? void 0 : u.render) == null || d.call(
@@ -103250,7 +103257,7 @@ function install$5(t) {
 function install$4(t) {
   install$5(t);
 }
-const SWITCH_PATH = "M7.41 8.59 12 4l4.59 4.59L18 7.17l-6-6-6 6 1.41 1.42zM16.59 15.41 12 20l-4.59-4.59L6 16.83l6 6 6-6-1.41-1.42z", SEARCH_PATH = "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", createSvgIcon = (t, e = 18) => {
+const AIRCRAFT_PATH = "M576 381.7l341.3 215.6v85.3L576 574.9v228.7l128 71.1v64L512 896l-192 42.7v-64l128-71.1V574.8L106.7 682.7v-85.3L448 381.7V149.3c0-35.3 28.7-64 64-64s64 28.7 64 64v232.4z", SWITCH_PATH = "M7.41 8.59 12 4l4.59 4.59L18 7.17l-6-6-6 6 1.41 1.42zM16.59 15.41 12 20l-4.59-4.59L6 16.83l6 6 6-6-1.41-1.42z", SEARCH_PATH = "M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z", createSvgIcon = (t, e = 18) => {
   const a = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   a.setAttribute("viewBox", "0 0 24 24"), a.setAttribute("width", String(e)), a.setAttribute("height", String(e)), a.setAttribute("aria-hidden", "true");
   const r = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -103260,6 +103267,11 @@ const SWITCH_PATH = "M7.41 8.59 12 4l4.59 4.59L18 7.17l-6-6-6 6 1.41 1.42zM16.59
   t.setAttribute("viewBox", "0 0 24 24"), t.setAttribute("width", "18"), t.setAttribute("height", "18"), t.setAttribute("aria-hidden", "true");
   const e = document.createElementNS("http://www.w3.org/2000/svg", "path");
   return e.setAttribute("d", SEARCH_PATH), e.setAttribute("fill", "#334155"), t.appendChild(e), t;
+}, createAircraftIcon = (t = 16) => {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  e.setAttribute("viewBox", "0 0 1024 1024"), e.setAttribute("width", String(t)), e.setAttribute("height", String(t)), e.setAttribute("aria-hidden", "true"), e.setAttribute("focusable", "false");
+  const a = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  return a.setAttribute("d", AIRCRAFT_PATH), a.setAttribute("fill", "currentColor"), e.appendChild(a), e;
 }, createElement$1 = (t, e) => {
   const a = document.createElement(t);
   return e && (a.className = e), a;
@@ -103418,20 +103430,90 @@ const SWITCH_PATH = "M7.41 8.59 12 4l4.59 4.59L18 7.17l-6-6-6 6 1.41 1.42zM16.59
     .gantt-query__condition-switch:hover {
       background: rgba(255, 255, 255, 0.34);
     }
+    .gantt-query__aircraft-button {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 auto;
+      width: 28px;
+      height: 30px;
+      padding: 0;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition:
+        color 160ms ease,
+        background 160ms ease,
+        transform 160ms ease;
+    }
+    .gantt-query-host > .gantt-query__aircraft-button {
+      position: absolute;
+      top: 7px;
+      right: -42px;
+      z-index: 2;
+      border: 1px solid rgba(255, 255, 255, 0.62);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(226, 232, 240, 0.34)),
+        rgba(255, 255, 255, 0.38);
+      box-shadow:
+        0 8px 18px rgba(71, 85, 105, 0.16),
+        inset 0 1px 1px rgba(255, 255, 255, 0.88),
+        inset 0 -5px 10px rgba(148, 163, 184, 0.14);
+      backdrop-filter: blur(8px) saturate(1.3);
+      -webkit-backdrop-filter: blur(8px) saturate(1.3);
+    }
+    .gantt-query__aircraft-button:hover {
+      color: #2563EB;
+      background: rgba(37, 99, 235, 0.08);
+    }
+    .gantt-query__aircraft-button:active {
+      transform: scale(0.92);
+    }
+    .gantt-query__aircraft-button svg {
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+    }
+    .gantt-query__aircraft-button.is-flying svg {
+      animation: gantt-query-aircraft-fly 720ms cubic-bezier(0.22, 0.8, 0.24, 1) both;
+    }
+    @keyframes gantt-query-aircraft-fly {
+      0% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg) scale(1);
+      }
+      42% {
+        opacity: 0;
+        transform: translate(18px, -34px) rotate(18deg) scale(0.72);
+      }
+      43% {
+        opacity: 0;
+        transform: translate(-14px, 18px) rotate(18deg) scale(0.72);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(0, 0) rotate(0deg) scale(1);
+      }
+    }
   `, document.head.appendChild(t);
 }, _GanttQueryView = class nt extends ComponentView {
   constructor() {
     super(...arguments), this.type = nt.type, this._host = null, this._conditionIndex = 0;
   }
   render(e, a, r) {
-    var c, m;
+    var m, p;
     if (this._ensureHost(r), !this._host)
       return;
-    this._host.style.display = e.get("show") ? "block" : "none", this._host.style.width = `${e.get("width") || 336}px`, this._host.style.top = `${(c = e.get("top")) != null ? c : 80}px`, this._host.style.right = `${(m = e.get("right")) != null ? m : 18}px`;
-    const o = createElement$1("div", "gantt-query"), n = createElement$1("span", "gantt-query__icon"), s = createElement$1("input", "gantt-query__input"), u = createElement$1("span", "gantt-query__condition-chip"), d = createElement$1("button", "gantt-query__condition-switch"), l = e.get("conditions") || ["任务名", "资源名", "航班号", "进出港"];
-    s.type = "search", s.placeholder = e.get("placeholder") || "Search", s.value = e.get("value") || "", this._conditionIndex >= l.length && (this._conditionIndex = 0), u.textContent = l[this._conditionIndex], d.type = "button", d.title = "切换搜索条件", d.appendChild(createSvgIcon(SWITCH_PATH, 16)), d.onclick = () => {
-      this._conditionIndex = (this._conditionIndex + 1) % l.length, this.render(e, a, r);
-    }, n.appendChild(createSearchIcon()), o.append(n, s, u, d), this._host.replaceChildren(o);
+    this._host.style.display = e.get("show") ? "block" : "none", this._host.style.width = `${e.get("width") || 336}px`, this._host.style.top = `${(m = e.get("top")) != null ? m : 80}px`, this._host.style.right = `${(p = e.get("right")) != null ? p : 18}px`;
+    const o = createElement$1("div", "gantt-query"), n = createElement$1("span", "gantt-query__icon"), s = createElement$1("input", "gantt-query__input"), u = createElement$1("span", "gantt-query__condition-chip"), d = createElement$1("button", "gantt-query__aircraft-button"), l = createElement$1("button", "gantt-query__condition-switch"), c = e.get("conditions") || ["任务名", "资源名", "航班号", "进出港"];
+    s.type = "search", s.placeholder = e.get("placeholder") || "Search", s.value = e.get("value") || "", this._conditionIndex >= c.length && (this._conditionIndex = 0), u.textContent = c[this._conditionIndex], l.type = "button", l.title = "切换搜索条件", l.appendChild(createSvgIcon(SWITCH_PATH, 16)), l.onclick = () => {
+      this._conditionIndex = (this._conditionIndex + 1) % c.length, this.render(e, a, r);
+    }, d.type = "button", d.title = "查询航班号", d.appendChild(createAircraftIcon(16)), d.onclick = () => {
+      d.classList.remove("is-flying"), d.offsetWidth, d.classList.add("is-flying");
+    }, n.appendChild(createSearchIcon()), o.append(n, s, u, l), this._host.replaceChildren(o, d);
   }
   dispose() {
     var e;
