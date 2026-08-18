@@ -25,6 +25,7 @@ const createCell = (x, y, width, height) => ({
 
 const createTextCell = (cell, text, options = {}) => ({
   type: 'group',
+  transition: [],
   position: [cell.x, cell.y],
   children: [
     {
@@ -122,6 +123,7 @@ export const TaskRenderItem = function (params, api) {
 
   return {
     type: 'group',
+    transition: [],
     info: {
       taskItem: true,
     },

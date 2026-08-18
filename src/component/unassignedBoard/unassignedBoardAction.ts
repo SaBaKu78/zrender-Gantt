@@ -2,6 +2,7 @@ import { ExtensionInstallRegisters } from "../../../extension";
 import GlobalModel from "../../model/Global";
 import ExtensionAPI from "../../core/ExtensionAPI";
 import { DATAZOOM_SPLIT_GAP } from '../split/SliderSplitView';
+import { applyDataZoomFilter } from '../dataZoom/dataZoomProcessor';
 
 export default function installUnassignedBoardAction(registers: ExtensionInstallRegisters) {
   registers.registerAction({
@@ -16,6 +17,7 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
     model.eachSeries(function(seriesModel: any) {
       if (seriesModel.id === 'assignedTasks') {
         seriesModel.updateData?.(assignedData, model)
+        applyDataZoomFilter(model, api)
         api.refreshSeries('assignedTasks', payload)
       }
       if (seriesModel.id === 'resourceRows') {
@@ -50,6 +52,7 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       if (seriesModel.id !== 'assignedTasks') return
 
       seriesModel.updateData?.(assignedData, model)
+      applyDataZoomFilter(model, api)
       api.refreshSeries('assignedTasks', payload)
     })
 
