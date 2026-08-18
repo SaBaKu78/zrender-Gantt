@@ -142,13 +142,72 @@ const injectStyle = (): void => {
       font-size: 12px;
       color: #475569;
     }
-    .resource-filter__select {
+    .resource-filter__combobox {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .resource-filter__combobox-input {
+      width: 100%;
       height: 32px;
       border: 1px solid #CBD5E1;
       border-radius: 4px;
-      padding: 0 8px;
+      padding: 0 30px 0 8px;
+      box-sizing: border-box;
       background: #FFFFFF;
       color: #111827;
+      font-size: 13px;
+      outline: none;
+    }
+    .resource-filter__combobox-input:focus {
+      border-color: #2563EB;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+    .resource-filter__combobox-clear {
+      position: absolute;
+      right: 4px;
+      width: 24px;
+      height: 24px;
+      border: 0;
+      background: transparent;
+      color: #94A3B8;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+    }
+    .resource-filter__combobox-clear:hover {
+      color: #334155;
+    }
+    .resource-filter__combobox-menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 36px;
+      z-index: 2;
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid #CBD5E1;
+      border-radius: 4px;
+      background: #FFFFFF;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+    }
+    .resource-filter__combobox-option {
+      min-height: 32px;
+      padding: 7px 8px;
+      box-sizing: border-box;
+      color: #111827;
+      font-size: 13px;
+      line-height: 18px;
+      cursor: pointer;
+    }
+    .resource-filter__combobox-option:hover,
+    .resource-filter__combobox-option--selected {
+      background: #EFF6FF;
+      color: #1D4ED8;
+    }
+    .resource-filter__combobox-empty {
+      padding: 10px 8px;
+      color: #94A3B8;
       font-size: 13px;
     }
     .resource-filter__actions {
@@ -292,7 +351,10 @@ export default class ResourceFilterView extends ComponentView {
     const body = createElement('div', 'resource-filter__body')
     const field = createElement('label', 'resource-filter__field')
     const fieldTitle = createElement('span', '', TEXT.name)
-    const select = createElement('select', 'resource-filter__select') as HTMLSelectElement
+    const combobox = createElement('div', 'resource-filter__combobox')
+    const comboboxInput = createElement('input', 'resource-filter__combobox-input') as HTMLInputElement
+    const comboboxClear = createElement('button', 'resource-filter__combobox-clear', '×') as HTMLButtonElement
+    const comboboxMenu = createElement('div', 'resource-filter__combobox-menu')
     const actions = createElement('div', 'resource-filter__actions')
     const resetButton = createElement('button', 'resource-filter__action', TEXT.reset) as HTMLButtonElement
     const applyButton = createElement('button', 'resource-filter__action resource-filter__action--primary', TEXT.apply) as HTMLButtonElement
@@ -300,20 +362,83 @@ export default class ResourceFilterView extends ComponentView {
     closeButton.type = 'button'
     resetButton.type = 'button'
     applyButton.type = 'button'
+    comboboxInput.type = 'text'
+    comboboxInput.placeholder = '搜索资源名称或编号'
+    comboboxInput.setAttribute('aria-label', '搜索资源名称或编号')
+    comboboxInput.setAttribute('role', 'combobox')
+    comboboxInput.setAttribute('aria-expanded', 'false')
+    comboboxClear.type = 'button'
+    comboboxClear.title = '清除选择'
+    comboboxClear.setAttribute('aria-label', '清除选择')
+    comboboxMenu.setAttribute('role', 'listbox')
+    comboboxMenu.hidden = true
 
-    const allOption = document.createElement('option')
-    allOption.value = allValue
-    allOption.textContent = TEXT.all
-    select.appendChild(allOption)
+    let query = ''
+    let menuOpen = false
+    const selectedValue = () => this._currentResourceId
+      ? String(this._currentResourceId)
+      : allValue
+    const resourceLabel = (resourceId: string | number): string => {
+      if (resourceId === allValue) return TEXT.all
+      const resource = resources.find((item) => String(item[1]) === String(resourceId))
+      return resource ? resource[0] || String(resource[1]) : ''
+    }
 
-    resources.forEach(([name, id]) => {
-      const option = document.createElement('option')
-      option.value = String(id)
-      option.textContent = name || String(id)
-      select.appendChild(option)
-    })
+    const renderOptions = (): void => {
+      const normalizedQuery = query.trim().toLocaleLowerCase()
+      const filteredResources = resources.filter(([name, id]) => {
+        if (!normalizedQuery) return true
+        return `${name || ''} ${id}`.toLocaleLowerCase().includes(normalizedQuery)
+      })
 
-    select.value = this._currentResourceId ? String(this._currentResourceId) : allValue
+      comboboxMenu.replaceChildren()
+      const options = [
+        [TEXT.all, allValue] as ResourceFilterResource,
+        ...filteredResources,
+      ]
+
+      options.forEach(([name, id]) => {
+        const option = createElement(
+          'div',
+          `resource-filter__combobox-option${String(id) === selectedValue() ? ' resource-filter__combobox-option--selected' : ''}`,
+          name || String(id),
+        )
+        option.setAttribute('role', 'option')
+        option.setAttribute('aria-selected', String(id) === selectedValue() ? 'true' : 'false')
+        option.onmousedown = (event) => {
+          event.preventDefault()
+          this._currentResourceId = id
+          query = ''
+          renderInputValue()
+          closeMenu()
+          renderOptions()
+        }
+        comboboxMenu.appendChild(option)
+      })
+
+      if (!options.length) {
+        comboboxMenu.appendChild(createElement('div', 'resource-filter__combobox-empty', '暂无匹配资源'))
+      }
+    }
+
+    const openMenu = (): void => {
+      menuOpen = true
+      comboboxMenu.hidden = false
+      comboboxInput.setAttribute('aria-expanded', 'true')
+      renderOptions()
+    }
+    const closeMenu = (): void => {
+      menuOpen = false
+      comboboxMenu.hidden = true
+      comboboxInput.setAttribute('aria-expanded', 'false')
+    }
+
+    const renderInputValue = (): void => {
+      comboboxInput.value = query || resourceLabel(selectedValue())
+    }
+
+    renderInputValue()
+    renderOptions()
 
     const applyValue = (resourceId: string | number): void => {
       this._currentResourceId = resourceId
@@ -329,13 +454,47 @@ export default class ResourceFilterView extends ComponentView {
 
     closeButton.onclick = () => backdrop.remove()
     resetButton.onclick = () => applyValue(allValue)
-    applyButton.onclick = () => applyValue(select.value)
+    applyButton.onclick = () => applyValue(selectedValue())
+    comboboxInput.onfocus = () => {
+      if (!query) {
+        comboboxInput.value = ''
+      }
+      openMenu()
+    }
+    comboboxInput.onclick = openMenu
+    comboboxInput.onblur = () => {
+      window.setTimeout(() => {
+        if (!combobox.contains(document.activeElement)) {
+          query = ''
+          renderInputValue()
+          closeMenu()
+        }
+      }, 0)
+    }
+    comboboxInput.oninput = () => {
+      query = comboboxInput.value
+      menuOpen = true
+      comboboxMenu.hidden = false
+      comboboxInput.setAttribute('aria-expanded', 'true')
+      renderOptions()
+    }
+    comboboxInput.onkeydown = (event) => {
+      if (event.key === 'Escape') closeMenu()
+    }
+    comboboxClear.onclick = () => {
+      this._currentResourceId = allValue
+      query = ''
+      renderInputValue()
+      openMenu()
+      comboboxInput.focus()
+    }
     backdrop.onclick = (event) => {
       if (event.target === backdrop) backdrop.remove()
     }
 
     header.append(title, closeButton)
-    field.append(fieldTitle, select)
+    combobox.append(comboboxInput, comboboxClear, comboboxMenu)
+    field.append(fieldTitle, combobox)
     body.appendChild(field)
     actions.append(resetButton, applyButton)
     modal.append(header, body, actions)

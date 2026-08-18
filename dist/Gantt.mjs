@@ -2,7 +2,7 @@ var nr = Object.defineProperty, sr = Object.defineProperties;
 var ur = Object.getOwnPropertyDescriptors;
 var ye = Object.getOwnPropertySymbols;
 var Za = Object.prototype.hasOwnProperty, ka = Object.prototype.propertyIsEnumerable;
-var Ea = (t, e, a) => e in t ? nr(t, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[e] = a, H = (t, e) => {
+var Ea = (t, e, a) => e in t ? nr(t, e, { enumerable: !0, configurable: !0, writable: !0, value: a }) : t[e] = a, K = (t, e) => {
   for (var a in e || (e = {}))
     Za.call(e, a) && Ea(t, a, e[a]);
   if (ye)
@@ -6436,100 +6436,100 @@ var mock = { exports: {} };
         /* 21 */
         /***/
         function(t, e) {
-          function a(S) {
-            this.type = S, this.offset = a.offset(), this.text = a.text();
+          function a(b) {
+            this.type = b, this.offset = a.offset(), this.text = a.text();
           }
-          function r(S, A) {
-            a.call(this, "alternate"), this.left = S, this.right = A;
+          function r(b, S) {
+            a.call(this, "alternate"), this.left = b, this.right = S;
           }
-          function o(S) {
-            a.call(this, "match"), this.body = S.filter(Boolean);
+          function o(b) {
+            a.call(this, "match"), this.body = b.filter(Boolean);
           }
-          function n(S, A) {
-            a.call(this, S), this.body = A;
+          function n(b, S) {
+            a.call(this, b), this.body = S;
           }
-          function s(S) {
-            n.call(this, "capture-group"), this.index = y[this.offset] || (y[this.offset] = x++), this.body = S;
+          function s(b) {
+            n.call(this, "capture-group"), this.index = y[this.offset] || (y[this.offset] = I++), this.body = b;
           }
-          function u(S, A) {
-            a.call(this, "quantified"), this.body = S, this.quantifier = A;
+          function u(b, S) {
+            a.call(this, "quantified"), this.body = b, this.quantifier = S;
           }
-          function d(S, A) {
-            a.call(this, "quantifier"), this.min = S, this.max = A, this.greedy = !0;
+          function d(b, S) {
+            a.call(this, "quantifier"), this.min = b, this.max = S, this.greedy = !0;
           }
-          function l(S, A) {
-            a.call(this, "charset"), this.invert = S, this.body = A;
+          function l(b, S) {
+            a.call(this, "charset"), this.invert = b, this.body = S;
           }
-          function c(S, A) {
-            a.call(this, "range"), this.start = S, this.end = A;
+          function c(b, S) {
+            a.call(this, "range"), this.start = b, this.end = S;
           }
-          function m(S) {
-            a.call(this, "literal"), this.body = S, this.escaped = this.body != this.text;
+          function m(b) {
+            a.call(this, "literal"), this.body = b, this.escaped = this.body != this.text;
           }
-          function p(S) {
-            a.call(this, "unicode"), this.code = S.toUpperCase();
+          function p(b) {
+            a.call(this, "unicode"), this.code = b.toUpperCase();
           }
-          function g(S) {
-            a.call(this, "hex"), this.code = S.toUpperCase();
+          function g(b) {
+            a.call(this, "hex"), this.code = b.toUpperCase();
           }
-          function T(S) {
-            a.call(this, "octal"), this.code = S.toUpperCase();
+          function T(b) {
+            a.call(this, "octal"), this.code = b.toUpperCase();
           }
-          function f(S) {
-            a.call(this, "back-reference"), this.code = S.toUpperCase();
+          function f(b) {
+            a.call(this, "back-reference"), this.code = b.toUpperCase();
           }
-          function h(S) {
-            a.call(this, "control-character"), this.code = S.toUpperCase();
+          function h(b) {
+            a.call(this, "control-character"), this.code = b.toUpperCase();
           }
           var C = function() {
-            function S(R, D) {
+            function b(R, D) {
               function F() {
                 this.constructor = R;
               }
               F.prototype = D.prototype, R.prototype = new F();
             }
-            function A(R, D, F, Z, b) {
-              function v(M, W) {
-                function K(J) {
-                  function V(z) {
+            function S(R, D, F, Z, B) {
+              function v(O, w) {
+                function $(J) {
+                  function H(z) {
                     return z.charCodeAt(0).toString(16).toUpperCase();
                   }
                   return J.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\x08/g, "\\b").replace(/\t/g, "\\t").replace(/\n/g, "\\n").replace(/\f/g, "\\f").replace(/\r/g, "\\r").replace(/[\x00-\x07\x0B\x0E\x0F]/g, function(z) {
-                    return "\\x0" + V(z);
+                    return "\\x0" + H(z);
                   }).replace(/[\x10-\x1F\x80-\xFF]/g, function(z) {
-                    return "\\x" + V(z);
+                    return "\\x" + H(z);
                   }).replace(/[\u0180-\u0FFF]/g, function(z) {
-                    return "\\u0" + V(z);
+                    return "\\u0" + H(z);
                   }).replace(/[\u1080-\uFFFF]/g, function(z) {
-                    return "\\u" + V(z);
+                    return "\\u" + H(z);
                   });
                 }
-                var $, q;
-                switch (M.length) {
+                var W, q;
+                switch (O.length) {
                   case 0:
-                    $ = "end of input";
+                    W = "end of input";
                     break;
                   case 1:
-                    $ = M[0];
+                    W = O[0];
                     break;
                   default:
-                    $ = M.slice(0, -1).join(", ") + " or " + M[M.length - 1];
+                    W = O.slice(0, -1).join(", ") + " or " + O[O.length - 1];
                 }
-                return q = W ? '"' + K(W) + '"' : "end of input", "Expected " + $ + " but " + q + " found.";
+                return q = w ? '"' + $(w) + '"' : "end of input", "Expected " + W + " but " + q + " found.";
               }
-              this.expected = R, this.found = D, this.offset = F, this.line = Z, this.column = b, this.name = "SyntaxError", this.message = v(R, D);
+              this.expected = R, this.found = D, this.offset = F, this.line = Z, this.column = B, this.name = "SyntaxError", this.message = v(R, D);
             }
-            function B(R) {
+            function A(R) {
               function D() {
-                return R.substring(O, P);
+                return R.substring(M, P);
               }
               function F() {
-                return O;
+                return M;
               }
               function Z(N) {
-                function I(E, L, U) {
+                function x(E, L, G) {
                   var ne, pe;
-                  for (ne = L; U > ne; ne++)
+                  for (ne = L; G > ne; ne++)
                     pe = R.charAt(ne), pe === `
 ` ? (E.seenCR || E.line++, E.column = 1, E.seenCR = !1) : pe === "\r" || pe === "\u2028" || pe === "\u2029" ? (E.line++, E.column = 1, E.seenCR = !0) : (E.column++, E.seenCR = !1);
                 }
@@ -6537,138 +6537,138 @@ var mock = { exports: {} };
                   line: 1,
                   column: 1,
                   seenCR: !1
-                }), I(Fe, me, N), me = N), Fe;
+                }), x(Fe, me, N), me = N), Fe;
               }
-              function b(N) {
-                xe > P || (P > xe && (xe = P, Pe = []), Pe.push(N));
+              function B(N) {
+                Ie > P || (P > Ie && (Ie = P, Pe = []), Pe.push(N));
               }
               function v(N) {
-                var I = 0;
-                for (N.sort(); I < N.length; )
-                  N[I - 1] === N[I] ? N.splice(I, 1) : I++;
+                var x = 0;
+                for (N.sort(); x < N.length; )
+                  N[x - 1] === N[x] ? N.splice(x, 1) : x++;
               }
-              function M() {
-                var N, I, E, L, U;
-                return N = P, I = W(), I !== null ? (E = P, R.charCodeAt(P) === 124 ? (L = xt, P++) : (L = null, k === 0 && b(Pt)), L !== null ? (U = M(), U !== null ? (L = [L, U], E = L) : (P = E, E = _)) : (P = E, E = _), E === null && (E = ce), E !== null ? (O = N, I = yt(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+              function O() {
+                var N, x, E, L, G;
+                return N = P, x = w(), x !== null ? (E = P, R.charCodeAt(P) === 124 ? (L = It, P++) : (L = null, k === 0 && B(Pt)), L !== null ? (G = O(), G !== null ? (L = [L, G], E = L) : (P = E, E = _)) : (P = E, E = _), E === null && (E = ce), E !== null ? (M = N, x = yt(x, E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
-              function W() {
-                var N, I, E, L, U;
-                if (N = P, I = $(), I === null && (I = ce), I !== null)
-                  if (E = P, k++, L = V(), k--, L === null ? E = ce : (P = E, E = _), E !== null) {
-                    for (L = [], U = J(), U === null && (U = K()); U !== null; )
-                      L.push(U), U = J(), U === null && (U = K());
-                    L !== null ? (U = q(), U === null && (U = ce), U !== null ? (O = N, I = St(I, L, U), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _);
+              function w() {
+                var N, x, E, L, G;
+                if (N = P, x = W(), x === null && (x = ce), x !== null)
+                  if (E = P, k++, L = H(), k--, L === null ? E = ce : (P = E, E = _), E !== null) {
+                    for (L = [], G = J(), G === null && (G = $()); G !== null; )
+                      L.push(G), G = J(), G === null && (G = $());
+                    L !== null ? (G = q(), G === null && (G = ce), G !== null ? (M = N, x = St(x, L, G), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _);
                   } else
                     P = N, N = _;
                 else
                   P = N, N = _;
                 return N;
               }
-              function K() {
+              function $() {
                 var N;
                 return N = ue(), N === null && (N = te(), N === null && (N = pt())), N;
               }
-              function $() {
-                var N, I;
-                return N = P, R.charCodeAt(P) === 94 ? (I = Qe, P++) : (I = null, k === 0 && b(Je)), I !== null && (O = N, I = At()), I === null && (P = N), N = I, N;
+              function W() {
+                var N, x;
+                return N = P, R.charCodeAt(P) === 94 ? (x = Qe, P++) : (x = null, k === 0 && B(Je)), x !== null && (M = N, x = At()), x === null && (P = N), N = x, N;
               }
               function q() {
-                var N, I;
-                return N = P, R.charCodeAt(P) === 36 ? (I = Rt, P++) : (I = null, k === 0 && b(Bt)), I !== null && (O = N, I = bt()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.charCodeAt(P) === 36 ? (x = Rt, P++) : (x = null, k === 0 && B(bt)), x !== null && (M = N, x = Bt()), x === null && (P = N), N = x, N;
               }
               function J() {
-                var N, I, E;
-                return N = P, I = K(), I !== null ? (E = V(), E !== null ? (O = N, I = Dt(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E;
+                return N = P, x = $(), x !== null ? (E = H(), E !== null ? (M = N, x = Dt(x, E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
-              function V() {
-                var N, I, E;
-                return k++, N = P, I = z(), I !== null ? (E = ae(), E === null && (E = ce), E !== null ? (O = N, I = Et(I, E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (I = null, k === 0 && b(Ft)), N;
+              function H() {
+                var N, x, E;
+                return k++, N = P, x = z(), x !== null ? (E = ae(), E === null && (E = ce), E !== null ? (M = N, x = Et(x, E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (x = null, k === 0 && B(Ft)), N;
               }
               function z() {
                 var N;
-                return N = Y(), N === null && (N = Q(), N === null && (N = G(), N === null && (N = w(), N === null && (N = X(), N === null && (N = j()))))), N;
+                return N = Y(), N === null && (N = Q(), N === null && (N = V(), N === null && (N = U(), N === null && (N = X(), N === null && (N = j()))))), N;
               }
               function Y() {
-                var N, I, E, L, U, ne;
-                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 44 ? (L = Zt, P++) : (L = null, k === 0 && b(kt)), L !== null ? (U = ee(), U !== null ? (R.charCodeAt(P) === 125 ? (ne = je, P++) : (ne = null, k === 0 && b(ea)), ne !== null ? (O = N, I = vt(E, U), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E, L, G, ne;
+                return N = P, R.charCodeAt(P) === 123 ? (x = be, P++) : (x = null, k === 0 && B(Be)), x !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 44 ? (L = Zt, P++) : (L = null, k === 0 && B(kt)), L !== null ? (G = ee(), G !== null ? (R.charCodeAt(P) === 125 ? (ne = je, P++) : (ne = null, k === 0 && B(ea)), ne !== null ? (M = N, x = vt(E, G), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function Q() {
-                var N, I, E, L;
-                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.substr(P, 2) === aa ? (L = aa, P += 2) : (L = null, k === 0 && b(Lt)), L !== null ? (O = N, I = _t(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E, L;
+                return N = P, R.charCodeAt(P) === 123 ? (x = be, P++) : (x = null, k === 0 && B(Be)), x !== null ? (E = ee(), E !== null ? (R.substr(P, 2) === aa ? (L = aa, P += 2) : (L = null, k === 0 && B(Lt)), L !== null ? (M = N, x = _t(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
-              function G() {
-                var N, I, E, L;
-                return N = P, R.charCodeAt(P) === 123 ? (I = Be, P++) : (I = null, k === 0 && b(be)), I !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 125 ? (L = je, P++) : (L = null, k === 0 && b(ea)), L !== null ? (O = N, I = Ot(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+              function V() {
+                var N, x, E, L;
+                return N = P, R.charCodeAt(P) === 123 ? (x = be, P++) : (x = null, k === 0 && B(Be)), x !== null ? (E = ee(), E !== null ? (R.charCodeAt(P) === 125 ? (L = je, P++) : (L = null, k === 0 && B(ea)), L !== null ? (M = N, x = Ot(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
-              function w() {
-                var N, I;
-                return N = P, R.charCodeAt(P) === 43 ? (I = Mt, P++) : (I = null, k === 0 && b(wt)), I !== null && (O = N, I = Ut()), I === null && (P = N), N = I, N;
+              function U() {
+                var N, x;
+                return N = P, R.charCodeAt(P) === 43 ? (x = Mt, P++) : (x = null, k === 0 && B(wt)), x !== null && (M = N, x = Ut()), x === null && (P = N), N = x, N;
               }
               function X() {
-                var N, I;
-                return N = P, R.charCodeAt(P) === 42 ? (I = Wt, P++) : (I = null, k === 0 && b(Gt)), I !== null && (O = N, I = $t()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.charCodeAt(P) === 42 ? (x = Wt, P++) : (x = null, k === 0 && B(Gt)), x !== null && (M = N, x = $t()), x === null && (P = N), N = x, N;
               }
               function j() {
-                var N, I;
-                return N = P, R.charCodeAt(P) === 63 ? (I = ta, P++) : (I = null, k === 0 && b(ia)), I !== null && (O = N, I = Vt()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.charCodeAt(P) === 63 ? (x = ta, P++) : (x = null, k === 0 && B(ia)), x !== null && (M = N, x = Vt()), x === null && (P = N), N = x, N;
               }
               function ae() {
                 var N;
-                return R.charCodeAt(P) === 63 ? (N = ta, P++) : (N = null, k === 0 && b(ia)), N;
+                return R.charCodeAt(P) === 63 ? (N = ta, P++) : (N = null, k === 0 && B(ia)), N;
               }
               function ee() {
-                var N, I, E;
-                if (N = P, I = [], ra.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(oa)), E !== null)
+                var N, x, E;
+                if (N = P, x = [], ra.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && B(oa)), E !== null)
                   for (; E !== null; )
-                    I.push(E), ra.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(oa));
+                    x.push(E), ra.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && B(oa));
                 else
-                  I = _;
-                return I !== null && (O = N, I = Ht(I)), I === null && (P = N), N = I, N;
+                  x = _;
+                return x !== null && (M = N, x = Ht(x)), x === null && (P = N), N = x, N;
               }
               function ue() {
-                var N, I, E, L;
-                return N = P, R.charCodeAt(P) === 40 ? (I = Kt, P++) : (I = null, k === 0 && b(zt)), I !== null ? (E = oe(), E === null && (E = de(), E === null && (E = ge(), E === null && (E = ie()))), E !== null ? (R.charCodeAt(P) === 41 ? (L = qt, P++) : (L = null, k === 0 && b(Yt)), L !== null ? (O = N, I = Xt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E, L;
+                return N = P, R.charCodeAt(P) === 40 ? (x = Kt, P++) : (x = null, k === 0 && B(zt)), x !== null ? (E = oe(), E === null && (E = de(), E === null && (E = ge(), E === null && (E = ie()))), E !== null ? (R.charCodeAt(P) === 41 ? (L = qt, P++) : (L = null, k === 0 && B(Yt)), L !== null ? (M = N, x = Xt(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function ie() {
-                var N, I;
-                return N = P, I = M(), I !== null && (O = N, I = Qt(I)), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, x = O(), x !== null && (M = N, x = Qt(x)), x === null && (P = N), N = x, N;
               }
               function ge() {
-                var N, I, E;
-                return N = P, R.substr(P, 2) === na ? (I = na, P += 2) : (I = null, k === 0 && b(Jt)), I !== null ? (E = M(), E !== null ? (O = N, I = jt(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E;
+                return N = P, R.substr(P, 2) === na ? (x = na, P += 2) : (x = null, k === 0 && B(Jt)), x !== null ? (E = O(), E !== null ? (M = N, x = jt(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function oe() {
-                var N, I, E;
-                return N = P, R.substr(P, 2) === sa ? (I = sa, P += 2) : (I = null, k === 0 && b(ei)), I !== null ? (E = M(), E !== null ? (O = N, I = ai(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E;
+                return N = P, R.substr(P, 2) === sa ? (x = sa, P += 2) : (x = null, k === 0 && B(ei)), x !== null ? (E = O(), E !== null ? (M = N, x = ai(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function de() {
-                var N, I, E;
-                return N = P, R.substr(P, 2) === ua ? (I = ua, P += 2) : (I = null, k === 0 && b(ti)), I !== null ? (E = M(), E !== null ? (O = N, I = ii(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E;
+                return N = P, R.substr(P, 2) === ua ? (x = ua, P += 2) : (x = null, k === 0 && B(ti)), x !== null ? (E = O(), E !== null ? (M = N, x = ii(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function te() {
-                var N, I, E, L, U;
-                if (k++, N = P, R.charCodeAt(P) === 91 ? (I = oi, P++) : (I = null, k === 0 && b(ni)), I !== null)
-                  if (R.charCodeAt(P) === 94 ? (E = Qe, P++) : (E = null, k === 0 && b(Je)), E === null && (E = ce), E !== null) {
-                    for (L = [], U = Ee(), U === null && (U = Te()); U !== null; )
-                      L.push(U), U = Ee(), U === null && (U = Te());
-                    L !== null ? (R.charCodeAt(P) === 93 ? (U = si, P++) : (U = null, k === 0 && b(ui)), U !== null ? (O = N, I = di(E, L), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _);
+                var N, x, E, L, G;
+                if (k++, N = P, R.charCodeAt(P) === 91 ? (x = oi, P++) : (x = null, k === 0 && B(ni)), x !== null)
+                  if (R.charCodeAt(P) === 94 ? (E = Qe, P++) : (E = null, k === 0 && B(Je)), E === null && (E = ce), E !== null) {
+                    for (L = [], G = Ee(), G === null && (G = Te()); G !== null; )
+                      L.push(G), G = Ee(), G === null && (G = Te());
+                    L !== null ? (R.charCodeAt(P) === 93 ? (G = si, P++) : (G = null, k === 0 && B(ui)), G !== null ? (M = N, x = di(E, L), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _);
                   } else
                     P = N, N = _;
                 else
                   P = N, N = _;
-                return k--, N === null && (I = null, k === 0 && b(ri)), N;
+                return k--, N === null && (x = null, k === 0 && B(ri)), N;
               }
               function Ee() {
-                var N, I, E, L;
-                return k++, N = P, I = Te(), I !== null ? (R.charCodeAt(P) === 45 ? (E = ci, P++) : (E = null, k === 0 && b(mi)), E !== null ? (L = Te(), L !== null ? (O = N, I = pi(I, L), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (I = null, k === 0 && b(li)), N;
+                var N, x, E, L;
+                return k++, N = P, x = Te(), x !== null ? (R.charCodeAt(P) === 45 ? (E = ci, P++) : (E = null, k === 0 && B(mi)), E !== null ? (L = Te(), L !== null ? (M = N, x = pi(x, L), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _)) : (P = N, N = _), k--, N === null && (x = null, k === 0 && B(li)), N;
               }
               function Te() {
                 var N;
-                return k++, N = mt(), N === null && (N = ct()), k--, N === null && k === 0 && b(gi), N;
+                return k++, N = mt(), N === null && (N = ct()), k--, N === null && k === 0 && B(gi), N;
               }
               function ct() {
-                var N, I;
-                return N = P, Ti.test(R.charAt(P)) ? (I = R.charAt(P), P++) : (I = null, k === 0 && b(hi)), I !== null && (O = N, I = De(I)), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, Ti.test(R.charAt(P)) ? (x = R.charAt(P), P++) : (x = null, k === 0 && B(hi)), x !== null && (M = N, x = De(x)), x === null && (P = N), N = x, N;
               }
               function mt() {
                 var N;
@@ -6679,144 +6679,144 @@ var mock = { exports: {} };
                 return N = gt(), N === null && (N = ht(), N === null && (N = Tt())), N;
               }
               function gt() {
-                var N, I;
-                return N = P, R.charCodeAt(P) === 46 ? (I = fi, P++) : (I = null, k === 0 && b(Ni)), I !== null && (O = N, I = Ci()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.charCodeAt(P) === 46 ? (x = fi, P++) : (x = null, k === 0 && B(Ni)), x !== null && (M = N, x = Ci()), x === null && (P = N), N = x, N;
               }
               function Tt() {
-                var N, I;
-                return k++, N = P, xi.test(R.charAt(P)) ? (I = R.charAt(P), P++) : (I = null, k === 0 && b(Pi)), I !== null && (O = N, I = De(I)), I === null && (P = N), N = I, k--, N === null && (I = null, k === 0 && b(Ii)), N;
+                var N, x;
+                return k++, N = P, Ii.test(R.charAt(P)) ? (x = R.charAt(P), P++) : (x = null, k === 0 && B(Pi)), x !== null && (M = N, x = De(x)), x === null && (P = N), N = x, k--, N === null && (x = null, k === 0 && B(xi)), N;
               }
               function ht() {
                 var N;
-                return N = Nt(), N === null && (N = Ct(), N === null && (N = $e(), N === null && (N = Ze(), N === null && (N = ke(), N === null && (N = ve(), N === null && (N = Le(), N === null && (N = _e(), N === null && (N = Oe(), N === null && (N = Me(), N === null && (N = we(), N === null && (N = Ue(), N === null && (N = We(), N === null && (N = Ge(), N === null && (N = It(), N === null && (N = Ve(), N === null && (N = He(), N === null && (N = Ke(), N === null && (N = ze(), N === null && (N = qe()))))))))))))))))))), N;
+                return N = Nt(), N === null && (N = Ct(), N === null && (N = $e(), N === null && (N = Ze(), N === null && (N = ke(), N === null && (N = ve(), N === null && (N = Le(), N === null && (N = _e(), N === null && (N = Oe(), N === null && (N = Me(), N === null && (N = we(), N === null && (N = Ue(), N === null && (N = We(), N === null && (N = Ge(), N === null && (N = xt(), N === null && (N = Ve(), N === null && (N = He(), N === null && (N = Ke(), N === null && (N = ze(), N === null && (N = qe()))))))))))))))))))), N;
               }
               function ft() {
-                var N, I;
-                return N = P, R.substr(P, 2) === fe ? (I = fe, P += 2) : (I = null, k === 0 && b(da)), I !== null && (O = N, I = yi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === fe ? (x = fe, P += 2) : (x = null, k === 0 && B(da)), x !== null && (M = N, x = yi()), x === null && (P = N), N = x, N;
               }
               function Nt() {
-                var N, I;
-                return N = P, R.substr(P, 2) === fe ? (I = fe, P += 2) : (I = null, k === 0 && b(da)), I !== null && (O = N, I = Si()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === fe ? (x = fe, P += 2) : (x = null, k === 0 && B(da)), x !== null && (M = N, x = Si()), x === null && (P = N), N = x, N;
               }
               function Ct() {
-                var N, I;
-                return N = P, R.substr(P, 2) === la ? (I = la, P += 2) : (I = null, k === 0 && b(Ai)), I !== null && (O = N, I = Ri()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === la ? (x = la, P += 2) : (x = null, k === 0 && B(Ai)), x !== null && (M = N, x = Ri()), x === null && (P = N), N = x, N;
               }
               function Ze() {
-                var N, I;
-                return N = P, R.substr(P, 2) === ca ? (I = ca, P += 2) : (I = null, k === 0 && b(Bi)), I !== null && (O = N, I = bi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === ca ? (x = ca, P += 2) : (x = null, k === 0 && B(bi)), x !== null && (M = N, x = Bi()), x === null && (P = N), N = x, N;
               }
               function ke() {
-                var N, I;
-                return N = P, R.substr(P, 2) === ma ? (I = ma, P += 2) : (I = null, k === 0 && b(Di)), I !== null && (O = N, I = Fi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === ma ? (x = ma, P += 2) : (x = null, k === 0 && B(Di)), x !== null && (M = N, x = Fi()), x === null && (P = N), N = x, N;
               }
               function ve() {
-                var N, I;
-                return N = P, R.substr(P, 2) === pa ? (I = pa, P += 2) : (I = null, k === 0 && b(Ei)), I !== null && (O = N, I = Zi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === pa ? (x = pa, P += 2) : (x = null, k === 0 && B(Ei)), x !== null && (M = N, x = Zi()), x === null && (P = N), N = x, N;
               }
               function Le() {
-                var N, I;
-                return N = P, R.substr(P, 2) === ga ? (I = ga, P += 2) : (I = null, k === 0 && b(ki)), I !== null && (O = N, I = vi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === ga ? (x = ga, P += 2) : (x = null, k === 0 && B(ki)), x !== null && (M = N, x = vi()), x === null && (P = N), N = x, N;
               }
               function _e() {
-                var N, I;
-                return N = P, R.substr(P, 2) === Ta ? (I = Ta, P += 2) : (I = null, k === 0 && b(Li)), I !== null && (O = N, I = _i()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === Ta ? (x = Ta, P += 2) : (x = null, k === 0 && B(Li)), x !== null && (M = N, x = _i()), x === null && (P = N), N = x, N;
               }
               function Oe() {
-                var N, I;
-                return N = P, R.substr(P, 2) === ha ? (I = ha, P += 2) : (I = null, k === 0 && b(Oi)), I !== null && (O = N, I = Mi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === ha ? (x = ha, P += 2) : (x = null, k === 0 && B(Oi)), x !== null && (M = N, x = Mi()), x === null && (P = N), N = x, N;
               }
               function Me() {
-                var N, I;
-                return N = P, R.substr(P, 2) === fa ? (I = fa, P += 2) : (I = null, k === 0 && b(wi)), I !== null && (O = N, I = Ui()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === fa ? (x = fa, P += 2) : (x = null, k === 0 && B(wi)), x !== null && (M = N, x = Ui()), x === null && (P = N), N = x, N;
               }
               function we() {
-                var N, I;
-                return N = P, R.substr(P, 2) === Na ? (I = Na, P += 2) : (I = null, k === 0 && b(Wi)), I !== null && (O = N, I = Gi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === Na ? (x = Na, P += 2) : (x = null, k === 0 && B(Wi)), x !== null && (M = N, x = Gi()), x === null && (P = N), N = x, N;
               }
               function Ue() {
-                var N, I;
-                return N = P, R.substr(P, 2) === Ca ? (I = Ca, P += 2) : (I = null, k === 0 && b($i)), I !== null && (O = N, I = Vi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === Ca ? (x = Ca, P += 2) : (x = null, k === 0 && B($i)), x !== null && (M = N, x = Vi()), x === null && (P = N), N = x, N;
               }
               function We() {
-                var N, I;
-                return N = P, R.substr(P, 2) === Ia ? (I = Ia, P += 2) : (I = null, k === 0 && b(Hi)), I !== null && (O = N, I = Ki()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === xa ? (x = xa, P += 2) : (x = null, k === 0 && B(Hi)), x !== null && (M = N, x = Ki()), x === null && (P = N), N = x, N;
               }
               function Ge() {
-                var N, I;
-                return N = P, R.substr(P, 2) === xa ? (I = xa, P += 2) : (I = null, k === 0 && b(zi)), I !== null && (O = N, I = qi()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === Ia ? (x = Ia, P += 2) : (x = null, k === 0 && B(zi)), x !== null && (M = N, x = qi()), x === null && (P = N), N = x, N;
               }
               function $e() {
-                var N, I, E;
-                return N = P, R.substr(P, 2) === Pa ? (I = Pa, P += 2) : (I = null, k === 0 && b(Yi)), I !== null ? (R.length > P ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(ya)), E !== null ? (O = N, I = Xi(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E;
+                return N = P, R.substr(P, 2) === Pa ? (x = Pa, P += 2) : (x = null, k === 0 && B(Yi)), x !== null ? (R.length > P ? (E = R.charAt(P), P++) : (E = null, k === 0 && B(ya)), E !== null ? (M = N, x = Xi(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
-              function It() {
-                var N, I, E;
-                return N = P, R.charCodeAt(P) === 92 ? (I = Sa, P++) : (I = null, k === 0 && b(Aa)), I !== null ? (Qi.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(Ji)), E !== null ? (O = N, I = ji(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+              function xt() {
+                var N, x, E;
+                return N = P, R.charCodeAt(P) === 92 ? (x = Sa, P++) : (x = null, k === 0 && B(Aa)), x !== null ? (Qi.test(R.charAt(P)) ? (E = R.charAt(P), P++) : (E = null, k === 0 && B(Ji)), E !== null ? (M = N, x = ji(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
               function Ve() {
-                var N, I, E, L;
-                if (N = P, R.substr(P, 2) === Ne ? (I = Ne, P += 2) : (I = null, k === 0 && b(Ra)), I !== null) {
-                  if (E = [], Ba.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(ba)), L !== null)
+                var N, x, E, L;
+                if (N = P, R.substr(P, 2) === Ne ? (x = Ne, P += 2) : (x = null, k === 0 && B(Ra)), x !== null) {
+                  if (E = [], ba.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && B(Ba)), L !== null)
                     for (; L !== null; )
-                      E.push(L), Ba.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(ba));
+                      E.push(L), ba.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && B(Ba));
                   else
                     E = _;
-                  E !== null ? (O = N, I = er(E), I === null && (P = N), N = I) : (P = N, N = _);
+                  E !== null ? (M = N, x = er(E), x === null && (P = N), N = x) : (P = N, N = _);
                 } else
                   P = N, N = _;
                 return N;
               }
               function He() {
-                var N, I, E, L;
-                if (N = P, R.substr(P, 2) === Da ? (I = Da, P += 2) : (I = null, k === 0 && b(ar)), I !== null) {
-                  if (E = [], Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie)), L !== null)
+                var N, x, E, L;
+                if (N = P, R.substr(P, 2) === Da ? (x = Da, P += 2) : (x = null, k === 0 && B(ar)), x !== null) {
+                  if (E = [], Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && B(xe)), L !== null)
                     for (; L !== null; )
-                      E.push(L), Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie));
+                      E.push(L), Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && B(xe));
                   else
                     E = _;
-                  E !== null ? (O = N, I = tr(E), I === null && (P = N), N = I) : (P = N, N = _);
+                  E !== null ? (M = N, x = tr(E), x === null && (P = N), N = x) : (P = N, N = _);
                 } else
                   P = N, N = _;
                 return N;
               }
               function Ke() {
-                var N, I, E, L;
-                if (N = P, R.substr(P, 2) === Fa ? (I = Fa, P += 2) : (I = null, k === 0 && b(ir)), I !== null) {
-                  if (E = [], Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie)), L !== null)
+                var N, x, E, L;
+                if (N = P, R.substr(P, 2) === Fa ? (x = Fa, P += 2) : (x = null, k === 0 && B(ir)), x !== null) {
+                  if (E = [], Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && B(xe)), L !== null)
                     for (; L !== null; )
-                      E.push(L), Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && b(Ie));
+                      E.push(L), Ce.test(R.charAt(P)) ? (L = R.charAt(P), P++) : (L = null, k === 0 && B(xe));
                   else
                     E = _;
-                  E !== null ? (O = N, I = rr(E), I === null && (P = N), N = I) : (P = N, N = _);
+                  E !== null ? (M = N, x = rr(E), x === null && (P = N), N = x) : (P = N, N = _);
                 } else
                   P = N, N = _;
                 return N;
               }
               function ze() {
-                var N, I;
-                return N = P, R.substr(P, 2) === Ne ? (I = Ne, P += 2) : (I = null, k === 0 && b(Ra)), I !== null && (O = N, I = or()), I === null && (P = N), N = I, N;
+                var N, x;
+                return N = P, R.substr(P, 2) === Ne ? (x = Ne, P += 2) : (x = null, k === 0 && B(Ra)), x !== null && (M = N, x = or()), x === null && (P = N), N = x, N;
               }
               function qe() {
-                var N, I, E;
-                return N = P, R.charCodeAt(P) === 92 ? (I = Sa, P++) : (I = null, k === 0 && b(Aa)), I !== null ? (R.length > P ? (E = R.charAt(P), P++) : (E = null, k === 0 && b(ya)), E !== null ? (O = N, I = De(E), I === null && (P = N), N = I) : (P = N, N = _)) : (P = N, N = _), N;
+                var N, x, E;
+                return N = P, R.charCodeAt(P) === 92 ? (x = Sa, P++) : (x = null, k === 0 && B(Aa)), x !== null ? (R.length > P ? (E = R.charAt(P), P++) : (E = null, k === 0 && B(ya)), E !== null ? (M = N, x = De(E), x === null && (P = N), N = x) : (P = N, N = _)) : (P = N, N = _), N;
               }
               var Re, he = arguments.length > 1 ? arguments[1] : {}, Ye = {
-                regexp: M
-              }, Xe = M, _ = null, ce = "", xt = "|", Pt = '"|"', yt = function(N, I) {
-                return I ? new r(N, I[1]) : N;
-              }, St = function(N, I, E) {
-                return new o([N].concat(I).concat([E]));
+                regexp: O
+              }, Xe = O, _ = null, ce = "", It = "|", Pt = '"|"', yt = function(N, x) {
+                return x ? new r(N, x[1]) : N;
+              }, St = function(N, x, E) {
+                return new o([N].concat(x).concat([E]));
               }, Qe = "^", Je = '"^"', At = function() {
                 return new a("start");
-              }, Rt = "$", Bt = '"$"', bt = function() {
+              }, Rt = "$", bt = '"$"', Bt = function() {
                 return new a("end");
-              }, Dt = function(N, I) {
-                return new u(N, I);
-              }, Ft = "Quantifier", Et = function(N, I) {
-                return I && (N.greedy = !1), N;
-              }, Be = "{", be = '"{"', Zt = ",", kt = '","', je = "}", ea = '"}"', vt = function(N, I) {
-                return new d(N, I);
+              }, Dt = function(N, x) {
+                return new u(N, x);
+              }, Ft = "Quantifier", Et = function(N, x) {
+                return x && (N.greedy = !1), N;
+              }, be = "{", Be = '"{"', Zt = ",", kt = '","', je = "}", ea = '"}"', vt = function(N, x) {
+                return new d(N, x);
               }, aa = ",}", Lt = '",}"', _t = function(N) {
                 return new d(N, 1 / 0);
               }, Ot = function(N) {
@@ -6839,21 +6839,21 @@ var mock = { exports: {} };
                 return new n("positive-lookahead", N);
               }, ua = "?!", ti = '"?!"', ii = function(N) {
                 return new n("negative-lookahead", N);
-              }, ri = "CharacterSet", oi = "[", ni = '"["', si = "]", ui = '"]"', di = function(N, I) {
-                return new l(!!N, I);
-              }, li = "CharacterRange", ci = "-", mi = '"-"', pi = function(N, I) {
-                return new c(N, I);
+              }, ri = "CharacterSet", oi = "[", ni = '"["', si = "]", ui = '"]"', di = function(N, x) {
+                return new l(!!N, x);
+              }, li = "CharacterRange", ci = "-", mi = '"-"', pi = function(N, x) {
+                return new c(N, x);
               }, gi = "Character", Ti = /^[^\\\]]/, hi = "[^\\\\\\]]", De = function(N) {
                 return new m(N);
               }, fi = ".", Ni = '"."', Ci = function() {
                 return new a("any-character");
-              }, Ii = "Literal", xi = /^[^|\\\/.[()?+*$\^]/, Pi = "[^|\\\\\\/.[()?+*$\\^]", fe = "\\b", da = '"\\\\b"', yi = function() {
+              }, xi = "Literal", Ii = /^[^|\\\/.[()?+*$\^]/, Pi = "[^|\\\\\\/.[()?+*$\\^]", fe = "\\b", da = '"\\\\b"', yi = function() {
                 return new a("backspace");
               }, Si = function() {
                 return new a("word-boundary");
               }, la = "\\B", Ai = '"\\\\B"', Ri = function() {
                 return new a("non-word-boundary");
-              }, ca = "\\d", Bi = '"\\\\d"', bi = function() {
+              }, ca = "\\d", bi = '"\\\\d"', Bi = function() {
                 return new a("digit");
               }, ma = "\\D", Di = '"\\\\D"', Fi = function() {
                 return new a("non-digit");
@@ -6871,27 +6871,27 @@ var mock = { exports: {} };
                 return new a("tab");
               }, Ca = "\\v", $i = '"\\\\v"', Vi = function() {
                 return new a("vertical-tab");
-              }, Ia = "\\w", Hi = '"\\\\w"', Ki = function() {
+              }, xa = "\\w", Hi = '"\\\\w"', Ki = function() {
                 return new a("word");
-              }, xa = "\\W", zi = '"\\\\W"', qi = function() {
+              }, Ia = "\\W", zi = '"\\\\W"', qi = function() {
                 return new a("non-word");
               }, Pa = "\\c", Yi = '"\\\\c"', ya = "any character", Xi = function(N) {
                 return new h(N);
               }, Sa = "\\", Aa = '"\\\\"', Qi = /^[1-9]/, Ji = "[1-9]", ji = function(N) {
                 return new f(N);
-              }, Ne = "\\0", Ra = '"\\\\0"', Ba = /^[0-7]/, ba = "[0-7]", er = function(N) {
+              }, Ne = "\\0", Ra = '"\\\\0"', ba = /^[0-7]/, Ba = "[0-7]", er = function(N) {
                 return new T(N.join(""));
-              }, Da = "\\x", ar = '"\\\\x"', Ce = /^[0-9a-fA-F]/, Ie = "[0-9a-fA-F]", tr = function(N) {
+              }, Da = "\\x", ar = '"\\\\x"', Ce = /^[0-9a-fA-F]/, xe = "[0-9a-fA-F]", tr = function(N) {
                 return new g(N.join(""));
               }, Fa = "\\u", ir = '"\\\\u"', rr = function(N) {
                 return new p(N.join(""));
               }, or = function() {
                 return new a("null-character");
-              }, P = 0, O = 0, me = 0, Fe = {
+              }, P = 0, M = 0, me = 0, Fe = {
                 line: 1,
                 column: 1,
                 seenCR: !1
-              }, xe = 0, Pe = [], k = 0;
+              }, Ie = 0, Pe = [], k = 0;
               if ("startRule" in he) {
                 if (!(he.startRule in Ye))
                   throw new Error(`Can't start parsing from rule "` + he.startRule + '".');
@@ -6899,13 +6899,13 @@ var mock = { exports: {} };
               }
               if (a.offset = F, a.text = D, Re = Xe(), Re !== null && P === R.length)
                 return Re;
-              throw v(Pe), O = Math.max(P, xe), new A(Pe, O < R.length ? R.charAt(O) : null, O, Z(O).line, Z(O).column);
+              throw v(Pe), M = Math.max(P, Ie), new S(Pe, M < R.length ? R.charAt(M) : null, M, Z(M).line, Z(M).column);
             }
-            return S(A, Error), {
-              SyntaxError: A,
-              parse: B
+            return b(S, Error), {
+              SyntaxError: S,
+              parse: A
             };
-          }(), x = 1, y = {};
+          }(), I = 1, y = {};
           t.exports = C;
         },
         /* 22 */
@@ -7062,7 +7062,7 @@ var mock = { exports: {} };
             */
             quantified: function(T, f, h) {
               f = "";
-              for (var C = this.quantifier(T.quantifier), x = 0; x < C; x++)
+              for (var C = this.quantifier(T.quantifier), I = 0; I < C; I++)
                 f += this.gen(T.body, f, h);
               return f;
             },
@@ -7077,8 +7077,8 @@ var mock = { exports: {} };
                 }
             */
             quantifier: function(T, f, h) {
-              var C = Math.max(T.min, 0), x = isFinite(T.max) ? T.max : C + o.integer(3, 7);
-              return o.integer(C, x);
+              var C = Math.max(T.min, 0), I = isFinite(T.max) ? T.max : C + o.integer(3, 7);
+              return o.integer(C, I);
             },
             /*
                 
@@ -7090,14 +7090,14 @@ var mock = { exports: {} };
               return this.gen(C, f, h);
             },
             "invert-charset": function(T, f, h) {
-              for (var C = c, x = 0, y; x < T.body.length; x++)
-                switch (y = T.body[x], y.type) {
+              for (var C = c, I = 0, y; I < T.body.length; I++)
+                switch (y = T.body[I], y.type) {
                   case "literal":
                     C = C.replace(y.body, "");
                     break;
                   case "range":
-                    for (var S = this.gen(y.start, f, h).charCodeAt(), A = this.gen(y.end, f, h).charCodeAt(), B = S; B <= A; B++)
-                      C = C.replace(String.fromCharCode(B), "");
+                    for (var b = this.gen(y.start, f, h).charCodeAt(), S = this.gen(y.end, f, h).charCodeAt(), A = b; A <= S; A++)
+                      C = C.replace(String.fromCharCode(A), "");
                   default:
                     var R = p[y.text];
                     if (R)
@@ -7107,9 +7107,9 @@ var mock = { exports: {} };
               return o.pick(C.split(""));
             },
             range: function(T, f, h) {
-              var C = this.gen(T.start, f, h).charCodeAt(), x = this.gen(T.end, f, h).charCodeAt();
+              var C = this.gen(T.start, f, h).charCodeAt(), I = this.gen(T.end, f, h).charCodeAt();
               return String.fromCharCode(
-                o.integer(C, x)
+                o.integer(C, I)
               );
             },
             literal: function(T, f, h) {
@@ -7272,8 +7272,8 @@ var mock = { exports: {} };
                     this.diff(
                       function() {
                         var C;
-                        return o.each(l.properties, function(x) {
-                          x.name === f[h] && (C = x);
+                        return o.each(l.properties, function(I) {
+                          I.name === f[h] && (C = I);
                         }), C || l.properties[h];
                       }(),
                       c[f[h]],
@@ -7445,8 +7445,8 @@ var mock = { exports: {} };
             new window.Event("custom");
           } catch (g) {
             window.Event = function(T, f, h, C) {
-              var x = document.createEvent("CustomEvent");
-              return x.initCustomEvent(T, f, h, C), x;
+              var I = document.createEvent("CustomEvent");
+              return I.initCustomEvent(T, f, h, C), I;
             };
           }
           var o = {
@@ -7522,7 +7522,7 @@ var mock = { exports: {} };
             // https://xhr.spec.whatwg.org/#the-open()-method
             // Sets the request method, request URL, and synchronous flag.
             open: function(g, T, f, h, C) {
-              var x = this;
+              var I = this;
               r.extend(this.custom, {
                 method: g,
                 url: T,
@@ -7539,31 +7539,31 @@ var mock = { exports: {} };
                 if (typeof D == "string" && !~D.indexOf("-"))
                   return parseInt(D, 10);
                 if (typeof D == "string" && ~D.indexOf("-")) {
-                  var F = D.split("-"), Z = parseInt(F[0], 10), b = parseInt(F[1], 10);
-                  return Math.round(Math.random() * (b - Z)) + Z;
+                  var F = D.split("-"), Z = parseInt(F[0], 10), B = parseInt(F[1], 10);
+                  return Math.round(Math.random() * (B - Z)) + Z;
                 }
               }(l._settings.timeout);
               var y = m(this.custom.options);
-              function S(D) {
+              function b(D) {
                 for (var F = 0; F < u.length; F++)
                   try {
-                    x[u[F]] = A[u[F]];
+                    I[u[F]] = S[u[F]];
                   } catch (Z) {
                   }
-                x.dispatchEvent(new Event(
+                I.dispatchEvent(new Event(
                   D.type
                   /*, false, false, that*/
                 ));
               }
               if (!y) {
-                var A = c();
-                this.custom.xhr = A;
-                for (var B = 0; B < n.length; B++)
-                  A.addEventListener(n[B], S);
-                h ? A.open(g, T, f, h, C) : A.open(g, T, f);
+                var S = c();
+                this.custom.xhr = S;
+                for (var A = 0; A < n.length; A++)
+                  S.addEventListener(n[A], b);
+                h ? S.open(g, T, f, h, C) : S.open(g, T, f);
                 for (var R = 0; R < s.length; R++)
                   try {
-                    A[s[R]] = x[s[R]];
+                    S[s[R]] = I[s[R]];
                   } catch (D) {
                   }
                 return;
@@ -7674,7 +7674,7 @@ var mock = { exports: {} };
           });
           function c() {
             var g = function() {
-              var h = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/, C = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/, x = location.href, y = C.exec(x.toLowerCase()) || [];
+              var h = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/, C = /^([\w.+-]+:)(?:\/\/([^\/?#:]*)(?::(\d+)|)|)/, I = location.href, y = C.exec(I.toLowerCase()) || [];
               return h.test(y[1]);
             }();
             return window.ActiveXObject ? !g && T() || f() : T();
@@ -7697,11 +7697,11 @@ var mock = { exports: {} };
               if ((!f.rurl || h(f.rurl, g.url)) && (!f.rtype || h(f.rtype, g.type.toLowerCase())))
                 return f;
             }
-            function h(C, x) {
+            function h(C, I) {
               if (r.type(C) === "string")
-                return C === x;
+                return C === I;
               if (r.type(C) === "regexp")
-                return C.test(x);
+                return C.test(I);
             }
           }
           function p(g, T) {
@@ -86126,8 +86126,8 @@ function setTokenTextStyle(t, e, a, r, o, n, s, u) {
   }
   if (!s || !r.disableBox) {
     for (let h = 0; h < TEXT_PROPS_BOX.length; h++) {
-      const C = TEXT_PROPS_BOX[h], x = e.getShallow(C);
-      x != null && (t[C] = x);
+      const C = TEXT_PROPS_BOX[h], I = e.getShallow(C);
+      I != null && (t[C] = I);
     }
     const f = e.getShallow("borderType");
     f != null && (t.borderDash = f), (t.backgroundColor === "auto" || t.backgroundColor === "inherit") && d && (t.backgroundColor = d), (t.borderColor === "auto" || t.borderColor === "inherit") && d && (t.borderColor = d);
@@ -86475,8 +86475,8 @@ let BoundingRect$2 = class se {
     let p = !(n < d || l < o || u < c || m < s);
     if (a) {
       let g = 1 / 0, T = 0;
-      const f = Math.abs(n - d), h = Math.abs(l - o), C = Math.abs(u - c), x = Math.abs(m - s), y = Math.min(f, h), S = Math.min(C, x);
-      n < d || l < o ? y > T && (T = y, f < h ? Point$2.set(maxTv$1, -f, 0) : Point$2.set(maxTv$1, h, 0)) : y < g && (g = y, f < h ? Point$2.set(minTv$1, f, 0) : Point$2.set(minTv$1, -h, 0)), u < c || m < s ? S > T && (T = S, C < x ? Point$2.set(maxTv$1, 0, -C) : Point$2.set(maxTv$1, 0, x)) : y < g && (g = y, C < x ? Point$2.set(minTv$1, 0, C) : Point$2.set(minTv$1, 0, -x));
+      const f = Math.abs(n - d), h = Math.abs(l - o), C = Math.abs(u - c), I = Math.abs(m - s), y = Math.min(f, h), b = Math.min(C, I);
+      n < d || l < o ? y > T && (T = y, f < h ? Point$2.set(maxTv$1, -f, 0) : Point$2.set(maxTv$1, h, 0)) : y < g && (g = y, f < h ? Point$2.set(minTv$1, f, 0) : Point$2.set(minTv$1, -h, 0)), u < c || m < s ? b > T && (T = b, C < I ? Point$2.set(maxTv$1, 0, -C) : Point$2.set(maxTv$1, 0, I)) : y < g && (g = y, C < I ? Point$2.set(minTv$1, 0, C) : Point$2.set(minTv$1, 0, -I));
     }
     return a && Point$2.copy(a, p ? minTv$1 : maxTv$1), p;
   }
@@ -86583,9 +86583,9 @@ function mergeLayoutParam(t, e, a) {
     if (g >= h)
       return p;
     for (let C = 0; C < c.length; C++) {
-      const x = c[C];
-      if (!u(p, x) && u(t, x)) {
-        p[x] = t[x];
+      const I = c[C];
+      if (!u(p, I) && u(t, I)) {
+        p[I] = t[I];
         break;
       }
     }
@@ -86949,21 +86949,21 @@ function makeSeriesEncodeForAxisCoordSys(t, e, a) {
   each(
     t,
     function(f, h) {
-      const C = f.name, x = T(f);
+      const C = f.name, I = T(f);
       if (c == null) {
         const y = p.valueWayDim;
-        g(r[C], y, x), g(s, y, x), p.valueWayDim += x;
+        g(r[C], y, I), g(s, y, I), p.valueWayDim += I;
       } else if (c === h)
-        g(r[C], 0, x), g(n, 0, x);
+        g(r[C], 0, I), g(n, 0, I);
       else {
         const y = p.categoryWayDim;
-        g(r[C], y, x), g(s, y, x), p.categoryWayDim += x;
+        g(r[C], y, I), g(s, y, I), p.categoryWayDim += I;
       }
     }
   );
   function g(f, h, C) {
-    for (let x = 0; x < C; x++)
-      f.push(h + x);
+    for (let I = 0; I < C; I++)
+      f.push(h + I);
   }
   function T(f) {
     const h = f.dimsDef;
@@ -87360,8 +87360,8 @@ function createExternalSource(t, e) {
         displayName: T.displayName
       };
       if (u.push(C), h != null) {
-        let x = "";
-        hasOwn$1(d, h) && throwError(x), d[h] = C;
+        let I = "";
+        hasOwn$1(d, h) && throwError(I), d[h] = C;
       }
     });
   else
@@ -87742,15 +87742,15 @@ class DataStore {
       if (n === 1) {
         const h = g[o[0]];
         for (let C = 0; C < r; C++) {
-          const x = h[C];
-          (x >= m && x <= p || isNaN(x)) && (d[l++] = f), f++;
+          const I = h[C];
+          (I >= m && I <= p || isNaN(I)) && (d[l++] = f), f++;
         }
         T = !0;
       } else if (n === 2) {
-        const h = g[o[0]], C = g[o[1]], x = e[o[1]][0], y = e[o[1]][1];
-        for (let S = 0; S < r; S++) {
-          const A = h[S], B = C[S];
-          (A >= m && A <= p || isNaN(A)) && (B >= x && B <= y || isNaN(B)) && (d[l++] = f), f++;
+        const h = g[o[0]], C = g[o[1]], I = e[o[1]][0], y = e[o[1]][1];
+        for (let b = 0; b < r; b++) {
+          const S = h[b], A = C[b];
+          (S >= m && S <= p || isNaN(S)) && (A >= I && A <= y || isNaN(A)) && (d[l++] = f), f++;
         }
         T = !0;
       }
@@ -87765,9 +87765,9 @@ class DataStore {
         for (let f = 0; f < s; f++) {
           let h = !0;
           const C = a.getRawIndex(f);
-          for (let x = 0; x < n; x++) {
-            const y = o[x], S = g[y][C];
-            (S < e[y][0] || S > e[y][1]) && (h = !1);
+          for (let I = 0; I < n; I++) {
+            const y = o[I], b = g[y][C];
+            (b < e[y][0] || b > e[y][1]) && (h = !1);
           }
           h && (d[l++] = a.getRawIndex(f));
         }
@@ -88973,8 +88973,8 @@ function millisecondsSetterName(t) {
   return t ? "setUTCMilliseconds" : "setMilliseconds";
 }
 function format(t, e, a, r) {
-  const o = parseDate(t), n = o[fullYearGetterName(a)](), s = o[monthGetterName(a)]() + 1, u = Math.floor((s - 1) / 3) + 1, d = o[dateGetterName(a)](), l = o["get" + (a ? "UTC" : "") + "Day"](), c = o[hoursGetterName(a)](), m = (c - 1) % 12 + 1, p = o[minutesGetterName(a)](), g = o[secondsGetterName(a)](), T = o[millisecondsGetterName(a)](), h = (r instanceof Model ? r : getLocaleModel(r || SYSTEM_LANG) || getDefaultLocaleModel()).getModel("time"), C = h.get("month"), x = h.get("monthAbbr"), y = h.get("dayOfWeek"), S = h.get("dayOfWeekAbbr");
-  return (e || "").replace(/{yyyy}/g, n + "").replace(/{yy}/g, pad(n % 100 + "", 2)).replace(/{Q}/g, u + "").replace(/{MMMM}/g, C[s - 1]).replace(/{MMM}/g, x[s - 1]).replace(/{MM}/g, pad(s, 2)).replace(/{M}/g, s + "").replace(/{dd}/g, pad(d, 2)).replace(/{d}/g, d + "").replace(/{eeee}/g, y[l]).replace(/{ee}/g, S[l]).replace(/{e}/g, l + "").replace(/{HH}/g, pad(c, 2)).replace(/{H}/g, c + "").replace(/{hh}/g, pad(m + "", 2)).replace(/{h}/g, m + "").replace(/{mm}/g, pad(p, 2)).replace(/{m}/g, p + "").replace(/{ss}/g, pad(g, 2)).replace(/{s}/g, g + "").replace(/{SSS}/g, pad(T, 3)).replace(/{S}/g, T + "");
+  const o = parseDate(t), n = o[fullYearGetterName(a)](), s = o[monthGetterName(a)]() + 1, u = Math.floor((s - 1) / 3) + 1, d = o[dateGetterName(a)](), l = o["get" + (a ? "UTC" : "") + "Day"](), c = o[hoursGetterName(a)](), m = (c - 1) % 12 + 1, p = o[minutesGetterName(a)](), g = o[secondsGetterName(a)](), T = o[millisecondsGetterName(a)](), h = (r instanceof Model ? r : getLocaleModel(r || SYSTEM_LANG) || getDefaultLocaleModel()).getModel("time"), C = h.get("month"), I = h.get("monthAbbr"), y = h.get("dayOfWeek"), b = h.get("dayOfWeekAbbr");
+  return (e || "").replace(/{yyyy}/g, n + "").replace(/{yy}/g, pad(n % 100 + "", 2)).replace(/{Q}/g, u + "").replace(/{MMMM}/g, C[s - 1]).replace(/{MMM}/g, I[s - 1]).replace(/{MM}/g, pad(s, 2)).replace(/{M}/g, s + "").replace(/{dd}/g, pad(d, 2)).replace(/{d}/g, d + "").replace(/{eeee}/g, y[l]).replace(/{ee}/g, b[l]).replace(/{e}/g, l + "").replace(/{HH}/g, pad(c, 2)).replace(/{H}/g, c + "").replace(/{hh}/g, pad(m + "", 2)).replace(/{h}/g, m + "").replace(/{mm}/g, pad(p, 2)).replace(/{m}/g, p + "").replace(/{ss}/g, pad(g, 2)).replace(/{s}/g, g + "").replace(/{SSS}/g, pad(T, 3)).replace(/{S}/g, T + "");
 }
 const bisect = function(t, e, a, r) {
   for (; a < r; ) {
@@ -89130,22 +89130,22 @@ function getFirstTimestampOfUnit(t, e, a) {
 function getIntervalTicks(t, e, a, r) {
   const n = timeUnits;
   let s = 0;
-  function u(C, x, y, S, A, B, R) {
-    const D = new Date(x);
-    let F = x, Z = D[S]();
+  function u(C, I, y, b, S, A, R) {
+    const D = new Date(I);
+    let F = I, Z = D[b]();
     for (; F < y && F <= r[1]; )
       R.push({
         value: F
-      }), Z += C, D[A](Z), F = D.getTime();
+      }), Z += C, D[S](Z), F = D.getTime();
     R.push({
       value: F,
       notAdd: !0
     });
   }
-  function d(C, x, y) {
-    const S = [], A = !x.length;
+  function d(C, I, y) {
+    const b = [], S = !I.length;
     if (!isUnitValueSame(getPrimaryTimeUnit(C), r[0], r[1], a)) {
-      A && (x = [
+      S && (I = [
         {
           // TODO Optimize. Not include so may ticks.
           value: getFirstTimestampOfUnit(new Date(r[0]), C, a)
@@ -89154,38 +89154,38 @@ function getIntervalTicks(t, e, a, r) {
           value: r[1]
         }
       ]);
-      for (let B = 0; B < x.length - 1; B++) {
-        const R = x[B].value, D = x[B + 1].value;
+      for (let A = 0; A < I.length - 1; A++) {
+        const R = I[A].value, D = I[A + 1].value;
         if (R === D)
           continue;
-        let F, Z, b, v = !1;
+        let F, Z, B, v = !1;
         switch (C) {
           case "year":
-            F = Math.max(1, Math.round(e / ONE_DAY / 365)), Z = fullYearGetterName(a), b = fullYearSetterName(a);
+            F = Math.max(1, Math.round(e / ONE_DAY / 365)), Z = fullYearGetterName(a), B = fullYearSetterName(a);
             break;
           case "half-year":
           case "quarter":
           case "month":
-            F = getMonthInterval(e), Z = monthGetterName(a), b = monthSetterName(a);
+            F = getMonthInterval(e), Z = monthGetterName(a), B = monthSetterName(a);
             break;
           case "week":
           case "half-week":
           case "day":
-            F = getDateInterval(e), Z = dateGetterName(a), b = dateSetterName(a), v = !0;
+            F = getDateInterval(e), Z = dateGetterName(a), B = dateSetterName(a), v = !0;
             break;
           case "half-day":
           case "quarter-day":
           case "hour":
-            F = getHourInterval(e), Z = hoursGetterName(a), b = hoursSetterName(a);
+            F = getHourInterval(e), Z = hoursGetterName(a), B = hoursSetterName(a);
             break;
           case "minute":
-            F = getMinutesAndSecondsInterval(e, !0), Z = minutesGetterName(a), b = minutesSetterName(a);
+            F = getMinutesAndSecondsInterval(e, !0), Z = minutesGetterName(a), B = minutesSetterName(a);
             break;
           case "second":
-            F = getMinutesAndSecondsInterval(e, !1), Z = secondsGetterName(a), b = secondsSetterName(a);
+            F = getMinutesAndSecondsInterval(e, !1), Z = secondsGetterName(a), B = secondsSetterName(a);
             break;
           case "millisecond":
-            F = getMillisecondsInterval(e), Z = millisecondsGetterName(a), b = millisecondsSetterName(a);
+            F = getMillisecondsInterval(e), Z = millisecondsGetterName(a), B = millisecondsSetterName(a);
             break;
         }
         u(
@@ -89193,22 +89193,22 @@ function getIntervalTicks(t, e, a, r) {
           R,
           D,
           Z,
-          b,
+          B,
           v,
-          S
-        ), C === "year" && y.length > 1 && B === 0 && y.unshift({
+          b
+        ), C === "year" && y.length > 1 && A === 0 && y.unshift({
           value: y[0].value - F
         });
       }
-      for (let B = 0; B < S.length; B++)
-        y.push(S[B]);
-      return S;
+      for (let A = 0; A < b.length; A++)
+        y.push(b[A]);
+      return b;
     }
   }
   const l = [];
   let c = [], m = 0, p = 0;
   for (let C = 0; C < n.length && s++ < 1e4; ++C) {
-    const x = getPrimaryTimeUnit(n[C]);
+    const I = getPrimaryTimeUnit(n[C]);
     if (!isPrimaryTimeUnit(n[C]))
       continue;
     d(
@@ -89217,16 +89217,16 @@ function getIntervalTicks(t, e, a, r) {
       c
     );
     const y = n[C + 1] ? getPrimaryTimeUnit(n[C + 1]) : null;
-    if (x !== y) {
+    if (I !== y) {
       if (c.length) {
-        p = m, c.sort((B, R) => B.value - R.value);
-        const S = [];
-        for (let B = 0; B < c.length; ++B) {
-          const R = c[B].value;
-          (B === 0 || c[B - 1].value !== R) && (S.push(c[B]), R >= r[0] && R <= r[1] && m++);
+        p = m, c.sort((A, R) => A.value - R.value);
+        const b = [];
+        for (let A = 0; A < c.length; ++A) {
+          const R = c[A].value;
+          (A === 0 || c[A - 1].value !== R) && (b.push(c[A]), R >= r[0] && R <= r[1] && m++);
         }
-        const A = (r[1] - r[0]) / e;
-        if (m > A * 1.5 && p > A / 1.5 || (l.push(S), m > A || t === n[C]))
+        const S = (r[1] - r[0]) / e;
+        if (m > S * 1.5 && p > S / 1.5 || (l.push(b), m > S || t === n[C]))
           break;
       }
       c = [];
@@ -89235,19 +89235,19 @@ function getIntervalTicks(t, e, a, r) {
   const g = filter(
     map(l, (C) => filter(
       C,
-      (x) => x.value >= r[0] && x.value <= r[1] && !x.notAdd
+      (I) => I.value >= r[0] && I.value <= r[1] && !I.notAdd
     )),
     (C) => C.length > 0
   ), T = [], f = g.length - 1;
   for (let C = 0; C < g.length; ++C) {
-    const x = g[C];
-    for (let y = 0; y < x.length; ++y)
+    const I = g[C];
+    for (let y = 0; y < I.length; ++y)
       T.push({
-        value: x[y].value,
+        value: I[y].value,
         level: f - C
       });
   }
-  T.sort((C, x) => C.value - x.value);
+  T.sort((C, I) => C.value - I.value);
   const h = [];
   for (let C = 0; C < T.length; ++C)
     (C === 0 || T[C].value !== T[C - 1].value) && h.push(T[C]);
@@ -89319,8 +89319,8 @@ function enableDataStack(t, e, a) {
     m = "__\0pistackresult_" + t.id, p = "__\0pistackedover_" + t.id, l && (l.createInvertedIndices = !0);
     const g = c.coordDim, T = c.type;
     let f = 0;
-    each(n, function(x) {
-      x.coordDim === g && f++;
+    each(n, function(I) {
+      I.coordDim === g && f++;
     });
     const h = {
       name: m,
@@ -89799,24 +89799,24 @@ function calculateCategoryInterval(t) {
   const l = t.dataToCoord(d + 1) - t.dataToCoord(d), c = Math.abs(l * Math.cos(r)), m = Math.abs(l * Math.sin(r));
   let p = 0, g = 0;
   for (; d <= n[1]; d += u) {
-    let A = 0, B = 0;
+    let S = 0, A = 0;
     const R = getBoundingRect$1(
       a({ value: d }),
       e.font,
       "center",
       "top"
     );
-    A = R.width * 1.3, B = R.height * 1.3, p = Math.max(p, A, 7), g = Math.max(g, B, 7);
+    S = R.width * 1.3, A = R.height * 1.3, p = Math.max(p, S, 7), g = Math.max(g, A, 7);
   }
   let T = p / c, f = g / m;
   isNaN(T) && (T = 1 / 0), isNaN(f) && (f = 1 / 0);
   let h = Math.max(0, Math.floor(Math.min(T, f)));
-  const C = inner$1(t.model), x = t.getExtent(), y = C.lastAutoInterval, S = C.lastTickCount;
-  return y != null && S != null && Math.abs(y - h) <= 1 && Math.abs(S - s) <= 1 && // Always choose the bigger one, otherwise the critical
+  const C = inner$1(t.model), I = t.getExtent(), y = C.lastAutoInterval, b = C.lastTickCount;
+  return y != null && b != null && Math.abs(y - h) <= 1 && Math.abs(b - s) <= 1 && // Always choose the bigger one, otherwise the critical
   // point is not the same when zooming in or zooming out.
   y > h && // If the axis change is caused by chart resize, the cache should not
   // be used. Otherwise some hidden labels might not be shown again.
-  C.axisExtent0 === x[0] && C.axisExtent1 === x[1] ? h = y : (C.lastTickCount = s, C.lastAutoInterval = h, C.axisExtent0 = x[0], C.axisExtent1 = x[1]), h;
+  C.axisExtent0 === I[0] && C.axisExtent1 === I[1] ? h = y : (C.lastTickCount = s, C.lastAutoInterval = h, C.axisExtent0 = I[0], C.axisExtent1 = I[1]), h;
 }
 function fetchAutoCategoryIntervalCalculationParams(t) {
   const e = t.getLabelModel();
@@ -90316,14 +90316,14 @@ class GlobalModel extends Model {
         ComponentModel
       ), r[c] = null, o.set(c, null), n.set(c, 0);
       const f = [], h = [];
-      let C = 0, x;
+      let C = 0, I;
       each$1(
         T,
-        function(y, S) {
-          let A = y.existing;
-          const B = y.newOption;
-          if (!B)
-            A && A.mergeOption({}, this);
+        function(y, b) {
+          let S = y.existing;
+          const A = y.newOption;
+          if (!A)
+            S && S.mergeOption({}, this);
           else {
             const R = c === "series", D = ComponentModel.getClass(
               c,
@@ -90334,28 +90334,28 @@ class GlobalModel extends Model {
             if (!D)
               return;
             if (c === "tooltip") {
-              if (x)
+              if (I)
                 return;
-              x = !0;
+              I = !0;
             }
-            if (A && A.constructor === D)
-              A.name = y.keyInfo.name, A.mergeOption(B, this), A.optionUpdated(B, !1);
+            if (S && S.constructor === D)
+              S.name = y.keyInfo.name, S.mergeOption(A, this), S.optionUpdated(A, !1);
             else {
               const F = extend$1(
                 {
-                  componentIndex: S
+                  componentIndex: b
                 },
                 y.keyInfo
               );
-              A = new D(
-                B,
+              S = new D(
+                A,
                 this,
                 this,
                 F
-              ), extend$1(A, F), y.brandNew && (A.__requireNewView = !0), A.init(B, this, this), A.optionUpdated(null, !0);
+              ), extend$1(S, F), y.brandNew && (S.__requireNewView = !0), S.init(A, this, this), S.optionUpdated(null, !0);
             }
           }
-          A ? (f.push(A.option), h.push(A), C++) : (f.push(void 0), h.push(void 0));
+          S ? (f.push(S.option), h.push(S), C++) : (f.push(void 0), h.push(void 0));
         },
         this
       ), r[c] = f, o.set(c, h), n.set(c, C), c === "series" && reCreateSeriesIndices(this);
@@ -90979,12 +90979,12 @@ function cubicRootAt$1(t, e, a, r, o, n) {
       var h = m / c, T = -u / s + h, C = -h / 2;
       T >= 0 && T <= 1 && (n[g++] = T), C >= 0 && C <= 1 && (n[g++] = C);
     } else if (f > 0) {
-      var x = mathSqrt$3(f), y = c * u + 1.5 * s * (-m + x), S = c * u + 1.5 * s * (-m - x);
-      y < 0 ? y = -mathPow$1(-y, ONE_THIRD$1) : y = mathPow$1(y, ONE_THIRD$1), S < 0 ? S = -mathPow$1(-S, ONE_THIRD$1) : S = mathPow$1(S, ONE_THIRD$1);
-      var T = (-u - (y + S)) / (3 * s);
+      var I = mathSqrt$3(f), y = c * u + 1.5 * s * (-m + I), b = c * u + 1.5 * s * (-m - I);
+      y < 0 ? y = -mathPow$1(-y, ONE_THIRD$1) : y = mathPow$1(y, ONE_THIRD$1), b < 0 ? b = -mathPow$1(-b, ONE_THIRD$1) : b = mathPow$1(b, ONE_THIRD$1);
+      var T = (-u - (y + b)) / (3 * s);
       T >= 0 && T <= 1 && (n[g++] = T);
     } else {
-      var A = (2 * c * u - 3 * s * m) / (2 * mathSqrt$3(c * c * c)), B = Math.acos(A) / 3, R = mathSqrt$3(c), D = Math.cos(B), T = (-u - 2 * R * D) / (3 * s), C = (-u + R * (D + THREE_SQRT$1 * Math.sin(B))) / (3 * s), F = (-u + R * (D - THREE_SQRT$1 * Math.sin(B))) / (3 * s);
+      var S = (2 * c * u - 3 * s * m) / (2 * mathSqrt$3(c * c * c)), A = Math.acos(S) / 3, R = mathSqrt$3(c), D = Math.cos(A), T = (-u - 2 * R * D) / (3 * s), C = (-u + R * (D + THREE_SQRT$1 * Math.sin(A))) / (3 * s), F = (-u + R * (D - THREE_SQRT$1 * Math.sin(A))) / (3 * s);
       T >= 0 && T <= 1 && (n[g++] = T), C >= 0 && C <= 1 && (n[g++] = C), F >= 0 && F <= 1 && (n[g++] = F);
     }
   }
@@ -91015,8 +91015,8 @@ function cubicSubdivide$1(t, e, a, r, o, n) {
 function cubicProjectPoint$1(t, e, a, r, o, n, s, u, d, l, c) {
   var m, p = 5e-3, g = 1 / 0, T, f, h, C;
   _v0$1[0] = d, _v0$1[1] = l;
-  for (var x = 0; x < 1; x += 0.05)
-    _v1$1[0] = cubicAt$1(t, a, o, s, x), _v1$1[1] = cubicAt$1(e, r, n, u, x), h = distSquare$1(_v0$1, _v1$1), h < g && (m = x, g = h);
+  for (var I = 0; I < 1; I += 0.05)
+    _v1$1[0] = cubicAt$1(t, a, o, s, I), _v1$1[1] = cubicAt$1(e, r, n, u, I), h = distSquare$1(_v0$1, _v1$1), h < g && (m = I, g = h);
   g = 1 / 0;
   for (var y = 0; y < 32 && !(p < EPSILON_NUMERIC$1); y++)
     T = m - p, f = m + p, _v1$1[0] = cubicAt$1(t, a, o, s, T), _v1$1[1] = cubicAt$1(e, r, n, u, T), h = distSquare$1(_v1$1, _v0$1), T >= 0 && h < g ? (m = T, g = h) : (_v2$1[0] = cubicAt$1(t, a, o, s, f), _v2$1[1] = cubicAt$1(e, r, n, u, f), C = distSquare$1(_v2$1, _v0$1), f <= 1 && C < g ? (m = f, g = C) : p *= 0.5);
@@ -91024,8 +91024,8 @@ function cubicProjectPoint$1(t, e, a, r, o, n, s, u, d, l, c) {
 }
 function cubicLength$1(t, e, a, r, o, n, s, u, d) {
   for (var l = t, c = e, m = 0, p = 1 / d, g = 1; g <= d; g++) {
-    var T = g * p, f = cubicAt$1(t, a, o, s, T), h = cubicAt$1(e, r, n, u, T), C = f - l, x = h - c;
-    m += Math.sqrt(C * C + x * x), l = f, c = h;
+    var T = g * p, f = cubicAt$1(t, a, o, s, T), h = cubicAt$1(e, r, n, u, T), C = f - l, I = h - c;
+    m += Math.sqrt(C * C + I * I), l = f, c = h;
   }
   return m;
 }
@@ -91630,31 +91630,31 @@ var tmpRgba$1 = [0, 0, 0, 0], Track$1 = function() {
         this._lastFr = c, this._lastFrP = a;
         var h = T.percent - g.percent, C = h === 0 ? 1 : p((a - g.percent) / h, 1);
         T.easingFunc && (C = T.easingFunc(C));
-        var x = r ? this._additiveValue : l ? tmpRgba$1 : e[d];
-        if ((isArrayValueType$1(n) || l) && !x && (x = this._additiveValue = []), this.discrete)
+        var I = r ? this._additiveValue : l ? tmpRgba$1 : e[d];
+        if ((isArrayValueType$1(n) || l) && !I && (I = this._additiveValue = []), this.discrete)
           e[d] = C < 1 ? g.rawValue : T.rawValue;
         else if (isArrayValueType$1(n))
-          n === VALUE_TYPE_1D_ARRAY$1 ? interpolate1DArray$1(x, g[o], T[o], C) : interpolate2DArray$1(x, g[o], T[o], C);
+          n === VALUE_TYPE_1D_ARRAY$1 ? interpolate1DArray$1(I, g[o], T[o], C) : interpolate2DArray$1(I, g[o], T[o], C);
         else if (isGradientValueType$1(n)) {
-          var y = g[o], S = T[o], A = n === VALUE_TYPE_LINEAR_GRADIENT$1;
+          var y = g[o], b = T[o], S = n === VALUE_TYPE_LINEAR_GRADIENT$1;
           e[d] = {
-            type: A ? "linear" : "radial",
-            x: interpolateNumber$1(y.x, S.x, C),
-            y: interpolateNumber$1(y.y, S.y, C),
+            type: S ? "linear" : "radial",
+            x: interpolateNumber$1(y.x, b.x, C),
+            y: interpolateNumber$1(y.y, b.y, C),
             colorStops: map(y.colorStops, function(R, D) {
-              var F = S.colorStops[D];
+              var F = b.colorStops[D];
               return {
                 offset: interpolateNumber$1(R.offset, F.offset, C),
                 color: rgba2String$1(interpolate1DArray$1([], R.color, F.color, C))
               };
             }),
-            global: S.global
-          }, A ? (e[d].x2 = interpolateNumber$1(y.x2, S.x2, C), e[d].y2 = interpolateNumber$1(y.y2, S.y2, C)) : e[d].r = interpolateNumber$1(y.r, S.r, C);
+            global: b.global
+          }, S ? (e[d].x2 = interpolateNumber$1(y.x2, b.x2, C), e[d].y2 = interpolateNumber$1(y.y2, b.y2, C)) : e[d].r = interpolateNumber$1(y.r, b.r, C);
         } else if (l)
-          interpolate1DArray$1(x, g[o], T[o], C), r || (e[d] = rgba2String$1(x));
+          interpolate1DArray$1(I, g[o], T[o], C), r || (e[d] = rgba2String$1(I));
         else {
-          var B = interpolateNumber$1(g[o], T[o], C);
-          r ? this._additiveValue = B : e[d] = B;
+          var A = interpolateNumber$1(g[o], T[o], C);
+          r ? this._additiveValue = A : e[d] = A;
         }
         r && this._addToTarget(e);
       }
@@ -91923,8 +91923,8 @@ var mathMin$4 = Math.min, mathMax$4 = Math.max, lt = new Point$1(), rb = new Poi
     e instanceof t || (e = t.create(e));
     var r = this, o = r.x, n = r.x + r.width, s = r.y, u = r.y + r.height, d = e.x, l = e.x + e.width, c = e.y, m = e.y + e.height, p = !(n < d || l < o || u < c || m < s);
     if (a) {
-      var g = 1 / 0, T = 0, f = Math.abs(n - d), h = Math.abs(l - o), C = Math.abs(u - c), x = Math.abs(m - s), y = Math.min(f, h), S = Math.min(C, x);
-      n < d || l < o ? y > T && (T = y, f < h ? Point$1.set(maxTv, -f, 0) : Point$1.set(maxTv, h, 0)) : y < g && (g = y, f < h ? Point$1.set(minTv, f, 0) : Point$1.set(minTv, -h, 0)), u < c || m < s ? S > T && (T = S, C < x ? Point$1.set(maxTv, 0, -C) : Point$1.set(maxTv, 0, x)) : y < g && (g = y, C < x ? Point$1.set(minTv, 0, C) : Point$1.set(minTv, 0, -x));
+      var g = 1 / 0, T = 0, f = Math.abs(n - d), h = Math.abs(l - o), C = Math.abs(u - c), I = Math.abs(m - s), y = Math.min(f, h), b = Math.min(C, I);
+      n < d || l < o ? y > T && (T = y, f < h ? Point$1.set(maxTv, -f, 0) : Point$1.set(maxTv, h, 0)) : y < g && (g = y, f < h ? Point$1.set(minTv, f, 0) : Point$1.set(minTv, -h, 0)), u < c || m < s ? b > T && (T = b, C < I ? Point$1.set(maxTv, 0, -C) : Point$1.set(maxTv, 0, I)) : y < g && (g = y, C < I ? Point$1.set(minTv, 0, C) : Point$1.set(minTv, 0, -I));
     }
     return a && Point$1.copy(a, p ? minTv : maxTv), p;
   }, t.prototype.contain = function(e, a) {
@@ -92187,8 +92187,8 @@ var devicePixelRatio$1 = dpr$1, DARK_MODE_THRESHOLD$1 = 0.4, DARK_LABEL_COLOR$1 
       r.rotation != null && (n.rotation = r.rotation);
       var T = r.offset;
       T && (n.x += T[0], n.y += T[1], l || (n.originX = -T[0], n.originY = -T[1]));
-      var f = r.inside == null ? typeof r.position == "string" && r.position.indexOf("inside") >= 0 : r.inside, h = this._innerTextDefaultStyle || (this._innerTextDefaultStyle = {}), C = void 0, x = void 0, y = void 0;
-      f && this.canBeInsideText() ? (C = r.insideFill, x = r.insideStroke, (C == null || C === "auto") && (C = this.getInsideTextFill()), (x == null || x === "auto") && (x = this.getInsideTextStroke(C), y = !0)) : (C = r.outsideFill, x = r.outsideStroke, (C == null || C === "auto") && (C = this.getOutsideFill()), (x == null || x === "auto") && (x = this.getOutsideStroke(C), y = !0)), C = C || "#000", (C !== h.fill || x !== h.stroke || y !== h.autoStroke || s !== h.align || u !== h.verticalAlign) && (d = !0, h.fill = C, h.stroke = x, h.autoStroke = y, h.align = s, h.verticalAlign = u, a.setDefaultTextStyle(h)), a.__dirty |= REDRAW_BIT$1, d && a.dirtyStyle(!0);
+      var f = r.inside == null ? typeof r.position == "string" && r.position.indexOf("inside") >= 0 : r.inside, h = this._innerTextDefaultStyle || (this._innerTextDefaultStyle = {}), C = void 0, I = void 0, y = void 0;
+      f && this.canBeInsideText() ? (C = r.insideFill, I = r.insideStroke, (C == null || C === "auto") && (C = this.getInsideTextFill()), (I == null || I === "auto") && (I = this.getInsideTextStroke(C), y = !0)) : (C = r.outsideFill, I = r.outsideStroke, (C == null || C === "auto") && (C = this.getOutsideFill()), (I == null || I === "auto") && (I = this.getOutsideStroke(C), y = !0)), C = C || "#000", (C !== h.fill || I !== h.stroke || y !== h.autoStroke || s !== h.align || u !== h.verticalAlign) && (d = !0, h.fill = C, h.stroke = I, h.autoStroke = y, h.align = s, h.verticalAlign = u, a.setDefaultTextStyle(h)), a.__dirty |= REDRAW_BIT$1, d && a.dirtyStyle(!0);
     }
   }, t.prototype.canBeInsideText = function() {
     return !0;
@@ -92509,52 +92509,52 @@ function is1DArraySame$1(t, e) {
 }
 function animateToShallow$1(t, e, a, r, o, n, s, u) {
   for (var d = keys(r), l = o.duration, c = o.delay, m = o.additive, p = o.setToFinal, g = !isObject(n), T = t.animators, f = [], h = 0; h < d.length; h++) {
-    var C = d[h], x = r[C];
-    if (x != null && a[C] != null && (g || n[C]))
-      if (isObject(x) && !isArrayLike(x) && !isGradientObject(x)) {
+    var C = d[h], I = r[C];
+    if (I != null && a[C] != null && (g || n[C]))
+      if (isObject(I) && !isArrayLike(I) && !isGradientObject(I)) {
         if (e) {
-          u || (a[C] = x, t.updateDuringAnimation(e));
+          u || (a[C] = I, t.updateDuringAnimation(e));
           continue;
         }
-        animateToShallow$1(t, C, a[C], x, o, n && n[C], s, u);
+        animateToShallow$1(t, C, a[C], I, o, n && n[C], s, u);
       } else
         f.push(C);
     else
-      u || (a[C] = x, t.updateDuringAnimation(e), f.push(C));
+      u || (a[C] = I, t.updateDuringAnimation(e), f.push(C));
   }
   var y = f.length;
   if (!m && y)
-    for (var S = 0; S < T.length; S++) {
-      var A = T[S];
-      if (A.targetName === e) {
-        var B = A.stopTracks(f);
-        if (B) {
-          var R = indexOf(T, A);
+    for (var b = 0; b < T.length; b++) {
+      var S = T[b];
+      if (S.targetName === e) {
+        var A = S.stopTracks(f);
+        if (A) {
+          var R = indexOf(T, S);
           T.splice(R, 1);
         }
       }
     }
-  if (o.force || (f = filter(f, function(b) {
-    return !isValueSame$1(r[b], a[b]);
+  if (o.force || (f = filter(f, function(B) {
+    return !isValueSame$1(r[B], a[B]);
   }), y = f.length), y > 0 || o.force && !s.length) {
     var D = void 0, F = void 0, Z = void 0;
     if (u) {
       F = {}, p && (D = {});
-      for (var S = 0; S < y; S++) {
-        var C = f[S];
+      for (var b = 0; b < y; b++) {
+        var C = f[b];
         F[C] = a[C], p ? D[C] = r[C] : a[C] = r[C];
       }
     } else if (p) {
       Z = {};
-      for (var S = 0; S < y; S++) {
-        var C = f[S];
+      for (var b = 0; b < y; b++) {
+        var C = f[b];
         Z[C] = cloneValue$1(a[C]), copyValue$1(a, r, C);
       }
     }
-    var A = new Animator$1(a, !1, !1, m ? filter(T, function(v) {
+    var S = new Animator$1(a, !1, !1, m ? filter(T, function(v) {
       return v.targetName === e;
     }) : null);
-    A.targetName = e, o.scope && (A.scope = o.scope), p && D && A.whenWithKeys(0, D, f), Z && A.whenWithKeys(0, Z, f), A.whenWithKeys(l == null ? 500 : l, u ? F : r, f).delay(c || 0), t.addAnimator(A, e), s.push(A);
+    S.targetName = e, o.scope && (S.scope = o.scope), p && D && S.whenWithKeys(0, D, f), Z && S.whenWithKeys(0, Z, f), S.whenWithKeys(l == null ? 500 : l, u ? F : r, f).delay(c || 0), t.addAnimator(S, e), s.push(S);
   }
 }
 const Element$3 = Element$2;
@@ -92887,33 +92887,33 @@ var PathProxy$1 = function() {
           n = u = e[p++], s = d = e[p++];
           break;
         case CMD$4.L: {
-          var h = e[p++], C = e[p++], x = h - n, y = C - s;
-          (mathAbs$1(x) > r || mathAbs$1(y) > o || p === a - 1) && (f = Math.sqrt(x * x + y * y), n = h, s = C);
+          var h = e[p++], C = e[p++], I = h - n, y = C - s;
+          (mathAbs$1(I) > r || mathAbs$1(y) > o || p === a - 1) && (f = Math.sqrt(I * I + y * y), n = h, s = C);
           break;
         }
         case CMD$4.C: {
-          var S = e[p++], A = e[p++], h = e[p++], C = e[p++], B = e[p++], R = e[p++];
-          f = cubicLength$1(n, s, S, A, h, C, B, R, 10), n = B, s = R;
+          var b = e[p++], S = e[p++], h = e[p++], C = e[p++], A = e[p++], R = e[p++];
+          f = cubicLength$1(n, s, b, S, h, C, A, R, 10), n = A, s = R;
           break;
         }
         case CMD$4.Q: {
-          var S = e[p++], A = e[p++], h = e[p++], C = e[p++];
-          f = quadraticLength$1(n, s, S, A, h, C, 10), n = h, s = C;
+          var b = e[p++], S = e[p++], h = e[p++], C = e[p++];
+          f = quadraticLength$1(n, s, b, S, h, C, 10), n = h, s = C;
           break;
         }
         case CMD$4.A:
-          var D = e[p++], F = e[p++], Z = e[p++], b = e[p++], v = e[p++], M = e[p++], W = M + v;
-          p += 1, e[p++], T && (u = mathCos$3(v) * Z + D, d = mathSin$3(v) * b + F), f = mathMax$2(Z, b) * mathMin$2(PI2$8, Math.abs(M)), n = mathCos$3(W) * Z + D, s = mathSin$3(W) * b + F;
+          var D = e[p++], F = e[p++], Z = e[p++], B = e[p++], v = e[p++], O = e[p++], w = O + v;
+          p += 1, e[p++], T && (u = mathCos$3(v) * Z + D, d = mathSin$3(v) * B + F), f = mathMax$2(Z, B) * mathMin$2(PI2$8, Math.abs(O)), n = mathCos$3(w) * Z + D, s = mathSin$3(w) * B + F;
           break;
         case CMD$4.R: {
           u = n = e[p++], d = s = e[p++];
-          var K = e[p++], $ = e[p++];
-          f = K * 2 + $ * 2;
+          var $ = e[p++], W = e[p++];
+          f = $ * 2 + W * 2;
           break;
         }
         case CMD$4.Z: {
-          var x = u - n, y = d - s;
-          f = Math.sqrt(x * x + y * y), n = u, s = d;
+          var I = u - n, y = d - s;
+          f = Math.sqrt(I * I + y * y), n = u, s = d;
           break;
         }
       }
@@ -92921,96 +92921,96 @@ var PathProxy$1 = function() {
     }
     return this._pathLen = c, c;
   }, t.prototype.rebuildPath = function(e, a) {
-    var r = this.data, o = this._ux, n = this._uy, s = this._len, u, d, l, c, m, p, g = a < 1, T, f, h = 0, C = 0, x, y = 0, S, A;
-    if (!(g && (this._pathSegLen || this._calculateLength(), T = this._pathSegLen, f = this._pathLen, x = a * f, !x)))
+    var r = this.data, o = this._ux, n = this._uy, s = this._len, u, d, l, c, m, p, g = a < 1, T, f, h = 0, C = 0, I, y = 0, b, S;
+    if (!(g && (this._pathSegLen || this._calculateLength(), T = this._pathSegLen, f = this._pathLen, I = a * f, !I)))
       e:
-        for (var B = 0; B < s; ) {
-          var R = r[B++], D = B === 1;
-          switch (D && (l = r[B], c = r[B + 1], u = l, d = c), R !== CMD$4.L && y > 0 && (e.lineTo(S, A), y = 0), R) {
+        for (var A = 0; A < s; ) {
+          var R = r[A++], D = A === 1;
+          switch (D && (l = r[A], c = r[A + 1], u = l, d = c), R !== CMD$4.L && y > 0 && (e.lineTo(b, S), y = 0), R) {
             case CMD$4.M:
-              u = l = r[B++], d = c = r[B++], e.moveTo(l, c);
+              u = l = r[A++], d = c = r[A++], e.moveTo(l, c);
               break;
             case CMD$4.L: {
-              m = r[B++], p = r[B++];
+              m = r[A++], p = r[A++];
               var F = mathAbs$1(m - l), Z = mathAbs$1(p - c);
               if (F > o || Z > n) {
                 if (g) {
-                  var b = T[C++];
-                  if (h + b > x) {
-                    var v = (x - h) / b;
+                  var B = T[C++];
+                  if (h + B > I) {
+                    var v = (I - h) / B;
                     e.lineTo(l * (1 - v) + m * v, c * (1 - v) + p * v);
                     break e;
                   }
-                  h += b;
+                  h += B;
                 }
                 e.lineTo(m, p), l = m, c = p, y = 0;
               } else {
-                var M = F * F + Z * Z;
-                M > y && (S = m, A = p, y = M);
+                var O = F * F + Z * Z;
+                O > y && (b = m, S = p, y = O);
               }
               break;
             }
             case CMD$4.C: {
-              var W = r[B++], K = r[B++], $ = r[B++], q = r[B++], J = r[B++], V = r[B++];
+              var w = r[A++], $ = r[A++], W = r[A++], q = r[A++], J = r[A++], H = r[A++];
               if (g) {
-                var b = T[C++];
-                if (h + b > x) {
-                  var v = (x - h) / b;
-                  cubicSubdivide$1(l, W, $, J, v, tmpOutX$1), cubicSubdivide$1(c, K, q, V, v, tmpOutY$1), e.bezierCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2], tmpOutX$1[3], tmpOutY$1[3]);
+                var B = T[C++];
+                if (h + B > I) {
+                  var v = (I - h) / B;
+                  cubicSubdivide$1(l, w, W, J, v, tmpOutX$1), cubicSubdivide$1(c, $, q, H, v, tmpOutY$1), e.bezierCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2], tmpOutX$1[3], tmpOutY$1[3]);
                   break e;
                 }
-                h += b;
+                h += B;
               }
-              e.bezierCurveTo(W, K, $, q, J, V), l = J, c = V;
+              e.bezierCurveTo(w, $, W, q, J, H), l = J, c = H;
               break;
             }
             case CMD$4.Q: {
-              var W = r[B++], K = r[B++], $ = r[B++], q = r[B++];
+              var w = r[A++], $ = r[A++], W = r[A++], q = r[A++];
               if (g) {
-                var b = T[C++];
-                if (h + b > x) {
-                  var v = (x - h) / b;
-                  quadraticSubdivide$1(l, W, $, v, tmpOutX$1), quadraticSubdivide$1(c, K, q, v, tmpOutY$1), e.quadraticCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2]);
+                var B = T[C++];
+                if (h + B > I) {
+                  var v = (I - h) / B;
+                  quadraticSubdivide$1(l, w, W, v, tmpOutX$1), quadraticSubdivide$1(c, $, q, v, tmpOutY$1), e.quadraticCurveTo(tmpOutX$1[1], tmpOutY$1[1], tmpOutX$1[2], tmpOutY$1[2]);
                   break e;
                 }
-                h += b;
+                h += B;
               }
-              e.quadraticCurveTo(W, K, $, q), l = $, c = q;
+              e.quadraticCurveTo(w, $, W, q), l = W, c = q;
               break;
             }
             case CMD$4.A:
-              var z = r[B++], Y = r[B++], Q = r[B++], G = r[B++], w = r[B++], X = r[B++], j = r[B++], ae = !r[B++], ee = Q > G ? Q : G, ue = mathAbs$1(Q - G) > 1e-3, ie = w + X, ge = !1;
+              var z = r[A++], Y = r[A++], Q = r[A++], V = r[A++], U = r[A++], X = r[A++], j = r[A++], ae = !r[A++], ee = Q > V ? Q : V, ue = mathAbs$1(Q - V) > 1e-3, ie = U + X, ge = !1;
               if (g) {
-                var b = T[C++];
-                h + b > x && (ie = w + X * (x - h) / b, ge = !0), h += b;
+                var B = T[C++];
+                h + B > I && (ie = U + X * (I - h) / B, ge = !0), h += B;
               }
-              if (ue && e.ellipse ? e.ellipse(z, Y, Q, G, j, w, ie, ae) : e.arc(z, Y, ee, w, ie, ae), ge)
+              if (ue && e.ellipse ? e.ellipse(z, Y, Q, V, j, U, ie, ae) : e.arc(z, Y, ee, U, ie, ae), ge)
                 break e;
-              D && (u = mathCos$3(w) * Q + z, d = mathSin$3(w) * G + Y), l = mathCos$3(ie) * Q + z, c = mathSin$3(ie) * G + Y;
+              D && (u = mathCos$3(U) * Q + z, d = mathSin$3(U) * V + Y), l = mathCos$3(ie) * Q + z, c = mathSin$3(ie) * V + Y;
               break;
             case CMD$4.R:
-              u = l = r[B], d = c = r[B + 1], m = r[B++], p = r[B++];
-              var oe = r[B++], de = r[B++];
+              u = l = r[A], d = c = r[A + 1], m = r[A++], p = r[A++];
+              var oe = r[A++], de = r[A++];
               if (g) {
-                var b = T[C++];
-                if (h + b > x) {
-                  var te = x - h;
+                var B = T[C++];
+                if (h + B > I) {
+                  var te = I - h;
                   e.moveTo(m, p), e.lineTo(m + mathMin$2(te, oe), p), te -= oe, te > 0 && e.lineTo(m + oe, p + mathMin$2(te, de)), te -= de, te > 0 && e.lineTo(m + mathMax$2(oe - te, 0), p + de), te -= oe, te > 0 && e.lineTo(m, p + mathMax$2(de - te, 0));
                   break e;
                 }
-                h += b;
+                h += B;
               }
               e.rect(m, p, oe, de);
               break;
             case CMD$4.Z:
               if (g) {
-                var b = T[C++];
-                if (h + b > x) {
-                  var v = (x - h) / b;
+                var B = T[C++];
+                if (h + B > I) {
+                  var v = (I - h) / B;
                   e.lineTo(l * (1 - v) + u * v, c * (1 - v) + d * v);
                   break e;
                 }
-                h += b;
+                h += B;
               }
               e.closePath(), l = u, c = d;
           }
@@ -93103,8 +93103,8 @@ function windingCubic$1(t, e, a, r, o, n, s, u, d, l) {
   if (c === 0)
     return 0;
   for (var m = 0, p = -1, g = void 0, T = void 0, f = 0; f < c; f++) {
-    var h = roots$1[f], C = h === 0 || h === 1 ? 0.5 : 1, x = cubicAt$1(t, a, o, s, h);
-    x < d || (p < 0 && (p = cubicExtrema$1(e, r, n, u, extrema$1), extrema$1[1] < extrema$1[0] && p > 1 && swapExtrema$1(), g = cubicAt$1(e, r, n, u, extrema$1[0]), p > 1 && (T = cubicAt$1(e, r, n, u, extrema$1[1]))), p === 2 ? h < extrema$1[0] ? m += g < e ? C : -C : h < extrema$1[1] ? m += T < g ? C : -C : m += u < T ? C : -C : h < extrema$1[0] ? m += g < e ? C : -C : m += u < g ? C : -C);
+    var h = roots$1[f], C = h === 0 || h === 1 ? 0.5 : 1, I = cubicAt$1(t, a, o, s, h);
+    I < d || (p < 0 && (p = cubicExtrema$1(e, r, n, u, extrema$1), extrema$1[1] < extrema$1[0] && p > 1 && swapExtrema$1(), g = cubicAt$1(e, r, n, u, extrema$1[0]), p > 1 && (T = cubicAt$1(e, r, n, u, extrema$1[1]))), p === 2 ? h < extrema$1[0] ? m += g < e ? C : -C : h < extrema$1[1] ? m += T < g ? C : -C : m += u < T ? C : -C : h < extrema$1[0] ? m += g < e ? C : -C : m += u < g ? C : -C);
   }
   return m;
 }
@@ -93185,17 +93185,17 @@ function containPath$1(t, e, a, r, o) {
         d = n[T++], l = n[T++];
         break;
       case CMD$3.A:
-        var C = n[T++], x = n[T++], y = n[T++], S = n[T++], A = n[T++], B = n[T++];
+        var C = n[T++], I = n[T++], y = n[T++], b = n[T++], S = n[T++], A = n[T++];
         T += 1;
         var R = !!(1 - n[T++]);
-        p = Math.cos(A) * y + C, g = Math.sin(A) * S + x, h ? (c = p, m = g) : u += windingLine$1(d, l, p, g, r, o);
-        var D = (r - C) * S / y + C;
+        p = Math.cos(S) * y + C, g = Math.sin(S) * b + I, h ? (c = p, m = g) : u += windingLine$1(d, l, p, g, r, o);
+        var D = (r - C) * b / y + C;
         if (a) {
-          if (containStroke$6(C, x, S, A, A + B, R, e, D, o))
+          if (containStroke$6(C, I, b, S, S + A, R, e, D, o))
             return !0;
         } else
-          u += windingArc$1(C, x, S, A, A + B, R, D, o);
-        d = Math.cos(A + B) * y + C, l = Math.sin(A + B) * S + x;
+          u += windingArc$1(C, I, b, S, S + A, R, D, o);
+        d = Math.cos(S + A) * y + C, l = Math.sin(S + A) * b + I;
         break;
       case CMD$3.R:
         c = d = n[T++], m = l = n[T++];
@@ -93447,15 +93447,15 @@ function transformPath(t, e) {
           n = 2;
           break;
         case T:
-          var h = e[4], C = e[5], x = mathSqrt$2(e[0] * e[0] + e[1] * e[1]), y = mathSqrt$2(e[2] * e[2] + e[3] * e[3]), S = mathAtan2(-e[1] / y, e[0] / x);
-          a[s] *= x, a[s++] += h, a[s] *= y, a[s++] += C, a[s++] *= x, a[s++] *= y, a[s++] += S, a[s++] += S, s += 2, u = s;
+          var h = e[4], C = e[5], I = mathSqrt$2(e[0] * e[0] + e[1] * e[1]), y = mathSqrt$2(e[2] * e[2] + e[3] * e[3]), b = mathAtan2(-e[1] / y, e[0] / I);
+          a[s] *= I, a[s++] += h, a[s] *= y, a[s++] += C, a[s++] *= I, a[s++] *= y, a[s++] += b, a[s++] += b, s += 2, u = s;
           break;
         case g:
           l[0] = a[s++], l[1] = a[s++], applyTransform$2(l, l, e), a[u++] = l[0], a[u++] = l[1], l[0] += a[s++], l[1] += a[s++], applyTransform$2(l, l, e), a[u++] = l[0], a[u++] = l[1];
       }
       for (d = 0; d < n; d++) {
-        var A = points[d];
-        A[0] = a[s++], A[1] = a[s++], applyTransform$2(A, A, e), a[u++] = A[0], a[u++] = A[1];
+        var S = points[d];
+        S[0] = a[s++], S[1] = a[s++], applyTransform$2(S, S, e), a[u++] = S[0], a[u++] = S[1];
       }
     }
     t.increaseVersion();
@@ -93474,12 +93474,12 @@ function vAngle(t, e) {
 function processArc(t, e, a, r, o, n, s, u, d, l, c) {
   var m = d * (PI$2 / 180), p = mathCos$2(m) * (t - a) / 2 + mathSin$2(m) * (e - r) / 2, g = -1 * mathSin$2(m) * (t - a) / 2 + mathCos$2(m) * (e - r) / 2, T = p * p / (s * s) + g * g / (u * u);
   T > 1 && (s *= mathSqrt$1(T), u *= mathSqrt$1(T));
-  var f = (o === n ? -1 : 1) * mathSqrt$1((s * s * (u * u) - s * s * (g * g) - u * u * (p * p)) / (s * s * (g * g) + u * u * (p * p))) || 0, h = f * s * g / u, C = f * -u * p / s, x = (t + a) / 2 + mathCos$2(m) * h - mathSin$2(m) * C, y = (e + r) / 2 + mathSin$2(m) * h + mathCos$2(m) * C, S = vAngle([1, 0], [(p - h) / s, (g - C) / u]), A = [(p - h) / s, (g - C) / u], B = [(-1 * p - h) / s, (-1 * g - C) / u], R = vAngle(A, B);
-  if (vRatio(A, B) <= -1 && (R = PI$2), vRatio(A, B) >= 1 && (R = 0), R < 0) {
+  var f = (o === n ? -1 : 1) * mathSqrt$1((s * s * (u * u) - s * s * (g * g) - u * u * (p * p)) / (s * s * (g * g) + u * u * (p * p))) || 0, h = f * s * g / u, C = f * -u * p / s, I = (t + a) / 2 + mathCos$2(m) * h - mathSin$2(m) * C, y = (e + r) / 2 + mathSin$2(m) * h + mathCos$2(m) * C, b = vAngle([1, 0], [(p - h) / s, (g - C) / u]), S = [(p - h) / s, (g - C) / u], A = [(-1 * p - h) / s, (-1 * g - C) / u], R = vAngle(S, A);
+  if (vRatio(S, A) <= -1 && (R = PI$2), vRatio(S, A) >= 1 && (R = 0), R < 0) {
     var D = Math.round(R / PI$2 * 1e6) / 1e6;
     R = PI$2 * 2 + D % 2 * PI$2;
   }
-  c.addData(l, x, y, s, u, S, R, m, n);
+  c.addData(l, I, y, s, u, b, R, m, n);
 }
 var commandReg = /([mlvhzcqtsa])([^mlvhzcqtsa]*)/ig, numberReg = /-?([0-9]*\.)?[0-9]+([eE]-?[0-9]+)?/g;
 function createPathProxyFromString(t) {
@@ -93493,7 +93493,7 @@ function createPathProxyFromString(t) {
     for (var c = d[l], m = c.charAt(0), p = void 0, g = c.match(numberReg) || [], T = g.length, f = 0; f < T; f++)
       g[f] = parseFloat(g[f]);
     for (var h = 0; h < T; ) {
-      var C = void 0, x = void 0, y = void 0, S = void 0, A = void 0, B = void 0, R = void 0, D = a, F = r, Z = void 0, b = void 0;
+      var C = void 0, I = void 0, y = void 0, b = void 0, S = void 0, A = void 0, R = void 0, D = a, F = r, Z = void 0, B = void 0;
       switch (m) {
         case "l":
           a += g[h++], r += g[h++], p = u.L, e.addData(p, a, r);
@@ -93526,10 +93526,10 @@ function createPathProxyFromString(t) {
           p = u.C, e.addData(p, g[h++] + a, g[h++] + r, g[h++] + a, g[h++] + r, g[h++] + a, g[h++] + r), a += g[h - 2], r += g[h - 1];
           break;
         case "S":
-          C = a, x = r, Z = e.len(), b = e.data, s === u.C && (C += a - b[Z - 4], x += r - b[Z - 3]), p = u.C, D = g[h++], F = g[h++], a = g[h++], r = g[h++], e.addData(p, C, x, D, F, a, r);
+          C = a, I = r, Z = e.len(), B = e.data, s === u.C && (C += a - B[Z - 4], I += r - B[Z - 3]), p = u.C, D = g[h++], F = g[h++], a = g[h++], r = g[h++], e.addData(p, C, I, D, F, a, r);
           break;
         case "s":
-          C = a, x = r, Z = e.len(), b = e.data, s === u.C && (C += a - b[Z - 4], x += r - b[Z - 3]), p = u.C, D = a + g[h++], F = r + g[h++], a += g[h++], r += g[h++], e.addData(p, C, x, D, F, a, r);
+          C = a, I = r, Z = e.len(), B = e.data, s === u.C && (C += a - B[Z - 4], I += r - B[Z - 3]), p = u.C, D = a + g[h++], F = r + g[h++], a += g[h++], r += g[h++], e.addData(p, C, I, D, F, a, r);
           break;
         case "Q":
           D = g[h++], F = g[h++], a = g[h++], r = g[h++], p = u.Q, e.addData(p, D, F, a, r);
@@ -93538,16 +93538,16 @@ function createPathProxyFromString(t) {
           D = g[h++] + a, F = g[h++] + r, a += g[h++], r += g[h++], p = u.Q, e.addData(p, D, F, a, r);
           break;
         case "T":
-          C = a, x = r, Z = e.len(), b = e.data, s === u.Q && (C += a - b[Z - 4], x += r - b[Z - 3]), a = g[h++], r = g[h++], p = u.Q, e.addData(p, C, x, a, r);
+          C = a, I = r, Z = e.len(), B = e.data, s === u.Q && (C += a - B[Z - 4], I += r - B[Z - 3]), a = g[h++], r = g[h++], p = u.Q, e.addData(p, C, I, a, r);
           break;
         case "t":
-          C = a, x = r, Z = e.len(), b = e.data, s === u.Q && (C += a - b[Z - 4], x += r - b[Z - 3]), a += g[h++], r += g[h++], p = u.Q, e.addData(p, C, x, a, r);
+          C = a, I = r, Z = e.len(), B = e.data, s === u.Q && (C += a - B[Z - 4], I += r - B[Z - 3]), a += g[h++], r += g[h++], p = u.Q, e.addData(p, C, I, a, r);
           break;
         case "A":
-          y = g[h++], S = g[h++], A = g[h++], B = g[h++], R = g[h++], D = a, F = r, a = g[h++], r = g[h++], p = u.A, processArc(D, F, a, r, B, R, y, S, A, p, e);
+          y = g[h++], b = g[h++], S = g[h++], A = g[h++], R = g[h++], D = a, F = r, a = g[h++], r = g[h++], p = u.A, processArc(D, F, a, r, A, R, y, b, S, p, e);
           break;
         case "a":
-          y = g[h++], S = g[h++], A = g[h++], B = g[h++], R = g[h++], D = a, F = r, a += g[h++], r += g[h++], p = u.A, processArc(D, F, a, r, B, R, y, S, A, p, e);
+          y = g[h++], b = g[h++], S = g[h++], A = g[h++], R = g[h++], D = a, F = r, a += g[h++], r += g[h++], p = u.A, processArc(D, F, a, r, A, R, y, b, S, p, e);
           break;
       }
     }
@@ -94159,8 +94159,8 @@ function summarizeDimensions(t, e) {
       getOrCreateEncodeArr(r, T)[f] = p, g.isExtraCoord || (o.set(T, 1), mayLabelDimType(g.type) && (n[0] = p), getOrCreateEncodeArr(u, T)[f] = t.getDimensionIndex(g.name)), g.defaultTooltip && s.push(p);
     }
     VISUAL_DIMENSIONS.each(function(f, h) {
-      const C = getOrCreateEncodeArr(r, h), x = g.otherDims[h];
-      x != null && x !== !1 && (C[x] = g.name);
+      const C = getOrCreateEncodeArr(r, h), I = g.otherDims[h];
+      I != null && I !== !1 && (C[I] = g.name);
     });
   });
   let d = [];
@@ -94594,82 +94594,82 @@ function prepareSeriesDataSchema(t, e) {
   const m = createHashMap(
     c
   ), p = new CtorInt32Array$2(s);
-  for (let A = 0; A < p.length; A++)
-    p[A] = -1;
-  function g(A) {
-    const B = p[A];
-    if (B < 0) {
-      const R = r[A], D = isObject$1(R) ? R : { name: R }, F = new SeriesDimensionDefine(), Z = D.name;
+  for (let S = 0; S < p.length; S++)
+    p[S] = -1;
+  function g(S) {
+    const A = p[S];
+    if (A < 0) {
+      const R = r[S], D = isObject$1(R) ? R : { name: R }, F = new SeriesDimensionDefine(), Z = D.name;
       Z != null && l.get(Z) != null && (F.name = F.displayName = Z), D.type != null && (F.type = D.type), D.displayName != null && (F.displayName = D.displayName);
-      const b = n.length;
-      return p[A] = b, F.storeDimIndex = A, n.push(F), F;
+      const B = n.length;
+      return p[S] = B, F.storeDimIndex = S, n.push(F), F;
     }
-    return n[B];
+    return n[A];
   }
   if (!u)
-    for (let A = 0; A < s; A++)
-      g(A);
-  m.each(function(A, B) {
-    const R = normalizeToArray(A).slice();
+    for (let S = 0; S < s; S++)
+      g(S);
+  m.each(function(S, A) {
+    const R = normalizeToArray(S).slice();
     if (R.length === 1 && !isString$1(R[0]) && R[0] < 0) {
-      m.set(B, !1);
+      m.set(A, !1);
       return;
     }
-    const D = m.set(B, []);
+    const D = m.set(A, []);
     each$1(R, function(F, Z) {
-      const b = isString$1(F) ? l.get(F) : F;
-      b != null && b < s && (D[Z] = b, f(g(b), B, Z));
+      const B = isString$1(F) ? l.get(F) : F;
+      B != null && B < s && (D[Z] = B, f(g(B), A, Z));
     });
   });
   let T = 0;
-  each$1(a, function(A) {
-    let B, R, D, F;
-    if (isString$1(A))
-      B = A, F = {};
+  each$1(a, function(S) {
+    let A, R, D, F;
+    if (isString$1(S))
+      A = S, F = {};
     else {
-      F = A, B = F.name;
-      const b = F.ordinalMeta;
-      F.ordinalMeta = null, F = extend$1({}, F), F.ordinalMeta = b, R = F.dimsDef, D = F.otherDims, F.name = F.coordDim = F.coordDimIndex = F.dimsDef = F.otherDims = null;
+      F = S, A = F.name;
+      const B = F.ordinalMeta;
+      F.ordinalMeta = null, F = extend$1({}, F), F.ordinalMeta = B, R = F.dimsDef, D = F.otherDims, F.name = F.coordDim = F.coordDimIndex = F.dimsDef = F.otherDims = null;
     }
-    let Z = m.get(B);
+    let Z = m.get(A);
     if (Z !== !1) {
       if (Z = normalizeToArray(Z), !Z.length)
-        for (let b = 0; b < (R && R.length || 1); b++) {
+        for (let B = 0; B < (R && R.length || 1); B++) {
           for (; T < s && g(T).coordDim != null; )
             T++;
           T < s && Z.push(T++);
         }
-      each$1(Z, function(b, v) {
-        const M = g(b);
-        if (d && F.type != null && (M.type = F.type), f(defaults$1(M, F), B, v), M.name == null && R) {
-          let W = R[v];
-          !isObject$1(W) && (W = {
-            name: W
-          }), M.name = M.displayName = W.name, M.defaultTooltip = W.defaultTooltip;
+      each$1(Z, function(B, v) {
+        const O = g(B);
+        if (d && F.type != null && (O.type = F.type), f(defaults$1(O, F), A, v), O.name == null && R) {
+          let w = R[v];
+          !isObject$1(w) && (w = {
+            name: w
+          }), O.name = O.displayName = w.name, O.defaultTooltip = w.defaultTooltip;
         }
-        D && defaults$1(M.otherDims, D);
+        D && defaults$1(O.otherDims, D);
       });
     }
   });
-  function f(A, B, R) {
-    VISUAL_DIMENSIONS.get(B) != null ? A.otherDims[B] = R : (A.coordDim = B, A.coordDimIndex = R, o.set(B, !0));
+  function f(S, A, R) {
+    VISUAL_DIMENSIONS.get(A) != null ? S.otherDims[A] = R : (S.coordDim = A, S.coordDimIndex = R, o.set(A, !0));
   }
   const h = e.generateCoord;
   let C = e.generateCoordCount;
-  const x = C != null;
+  const I = C != null;
   C = h ? C || 1 : 0;
   const y = h || "value";
-  function S(A) {
-    A.name == null && (A.name = A.coordDim);
+  function b(S) {
+    S.name == null && (S.name = S.coordDim);
   }
   if (u)
-    each$1(n, (A) => {
-      S(A);
-    }), n.sort((A, B) => A.storeDimIndex - B.storeDimIndex);
+    each$1(n, (S) => {
+      b(S);
+    }), n.sort((S, A) => S.storeDimIndex - A.storeDimIndex);
   else
-    for (let A = 0; A < s; A++) {
-      const B = g(A);
-      B.coordDim == null && (B.coordDim = genCoordDimName(y, o, x), B.coordDimIndex = 0, (!h || C <= 0) && (B.isExtraCoord = !0), C--), S(B), B.type == null && (guessOrdinal(t, A) === BE_ORDINAL.Must || // Consider the case:
+    for (let S = 0; S < s; S++) {
+      const A = g(S);
+      A.coordDim == null && (A.coordDim = genCoordDimName(y, o, I), A.coordDimIndex = 0, (!h || C <= 0) && (A.isExtraCoord = !0), C--), b(A), A.type == null && (guessOrdinal(t, S) === BE_ORDINAL.Must || // Consider the case:
       // {
       //    dataset: {source: [
       //        ['2001', 123],
@@ -94681,7 +94681,7 @@ function prepareSeriesDataSchema(t, e) {
       // }
       // The first column should better be treated as a "ordinal" although it
       // might not be detected as an "ordinal" by `guessOrdinal`.
-      B.isExtraCoord && (B.otherDims.itemName != null || B.otherDims.seriesName != null)) && (B.type = "ordinal");
+      A.isExtraCoord && (A.otherDims.itemName != null || A.otherDims.seriesName != null)) && (A.type = "ordinal");
     }
   return removeDuplication(n), new SeriesDataSchema({
     source: t,
@@ -94754,8 +94754,8 @@ function createSeriesData(t, e, a) {
     s
   ), g = n ? null : r.getSharedDataStore(m), T = enableDataStack(e, { schema: m, store: g }), f = new SeriesData(m, e);
   f.setCalculationInfo(T);
-  const h = p != null && isNeedCompleteOrdinalData(o) ? function(C, x, y, S) {
-    return S === p ? y : this.defaultDimValueGetter(C, x, y, S);
+  const h = p != null && isNeedCompleteOrdinalData(o) ? function(C, I, y, b) {
+    return b === p ? y : this.defaultDimValueGetter(C, I, y, b);
   } : null;
   return f.hasItemOption = !1, f.initData(
     // Try to reuse the data store in sourceManager if using dataset.
@@ -95680,11 +95680,11 @@ function cubicRootAt(t, e, a, r, o, n) {
       const f = mathSqrt(T);
       let h = c * u + 1.5 * s * (-m + f), C = c * u + 1.5 * s * (-m - f);
       h < 0 ? h = -mathPow(-h, ONE_THIRD) : h = mathPow(h, ONE_THIRD), C < 0 ? C = -mathPow(-C, ONE_THIRD) : C = mathPow(C, ONE_THIRD);
-      const x = (-u - (h + C)) / (3 * s);
-      x >= 0 && x <= 1 && (n[g++] = x);
+      const I = (-u - (h + C)) / (3 * s);
+      I >= 0 && I <= 1 && (n[g++] = I);
     } else {
-      const f = (2 * c * u - 3 * s * m) / (2 * mathSqrt(c * c * c)), h = Math.acos(f) / 3, C = mathSqrt(c), x = Math.cos(h), y = (-u - 2 * C * x) / (3 * s), S = (-u + C * (x + THREE_SQRT * Math.sin(h))) / (3 * s), A = (-u + C * (x - THREE_SQRT * Math.sin(h))) / (3 * s);
-      y >= 0 && y <= 1 && (n[g++] = y), S >= 0 && S <= 1 && (n[g++] = S), A >= 0 && A <= 1 && (n[g++] = A);
+      const f = (2 * c * u - 3 * s * m) / (2 * mathSqrt(c * c * c)), h = Math.acos(f) / 3, C = mathSqrt(c), I = Math.cos(h), y = (-u - 2 * C * I) / (3 * s), b = (-u + C * (I + THREE_SQRT * Math.sin(h))) / (3 * s), S = (-u + C * (I - THREE_SQRT * Math.sin(h))) / (3 * s);
+      y >= 0 && y <= 1 && (n[g++] = y), b >= 0 && b <= 1 && (n[g++] = b), S >= 0 && S <= 1 && (n[g++] = S);
     }
   }
   return g;
@@ -95715,10 +95715,10 @@ function cubicSubdivide(t, e, a, r, o, n) {
 function cubicProjectPoint(t, e, a, r, o, n, s, u, d, l, c) {
   let m, p = 5e-3, g = 1 / 0, T, f, h, C;
   _v0[0] = d, _v0[1] = l;
-  for (let x = 0; x < 1; x += 0.05)
-    _v1[0] = cubicAt(t, a, o, s, x), _v1[1] = cubicAt(e, r, n, u, x), h = distSquare(_v0, _v1), h < g && (m = x, g = h);
+  for (let I = 0; I < 1; I += 0.05)
+    _v1[0] = cubicAt(t, a, o, s, I), _v1[1] = cubicAt(e, r, n, u, I), h = distSquare(_v0, _v1), h < g && (m = I, g = h);
   g = 1 / 0;
-  for (let x = 0; x < 32 && !(p < EPSILON_NUMERIC); x++)
+  for (let I = 0; I < 32 && !(p < EPSILON_NUMERIC); I++)
     T = m - p, f = m + p, _v1[0] = cubicAt(t, a, o, s, T), _v1[1] = cubicAt(e, r, n, u, T), h = distSquare(_v1, _v0), T >= 0 && h < g ? (m = T, g = h) : (_v2[0] = cubicAt(t, a, o, s, f), _v2[1] = cubicAt(e, r, n, u, f), C = distSquare(_v2, _v0), f <= 1 && C < g ? (m = f, g = C) : p *= 0.5);
   return c && (c[0] = cubicAt(t, a, o, s, m), c[1] = cubicAt(e, r, n, u, m)), mathSqrt(g);
 }
@@ -95727,8 +95727,8 @@ function cubicLength(t, e, a, r, o, n, s, u, d) {
   const p = 1 / d;
   for (let g = 1; g <= d; g++) {
     let T = g * p;
-    const f = cubicAt(t, a, o, s, T), h = cubicAt(e, r, n, u, T), C = f - l, x = h - c;
-    m += Math.sqrt(C * C + x * x), l = f, c = h;
+    const f = cubicAt(t, a, o, s, T), h = cubicAt(e, r, n, u, T), C = f - l, I = h - c;
+    m += Math.sqrt(C * C + I * I), l = f, c = h;
   }
   return m;
 }
@@ -96308,8 +96308,8 @@ class Track {
       if (a < 0)
         c = 0;
       else if (a < this._lastFrP) {
-        const x = p(m + 1, u - 1);
-        for (c = x; c >= 0 && !(s[c].percent <= a); c--)
+        const I = p(m + 1, u - 1);
+        for (c = I; c >= 0 && !(s[c].percent <= a); c--)
           ;
         c = p(c, u - 2);
       } else {
@@ -96341,35 +96341,35 @@ class Track {
         h
       );
     else if (isGradientValueType(n)) {
-      const x = g[o], y = T[o], S = n === VALUE_TYPE_LINEAR_GRADIENT;
+      const I = g[o], y = T[o], b = n === VALUE_TYPE_LINEAR_GRADIENT;
       e[d] = {
-        type: S ? "linear" : "radial",
-        x: interpolateNumber(x.x, y.x, h),
-        y: interpolateNumber(x.y, y.y, h),
+        type: b ? "linear" : "radial",
+        x: interpolateNumber(I.x, y.x, h),
+        y: interpolateNumber(I.y, y.y, h),
         // TODO performance
-        colorStops: map$1(x.colorStops, (A, B) => {
-          const R = y.colorStops[B];
+        colorStops: map$1(I.colorStops, (S, A) => {
+          const R = y.colorStops[A];
           return {
-            offset: interpolateNumber(A.offset, R.offset, h),
+            offset: interpolateNumber(S.offset, R.offset, h),
             color: rgba2String(interpolate1DArray(
               [],
-              A.color,
+              S.color,
               R.color,
               h
             ))
           };
         }),
         global: y.global
-      }, S ? (e[d].x2 = interpolateNumber(
-        x.x2,
+      }, b ? (e[d].x2 = interpolateNumber(
+        I.x2,
         y.x2,
         h
       ), e[d].y2 = interpolateNumber(
-        x.y2,
+        I.y2,
         y.y2,
         h
       )) : e[d].r = interpolateNumber(
-        x.r,
+        I.r,
         y.r,
         h
       );
@@ -96381,8 +96381,8 @@ class Track {
         h
       ), r || (e[d] = rgba2String(C));
     else {
-      const x = interpolateNumber(g[o], T[o], h);
-      r ? this._additiveValue = x : e[d] = x;
+      const I = interpolateNumber(g[o], T[o], h);
+      r ? this._additiveValue = I : e[d] = I;
     }
     r && this._addToTarget(e);
   }
@@ -96711,8 +96711,8 @@ const _Element = class {
         r.layoutRect ? h.copy(r.layoutRect) : h.copy(this.getBoundingRect()), o || h.applyTransform(this.transform), this.calculateTextPosition ? this.calculateTextPosition(tmpTextPosCalcRes, r, h) : calculateTextPosition$1(tmpTextPosCalcRes, r, h), n.x = tmpTextPosCalcRes.x, n.y = tmpTextPosCalcRes.y, s = tmpTextPosCalcRes.align, u = tmpTextPosCalcRes.verticalAlign;
         const C = r.origin;
         if (C && r.rotation != null) {
-          let x, y;
-          C === "center" ? (x = h.width * 0.5, y = h.height * 0.5) : (x = parsePercent$1(C[0], h.width), y = parsePercent$1(C[1], h.height)), l = !0, n.originX = -n.x + x + (o ? 0 : h.x), n.originY = -n.y + y + (o ? 0 : h.y);
+          let I, y;
+          C === "center" ? (I = h.width * 0.5, y = h.height * 0.5) : (I = parsePercent$1(C[0], h.width), y = parsePercent$1(C[1], h.height)), l = !0, n.originX = -n.x + I + (o ? 0 : h.x), n.originY = -n.y + y + (o ? 0 : h.y);
         }
       }
       r.rotation != null && (n.rotation = r.rotation);
@@ -97285,62 +97285,62 @@ function animateToShallow(t, e, a, r, o, n, s, u) {
   const d = keys$1(r), l = o.duration, c = o.delay, m = o.additive, p = o.setToFinal, g = !isObject$1(n), T = t.animators;
   let f = [];
   for (let C = 0; C < d.length; C++) {
-    const x = d[C], y = r[x];
-    if (y != null && a[x] != null && (g || n[x]))
+    const I = d[C], y = r[I];
+    if (y != null && a[I] != null && (g || n[I]))
       if (isObject$1(y) && !isArrayLike$1(y) && !isGradientObject$1(y)) {
         if (e) {
-          u || (a[x] = y, t.updateDuringAnimation(e));
+          u || (a[I] = y, t.updateDuringAnimation(e));
           continue;
         }
         animateToShallow(
           t,
-          x,
-          a[x],
+          I,
+          a[I],
           y,
           o,
-          n && n[x],
+          n && n[I],
           s,
           u
         );
       } else
-        f.push(x);
+        f.push(I);
     else
-      u || (a[x] = y, t.updateDuringAnimation(e), f.push(x));
+      u || (a[I] = y, t.updateDuringAnimation(e), f.push(I));
   }
   let h = f.length;
   if (!m && h)
     for (let C = 0; C < T.length; C++) {
-      const x = T[C];
-      if (x.targetName === e && x.stopTracks(f)) {
-        const S = indexOf$1(T, x);
-        T.splice(S, 1);
+      const I = T[C];
+      if (I.targetName === e && I.stopTracks(f)) {
+        const b = indexOf$1(T, I);
+        T.splice(b, 1);
       }
     }
   if (o.force || (f = filter$1(f, (C) => !isValueSame(r[C], a[C])), h = f.length), h > 0 || o.force && !s.length) {
-    let C, x, y;
+    let C, I, y;
     if (u) {
-      x = {}, p && (C = {});
-      for (let A = 0; A < h; A++) {
-        const B = f[A];
-        x[B] = a[B], p ? C[B] = r[B] : a[B] = r[B];
+      I = {}, p && (C = {});
+      for (let S = 0; S < h; S++) {
+        const A = f[S];
+        I[A] = a[A], p ? C[A] = r[A] : a[A] = r[A];
       }
     } else if (p) {
       y = {};
-      for (let A = 0; A < h; A++) {
-        const B = f[A];
-        y[B] = cloneValue(a[B]), copyValue(a, r, B);
+      for (let S = 0; S < h; S++) {
+        const A = f[S];
+        y[A] = cloneValue(a[A]), copyValue(a, r, A);
       }
     }
-    const S = new Animator(a, !1, !1, m ? filter$1(
+    const b = new Animator(a, !1, !1, m ? filter$1(
       // Use key string instead object reference because ref may be changed.
       T,
-      (A) => A.targetName === e
+      (S) => S.targetName === e
     ) : null);
-    S.targetName = e, o.scope && (S.scope = o.scope), p && C && S.whenWithKeys(0, C, f), y && S.whenWithKeys(0, y, f), S.whenWithKeys(
+    b.targetName = e, o.scope && (b.scope = o.scope), p && C && b.whenWithKeys(0, C, f), y && b.whenWithKeys(0, y, f), b.whenWithKeys(
       l == null ? 500 : l,
-      u ? x : r,
+      u ? I : r,
       f
-    ).delay(c || 0), t.addAnimator(S, e), s.push(S);
+    ).delay(c || 0), t.addAnimator(b, e), s.push(b);
   }
 }
 const Element$1 = Element, STYLE_MAGIC_KEY = "__zr_style_" + Math.round(Math.random() * 10), DEFAULT_COMMON_STYLE = {
@@ -97868,8 +97868,8 @@ const _PathProxy = class Ha {
           break;
         }
         case CMD$1.C: {
-          const R = e[p++], D = e[p++], F = e[p++], Z = e[p++], b = e[p++], v = e[p++];
-          f = cubicLength(n, s, R, D, F, Z, b, v, 10), n = b, s = v;
+          const R = e[p++], D = e[p++], F = e[p++], Z = e[p++], B = e[p++], v = e[p++];
+          f = cubicLength(n, s, R, D, F, Z, B, v, 10), n = B, s = v;
           break;
         }
         case CMD$1.Q: {
@@ -97878,10 +97878,10 @@ const _PathProxy = class Ha {
           break;
         }
         case CMD$1.A:
-          const h = e[p++], C = e[p++], x = e[p++], y = e[p++], S = e[p++];
-          let A = e[p++];
-          const B = A + S;
-          p += 1, e[p++], T && (u = mathCos(S) * x + h, d = mathSin(S) * y + C), f = mathMax(x, y) * mathMin(PI2$3, Math.abs(A)), n = mathCos(B) * x + h, s = mathSin(B) * y + C;
+          const h = e[p++], C = e[p++], I = e[p++], y = e[p++], b = e[p++];
+          let S = e[p++];
+          const A = S + b;
+          p += 1, e[p++], T && (u = mathCos(b) * I + h, d = mathSin(b) * y + C), f = mathMax(I, y) * mathMin(PI2$3, Math.abs(S)), n = mathCos(A) * I + h, s = mathSin(A) * y + C;
           break;
         case CMD$1.R: {
           u = n = e[p++], d = s = e[p++];
@@ -97908,23 +97908,23 @@ const _PathProxy = class Ha {
     const r = this.data, o = this._ux, n = this._uy, s = this._len;
     let u, d, l, c, m, p;
     const g = a < 1;
-    let T, f, h = 0, C = 0, x, y = 0, S, A;
-    if (!(g && (this._pathSegLen || this._calculateLength(), T = this._pathSegLen, f = this._pathLen, x = a * f, !x)))
+    let T, f, h = 0, C = 0, I, y = 0, b, S;
+    if (!(g && (this._pathSegLen || this._calculateLength(), T = this._pathSegLen, f = this._pathLen, I = a * f, !I)))
       e:
-        for (let B = 0; B < s; ) {
-          const R = r[B++], D = B === 1;
-          switch (D && (l = r[B], c = r[B + 1], u = l, d = c), R !== CMD$1.L && y > 0 && (e.lineTo(S, A), y = 0), R) {
+        for (let A = 0; A < s; ) {
+          const R = r[A++], D = A === 1;
+          switch (D && (l = r[A], c = r[A + 1], u = l, d = c), R !== CMD$1.L && y > 0 && (e.lineTo(b, S), y = 0), R) {
             case CMD$1.M:
-              u = l = r[B++], d = c = r[B++], e.moveTo(l, c);
+              u = l = r[A++], d = c = r[A++], e.moveTo(l, c);
               break;
             case CMD$1.L: {
-              m = r[B++], p = r[B++];
-              const G = mathAbs(m - l), w = mathAbs(p - c);
-              if (G > o || w > n) {
+              m = r[A++], p = r[A++];
+              const V = mathAbs(m - l), U = mathAbs(p - c);
+              if (V > o || U > n) {
                 if (g) {
                   const X = T[C++];
-                  if (h + X > x) {
-                    const j = (x - h) / X;
+                  if (h + X > I) {
+                    const j = (I - h) / X;
                     e.lineTo(l * (1 - j) + m * j, c * (1 - j) + p * j);
                     break e;
                   }
@@ -97932,75 +97932,75 @@ const _PathProxy = class Ha {
                 }
                 e.lineTo(m, p), l = m, c = p, y = 0;
               } else {
-                const X = G * G + w * w;
-                X > y && (S = m, A = p, y = X);
+                const X = V * V + U * U;
+                X > y && (b = m, S = p, y = X);
               }
               break;
             }
             case CMD$1.C: {
-              const G = r[B++], w = r[B++], X = r[B++], j = r[B++], ae = r[B++], ee = r[B++];
+              const V = r[A++], U = r[A++], X = r[A++], j = r[A++], ae = r[A++], ee = r[A++];
               if (g) {
                 const ue = T[C++];
-                if (h + ue > x) {
-                  const ie = (x - h) / ue;
-                  cubicSubdivide(l, G, X, ae, ie, tmpOutX), cubicSubdivide(c, w, j, ee, ie, tmpOutY), e.bezierCurveTo(tmpOutX[1], tmpOutY[1], tmpOutX[2], tmpOutY[2], tmpOutX[3], tmpOutY[3]);
+                if (h + ue > I) {
+                  const ie = (I - h) / ue;
+                  cubicSubdivide(l, V, X, ae, ie, tmpOutX), cubicSubdivide(c, U, j, ee, ie, tmpOutY), e.bezierCurveTo(tmpOutX[1], tmpOutY[1], tmpOutX[2], tmpOutY[2], tmpOutX[3], tmpOutY[3]);
                   break e;
                 }
                 h += ue;
               }
-              e.bezierCurveTo(G, w, X, j, ae, ee), l = ae, c = ee;
+              e.bezierCurveTo(V, U, X, j, ae, ee), l = ae, c = ee;
               break;
             }
             case CMD$1.Q: {
-              const G = r[B++], w = r[B++], X = r[B++], j = r[B++];
+              const V = r[A++], U = r[A++], X = r[A++], j = r[A++];
               if (g) {
                 const ae = T[C++];
-                if (h + ae > x) {
-                  const ee = (x - h) / ae;
-                  quadraticSubdivide(l, G, X, ee, tmpOutX), quadraticSubdivide(c, w, j, ee, tmpOutY), e.quadraticCurveTo(tmpOutX[1], tmpOutY[1], tmpOutX[2], tmpOutY[2]);
+                if (h + ae > I) {
+                  const ee = (I - h) / ae;
+                  quadraticSubdivide(l, V, X, ee, tmpOutX), quadraticSubdivide(c, U, j, ee, tmpOutY), e.quadraticCurveTo(tmpOutX[1], tmpOutY[1], tmpOutX[2], tmpOutY[2]);
                   break e;
                 }
                 h += ae;
               }
-              e.quadraticCurveTo(G, w, X, j), l = X, c = j;
+              e.quadraticCurveTo(V, U, X, j), l = X, c = j;
               break;
             }
             case CMD$1.A:
-              const F = r[B++], Z = r[B++], b = r[B++], v = r[B++];
-              let M = r[B++], W = r[B++];
-              const K = r[B++], $ = !r[B++], q = b > v ? b : v, J = mathAbs(b - v) > 1e-3;
-              let V = M + W, z = !1;
+              const F = r[A++], Z = r[A++], B = r[A++], v = r[A++];
+              let O = r[A++], w = r[A++];
+              const $ = r[A++], W = !r[A++], q = B > v ? B : v, J = mathAbs(B - v) > 1e-3;
+              let H = O + w, z = !1;
               if (g) {
-                const G = T[C++];
-                h + G > x && (V = M + W * (x - h) / G, z = !0), h += G;
+                const V = T[C++];
+                h + V > I && (H = O + w * (I - h) / V, z = !0), h += V;
               }
-              if (J && e.ellipse ? e.ellipse(F, Z, b, v, K, M, V, $) : e.arc(F, Z, q, M, V, $), z)
+              if (J && e.ellipse ? e.ellipse(F, Z, B, v, $, O, H, W) : e.arc(F, Z, q, O, H, W), z)
                 break e;
-              D && (u = mathCos(M) * b + F, d = mathSin(M) * v + Z), l = mathCos(V) * b + F, c = mathSin(V) * v + Z;
+              D && (u = mathCos(O) * B + F, d = mathSin(O) * v + Z), l = mathCos(H) * B + F, c = mathSin(H) * v + Z;
               break;
             case CMD$1.R:
-              u = l = r[B], d = c = r[B + 1], m = r[B++], p = r[B++];
-              const Y = r[B++], Q = r[B++];
+              u = l = r[A], d = c = r[A + 1], m = r[A++], p = r[A++];
+              const Y = r[A++], Q = r[A++];
               if (g) {
-                const G = T[C++];
-                if (h + G > x) {
-                  let w = x - h;
-                  e.moveTo(m, p), e.lineTo(m + mathMin(w, Y), p), w -= Y, w > 0 && e.lineTo(m + Y, p + mathMin(w, Q)), w -= Q, w > 0 && e.lineTo(m + mathMax(Y - w, 0), p + Q), w -= Y, w > 0 && e.lineTo(m, p + mathMax(Q - w, 0));
+                const V = T[C++];
+                if (h + V > I) {
+                  let U = I - h;
+                  e.moveTo(m, p), e.lineTo(m + mathMin(U, Y), p), U -= Y, U > 0 && e.lineTo(m + Y, p + mathMin(U, Q)), U -= Q, U > 0 && e.lineTo(m + mathMax(Y - U, 0), p + Q), U -= Y, U > 0 && e.lineTo(m, p + mathMax(Q - U, 0));
                   break e;
                 }
-                h += G;
+                h += V;
               }
               e.rect(m, p, Y, Q);
               break;
             case CMD$1.Z:
               if (g) {
-                const G = T[C++];
-                if (h + G > x) {
-                  const w = (x - h) / G;
-                  e.lineTo(l * (1 - w) + u * w, c * (1 - w) + d * w);
+                const V = T[C++];
+                if (h + V > I) {
+                  const U = (I - h) / V;
+                  e.lineTo(l * (1 - U) + u * U, c * (1 - U) + d * U);
                   break e;
                 }
-                h += G;
+                h += V;
               }
               e.closePath(), l = u, c = d;
           }
@@ -98313,18 +98313,18 @@ function containPath(t, e, a, r, o) {
         d = n[T++], l = n[T++];
         break;
       case CMD.A:
-        const C = n[T++], x = n[T++], y = n[T++], S = n[T++], A = n[T++], B = n[T++];
+        const C = n[T++], I = n[T++], y = n[T++], b = n[T++], S = n[T++], A = n[T++];
         T += 1;
         const R = !!(1 - n[T++]);
-        p = Math.cos(A) * y + C, g = Math.sin(A) * S + x, h ? (c = p, m = g) : u += windingLine(d, l, p, g, r, o);
-        const D = (r - C) * S / y + C;
+        p = Math.cos(S) * y + C, g = Math.sin(S) * b + I, h ? (c = p, m = g) : u += windingLine(d, l, p, g, r, o);
+        const D = (r - C) * b / y + C;
         if (a) {
           if (containStroke$1(
             C,
-            x,
+            I,
+            b,
             S,
-            A,
-            A + B,
+            S + A,
             R,
             e,
             D,
@@ -98334,15 +98334,15 @@ function containPath(t, e, a, r, o) {
         } else
           u += windingArc(
             C,
-            x,
+            I,
+            b,
             S,
-            A,
-            A + B,
+            S + A,
             R,
             D,
             o
           );
-        d = Math.cos(A + B) * y + C, l = Math.sin(A + B) * S + x;
+        d = Math.cos(S + A) * y + C, l = Math.sin(S + A) * b + I;
         break;
       case CMD.R:
         c = d = n[T++], m = l = n[T++];
@@ -98827,9 +98827,9 @@ function brushPath$1(t, e, a, r) {
   (!e.silent || u) && d && e.createPathProxy();
   const l = e.path || pathProxyForDraw$1, c = e.__dirty;
   if (!r) {
-    const f = a.fill, h = a.stroke, C = n && !!f.colorStops, x = o && !!h.colorStops, y = n && !!f.image, S = o && !!h.image;
-    let A, B, R, D, F;
-    (C || x) && (F = e.getBoundingRect()), C && (A = c ? getCanvasGradient$1(t, f, F) : e.__canvasFillGradient, e.__canvasFillGradient = A), x && (B = c ? getCanvasGradient$1(t, h, F) : e.__canvasStrokeGradient, e.__canvasStrokeGradient = B), y && (R = c || !e.__canvasFillPattern ? createCanvasPattern$1(t, f, e) : e.__canvasFillPattern, e.__canvasFillPattern = R), S && (D = c || !e.__canvasStrokePattern ? createCanvasPattern$1(t, h, e) : e.__canvasStrokePattern, e.__canvasStrokePattern = R), C ? t.fillStyle = A : y && (R ? t.fillStyle = R : n = !1), x ? t.strokeStyle = B : S && (D ? t.strokeStyle = D : o = !1);
+    const f = a.fill, h = a.stroke, C = n && !!f.colorStops, I = o && !!h.colorStops, y = n && !!f.image, b = o && !!h.image;
+    let S, A, R, D, F;
+    (C || I) && (F = e.getBoundingRect()), C && (S = c ? getCanvasGradient$1(t, f, F) : e.__canvasFillGradient, e.__canvasFillGradient = S), I && (A = c ? getCanvasGradient$1(t, h, F) : e.__canvasStrokeGradient, e.__canvasStrokeGradient = A), y && (R = c || !e.__canvasFillPattern ? createCanvasPattern$1(t, f, e) : e.__canvasFillPattern, e.__canvasFillPattern = R), b && (D = c || !e.__canvasStrokePattern ? createCanvasPattern$1(t, h, e) : e.__canvasStrokePattern, e.__canvasStrokePattern = R), C ? t.fillStyle = S : y && (R ? t.fillStyle = R : n = !1), I ? t.strokeStyle = A : b && (D ? t.strokeStyle = D : o = !1);
   }
   const m = e.getGlobalScale();
   l.setScale(m[0], m[1], e.segmentIgnoreThreshold);
@@ -99054,23 +99054,23 @@ function createOrUpdatePatternFromDecal(t, e) {
       const D = decalCache.get(p);
       D && (o ? l.svgElement = D : l.image = D);
     }
-    const g = normalizeDashArrayX(s.dashArrayX), T = normalizeDashArrayY(s.dashArrayY), f = normalizeSymbolArray(s.symbol), h = getLineBlockLengthX(g), C = getLineBlockLengthY(T), x = !o && platformApi.createCanvas(), y = o && {
+    const g = normalizeDashArrayX(s.dashArrayX), T = normalizeDashArrayY(s.dashArrayY), f = normalizeSymbolArray(s.symbol), h = getLineBlockLengthX(g), C = getLineBlockLengthY(T), I = !o && platformApi.createCanvas(), y = o && {
       tag: "g",
       attrs: {},
       key: "dcl",
       children: []
-    }, S = B();
-    let A;
-    x && (x.width = S.width * a, x.height = S.height * a, A = x.getContext("2d")), R(), m && decalCache.put(p, x || y), l.image = x, l.svgElement = y, l.svgWidth = S.width, l.svgHeight = S.height;
-    function B() {
+    }, b = A();
+    let S;
+    I && (I.width = b.width * a, I.height = b.height * a, S = I.getContext("2d")), R(), m && decalCache.put(p, I || y), l.image = I, l.svgElement = y, l.svgWidth = b.width, l.svgHeight = b.height;
+    function A() {
       let D = 1;
-      for (let b = 0, v = h.length; b < v; ++b)
-        D = getLeastCommonMultiple(D, h[b]);
+      for (let B = 0, v = h.length; B < v; ++B)
+        D = getLeastCommonMultiple(D, h[B]);
       let F = 1;
-      for (let b = 0, v = f.length; b < v; ++b)
+      for (let B = 0, v = f.length; B < v; ++B)
         F = getLeastCommonMultiple(
           F,
-          f[b].length
+          f[B].length
         );
       D *= F;
       const Z = C * h.length * f.length;
@@ -99080,46 +99080,46 @@ function createOrUpdatePatternFromDecal(t, e) {
       };
     }
     function R() {
-      A && (A.clearRect(0, 0, x.width, x.height), s.backgroundColor && (A.fillStyle = s.backgroundColor, A.fillRect(0, 0, x.width, x.height)));
+      S && (S.clearRect(0, 0, I.width, I.height), s.backgroundColor && (S.fillStyle = s.backgroundColor, S.fillRect(0, 0, I.width, I.height)));
       let D = 0;
-      for (let W = 0; W < T.length; ++W)
-        D += T[W];
+      for (let w = 0; w < T.length; ++w)
+        D += T[w];
       if (D <= 0)
         return;
-      let F = -C, Z = 0, b = 0, v = 0;
-      for (; F < S.height; ) {
+      let F = -C, Z = 0, B = 0, v = 0;
+      for (; F < b.height; ) {
         if (Z % 2 === 0) {
-          const W = b / 2 % f.length;
-          let K = 0, $ = 0, q = 0;
-          for (; K < S.width * 2; ) {
+          const w = B / 2 % f.length;
+          let $ = 0, W = 0, q = 0;
+          for (; $ < b.width * 2; ) {
             let J = 0;
-            for (let V = 0; V < g[v].length; ++V)
-              J += g[v][V];
+            for (let H = 0; H < g[v].length; ++H)
+              J += g[v][H];
             if (J <= 0)
               break;
-            if ($ % 2 === 0) {
-              const V = (1 - s.symbolSize) * 0.5, z = K + g[v][$] * V, Y = F + T[Z] * V, Q = g[v][$] * s.symbolSize, G = T[Z] * s.symbolSize, w = q / 2 % f[W].length;
-              M(
+            if (W % 2 === 0) {
+              const H = (1 - s.symbolSize) * 0.5, z = $ + g[v][W] * H, Y = F + T[Z] * H, Q = g[v][W] * s.symbolSize, V = T[Z] * s.symbolSize, U = q / 2 % f[w].length;
+              O(
                 z,
                 Y,
                 Q,
-                G,
-                f[W][w]
+                V,
+                f[w][U]
               );
             }
-            K += g[v][$], ++q, ++$, $ === g[v].length && ($ = 0);
+            $ += g[v][W], ++q, ++W, W === g[v].length && (W = 0);
           }
           ++v, v === g.length && (v = 0);
         }
-        F += T[Z], ++b, ++Z, Z === T.length && (Z = 0);
+        F += T[Z], ++B, ++Z, Z === T.length && (Z = 0);
       }
-      function M(W, K, $, q, J) {
-        const V = o ? 1 : a, z = createSymbol(
+      function O(w, $, W, q, J) {
+        const H = o ? 1 : a, z = createSymbol(
           J,
-          W * V,
-          K * V,
-          $ * V,
-          q * V,
+          w * H,
+          $ * H,
+          W * H,
+          q * H,
           s.color,
           s.symbolKeepAspect
         );
@@ -99129,7 +99129,7 @@ function createOrUpdatePatternFromDecal(t, e) {
           );
           Y && y.children.push(Y);
         } else
-          brushSingle$1(A, z);
+          brushSingle$1(S, z);
       }
     }
   }
@@ -100235,21 +100235,21 @@ const builders = {
             )
           }
         ],
-        function(C, x) {
-          if (p[x] !== "none" && p[x] != null) {
+        function(C, I) {
+          if (p[I] !== "none" && p[I] != null) {
             const y = createSymbol(
-              p[x],
+              p[I],
               -f / 2,
               -h / 2,
               f,
               h,
               c.stroke,
               !0
-            ), S = C.r + C.offset, A = l ? d : u;
+            ), b = C.r + C.offset, S = l ? d : u;
             y.attr({
               rotation: C.rotate,
-              x: A[0] + S * Math.cos(t.rotation),
-              y: A[1] - S * Math.sin(t.rotation),
+              x: S[0] + b * Math.cos(t.rotation),
+              y: S[1] - b * Math.sin(t.rotation),
               silent: !0,
               z2: 11
             }), a.add(y);
@@ -100317,27 +100317,27 @@ function buildAxisLabel(t, e, a, r) {
     r.labelDirection
   ), m = a.getCategories && a.getCategories(!0), p = [], g = AxisBuilder.isLabelSilent(a), T = a.get("triggerEvent");
   return each(d, function(f, h) {
-    const C = o.scale.type === "ordinal" ? o.scale.getRawOrdinalNumber(f.tickValue) : f.tickValue, x = f.formattedLabel, y = f.rawLabel;
-    let S = s;
+    const C = o.scale.type === "ordinal" ? o.scale.getRawOrdinalNumber(f.tickValue) : f.tickValue, I = f.formattedLabel, y = f.rawLabel;
+    let b = s;
     if (m && m[C]) {
       const D = m[C];
-      isObject$1(D) && D.textStyle && (S = new Model(
+      isObject$1(D) && D.textStyle && (b = new Model(
         D.textStyle,
         s,
         a.piModel
       ));
     }
-    const A = S.getTextColor() || a.get(["axisLine", "lineStyle", "color"]), B = o.dataToCoord(C), R = new _global_zrender_Text({
-      x: B,
+    const S = b.getTextColor() || a.get(["axisLine", "lineStyle", "color"]), A = o.dataToCoord(C), R = new _global_zrender_Text({
+      x: A,
       y: r.labelOffset + r.labelDirection * u,
       rotation: c.rotation,
       silent: g,
       z2: 10 + (f.level || 0),
-      style: createTextStyle(S, {
-        text: x,
-        align: S.getShallow("align", !0) || c.textAlign,
-        verticalAlign: S.getShallow("verticalAlign", !0) || S.getShallow("baseline", !0) || c.textVerticalAlign,
-        fill: isFunction$1(A) ? A(
+      style: createTextStyle(b, {
+        text: I,
+        align: b.getShallow("align", !0) || c.textAlign,
+        verticalAlign: b.getShallow("verticalAlign", !0) || b.getShallow("baseline", !0) || c.textVerticalAlign,
+        fill: isFunction$1(S) ? S(
           // (1) In category axis with data zoom, tick is not the original
           // index of axis.data. So tick should not be exposed to user
           // in category axis.
@@ -100347,7 +100347,7 @@ function buildAxisLabel(t, e, a, r) {
           // it as 'string' to avoid error in replacing.
           o.type === "category" ? y : o.type === "value" ? C + "" : C,
           h
-        ) : A
+        ) : S
       })
     });
     if (R.anid = "label_" + C, T) {
@@ -100896,13 +100896,13 @@ class AxisProxy {
         c["min" + C],
         c["max" + C]
       );
-      for (let x = 0; x < 2; x++)
-        g[x] = linearMap(
-          p[x],
+      for (let I = 0; I < 2; I++)
+        g[I] = linearMap(
+          p[I],
           T,
           f,
           !0
-        ), h && (g[x] = o.parse(g[x]));
+        ), h && (g[I] = o.parse(g[I]));
     }
     return {
       valueWindow: d,
@@ -100936,10 +100936,10 @@ class AxisProxy {
           l.filterSelf(function(g) {
             let T, f, h;
             for (let C = 0; C < c.length; C++) {
-              const x = m.get(p[C], g), y = !isNaN(x), S = x < s[0], A = x > s[1];
-              if (y && !S && !A)
+              const I = m.get(p[C], g), y = !isNaN(I), b = I < s[0], S = I > s[1];
+              if (y && !b && !S)
                 return !0;
-              y && (h = !0), S && (T = !0), A && (f = !0);
+              y && (h = !0), b && (T = !0), S && (f = !0);
             }
             return h && T && f;
           });
@@ -101063,13 +101063,6 @@ const dataZoomProcessor = {
     });
   }
 };
-function applyDataZoomFilter(t, e) {
-  t.eachComponent("dataZoom", function(a) {
-    a.eachTargetAxis(function(r, o) {
-      a.getAxisProxy(r, o).filterData(a, e);
-    });
-  });
-}
 let installed = !1;
 function installCommon(t) {
   installed || (installed = !0, t.registerProcessor(t.PRIORITY.PROCESSOR.FILTER, dataZoomProcessor), installDataZoomAction(t), t.registerSubTypeDefaulter("dataZoom", function() {
@@ -101237,17 +101230,17 @@ const DEFAULT_LOCATION_EDGE_GAP = 7, DEFAULT_FRAME_BORDER_WIDTH = 1, DEFAULT_FIL
       const T = [0, a[1]], f = [0, a[0]], h = [
         [a[0], 0],
         [0, 0]
-      ], C = [], x = f[1] / (n.count() - 1);
+      ], C = [], I = f[1] / (n.count() - 1);
       let y = 0;
-      const S = Math.round(n.count() / a[0]);
-      let A;
-      n.each([u], function(B, R) {
-        if (S > 0 && R % S) {
-          y += x;
+      const b = Math.round(n.count() / a[0]);
+      let S;
+      n.each([u], function(A, R) {
+        if (b > 0 && R % b) {
+          y += I;
           return;
         }
-        const D = B == null || isNaN(B) || B === "", F = D ? 0 : linearMap(B, p, T, !0);
-        D && !A && R ? (h.push([h[h.length - 1][0], 0]), C.push([C[C.length - 1][0], 0])) : !D && A && (h.push([y, 0]), C.push([y, 0])), h.push([y, F]), C.push([y, F]), y += x, A = D;
+        const D = A == null || isNaN(A) || A === "", F = D ? 0 : linearMap(A, p, T, !0);
+        D && !S && R ? (h.push([h[h.length - 1][0], 0]), C.push([C[C.length - 1][0], 0])) : !D && S && (h.push([y, 0]), C.push([y, 0])), h.push([y, F]), C.push([y, F]), y += I, S = D;
       }), d = this._shadowPolygonPts = h, l = this._shadowPolylinePts = C;
     }
     this._shadowData = n, this._shadowDim = u, this._shadowSize = [a[0], a[1]];
@@ -101365,8 +101358,8 @@ const DEFAULT_LOCATION_EDGE_GAP = 7, DEFAULT_FRAME_BORDER_WIDTH = 1, DEFAULT_FIL
         });
         const h = f.getBoundingRect(), C = u.get("handleSize");
         this._handleHeight = parsePercent$1(C, this._size[1]), this._handleWidth = h.width / h.height * this._handleHeight, f.setStyle(u.getModel("handleStyle").getItemStyle()), f.style.strokeNoScale = !0, f.rectHover = !0, f.ensureState("emphasis").style = u.getModel(["emphasis", "handleStyle"]).getItemStyle(), enableHoverEmphasis(f);
-        const x = u.get("handleColor");
-        x != null && (f.style.fill = x), n.add(r[g] = f);
+        const I = u.get("handleColor");
+        I != null && (f.style.fill = I), n.add(r[g] = f);
         const y = u.getModel("textStyle");
         e.add(
           o[g] = new _global_zrender_Text({
@@ -102077,33 +102070,33 @@ function install$8(t) {
 }
 class BaseStateMachine {
   constructor(e) {
-    this.listeners = /* @__PURE__ */ new Map(), this.initialState = e.initialState, this.initialContext = H({}, e.initialContext), this.state = e.initialState, this.context = H({}, e.initialContext), this.transitions = e.transitions, this.guards = e.guards || {};
+    this.listeners = /* @__PURE__ */ new Map(), this.initialState = e.initialState, this.initialContext = K({}, e.initialContext), this.state = e.initialState, this.context = K({}, e.initialContext), this.transitions = e.transitions, this.guards = e.guards || {};
   }
   getState() {
     return this.state;
   }
   getContext() {
-    return H({}, this.context);
+    return K({}, this.context);
   }
   setContext(e) {
     const a = this.state;
-    this.context = H(H({}, this.context), e), this.emit("contextchange", a, this.state);
+    this.context = K(K({}, this.context), e), this.emit("contextchange", a, this.state);
   }
   can(e, a) {
     var s;
-    const r = a ? H(H({}, this.context), a) : this.context, o = this.guards[e];
+    const r = a ? K(K({}, this.context), a) : this.context, o = this.guards[e];
     return !!((s = this.transitions[this.state]) == null ? void 0 : s[e]) && (!o || o(r));
   }
   transition(e, a) {
     var u;
     if (!this.can(e, a))
       return this.emit("blocked", this.state, this.state), !1;
-    const r = this.state, o = a ? H(H({}, this.context), a) : this.context, n = (u = this.transitions[r]) == null ? void 0 : u[e], s = this._resolveTransition(n, o);
+    const r = this.state, o = a ? K(K({}, this.context), a) : this.context, n = (u = this.transitions[r]) == null ? void 0 : u[e], s = this._resolveTransition(n, o);
     return s == null ? (this.emit("blocked", r, r), !1) : (this.context = o, s !== r && (this.emit("exit", r, s), this.state = s, this.emit("enter", r, s)), this.emit("statechange", r, this.state), !0);
   }
   reset(e) {
     const a = this.state;
-    this.state = this.initialState, this.context = H(H({}, this.initialContext), e || {}), this.emit("reset", a, this.state), this.emit("statechange", a, this.state);
+    this.state = this.initialState, this.context = K(K({}, this.initialContext), e || {}), this.emit("reset", a, this.state), this.emit("statechange", a, this.state);
   }
   on(e, a) {
     this.listeners.has(e) || this.listeners.set(e, /* @__PURE__ */ new Set()), this.listeners.get(e).add(a);
@@ -102466,13 +102459,13 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
         z2: 0
       })
     );
-    const x = r + o * 0.34, y = r + o * 0.72, S = Math.min(48, Math.max(36, f * 0.2)), A = S, B = g + S, R = Math.max(0, f - S - A);
+    const I = r + o * 0.34, y = r + o * 0.72, b = Math.min(48, Math.max(36, f * 0.2)), S = b, A = g + b, R = Math.max(0, f - b - S);
     if (h.add(
       new zrender.Text({
         style: {
           text: this._formatTimeLabel(l),
-          x: g + S / 2,
-          y: x,
+          x: g + b / 2,
+          y: I,
           fontSize: 10,
           fill: "#64748B",
           align: "center",
@@ -102487,8 +102480,8 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
       new zrender.Text({
         style: {
           text: this._formatTimeLabel(c),
-          x: g + f - A / 2,
-          y: x,
+          x: g + f - S / 2,
+          y: I,
           fontSize: 10,
           fill: "#64748B",
           align: "center",
@@ -102503,8 +102496,8 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
       new zrender.Text({
         style: {
           text: this._truncateText(e.flightStatusText || e.name || "", R - 8, 10),
-          x: B + R / 2,
-          y: x,
+          x: A + R / 2,
+          y: I,
           fontSize: 10,
           fill: "#111827",
           align: "center",
@@ -102532,7 +102525,7 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
         silent: !0
       })
     ), s) {
-      const b = new zrender.Rect({
+      const B = new zrender.Rect({
         shape: C,
         style: {
           fill: "rgba(0,0,0,0)"
@@ -102542,11 +102535,11 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
         z: 0,
         z2: 20,
         ondblclick: (v) => {
-          var M;
-          (M = this._assignmentMachine) == null || M.selectTask(e), stop(v.event);
+          var O;
+          (O = this._assignmentMachine) == null || O.selectTask(e), stop(v.event);
         }
       });
-      h.add(b);
+      h.add(B);
     }
     return h;
   }
@@ -102790,10 +102783,10 @@ const BOARD_ZLEVEL = 999, _UnassignedBoardView = class at extends ComponentView 
       ondragstart: (h) => {
         this._mainScrollDragStartY = h.offsetY, this._mainScrollDragStartStart = n[0], stop(h.event);
       },
-      drift: (h, C, x) => {
+      drift: (h, C, I) => {
         var D, F;
-        const y = ((F = (D = this._getVerticalDataZoomModel()) == null ? void 0 : D.getPercentRange) == null ? void 0 : F.call(D)) || n, S = Math.max(1, Math.min(100, y[1] - y[0])), A = Math.max(1, 100 - S), B = x.offsetY - this._mainScrollDragStartY, R = this._mainScrollDragStartStart + B / l * A;
-        this._dispatchVerticalDataZoom(R, R + S), stop(x.event);
+        const y = ((F = (D = this._getVerticalDataZoomModel()) == null ? void 0 : D.getPercentRange) == null ? void 0 : F.call(D)) || n, b = Math.max(1, Math.min(100, y[1] - y[0])), S = Math.max(1, 100 - b), A = I.offsetY - this._mainScrollDragStartY, R = this._mainScrollDragStartStart + A / l * S;
+        this._dispatchVerticalDataZoom(R, R + b), stop(I.event);
       }
     }), T.add(this._mainScrollThumb), this.group.add(T);
   }
@@ -102898,40 +102891,26 @@ function install$7(t) {
 function installUnassignedBoardAction(t) {
   t.registerAction({
     type: "updateResourceFilter",
-    update: "none"
+    update: "update"
   }, function(e, a, r) {
     const o = e.assignedData || [], n = e.unassignedData || [], s = e.resourceData || [], u = e.resources || [];
     a.eachSeries(function(d) {
       var l, c;
-      d.id === "assignedTasks" && ((l = d.updateData) == null || l.call(d, o, a), applyDataZoomFilter(a, r), r.refreshSeries("assignedTasks", e)), d.id === "resourceRows" && ((c = d.updateData) == null || c.call(d, s, a), r.refreshSeries("resourceRows", e));
+      d.id === "assignedTasks" && ((l = d.updateData) == null || l.call(d, o, a)), d.id === "resourceRows" && ((c = d.updateData) == null || c.call(d, s, a));
     }), a.eachComponent("unassignedBoard", function(d) {
-      var l, c;
-      d.id === "unassignedBoard" && (d.option.data = n, d.option.resources = u, (c = (l = r.getViewOfComponentModel(d)) == null ? void 0 : l.render) == null || c.call(
-        l,
-        d,
-        a,
-        r,
-        e
-      ));
-    }), r.getZr().refresh();
+      d.id === "unassignedBoard" && (d.option.data = n, d.option.resources = u);
+    });
   }), t.registerAction({
     type: "updateTaskData",
-    update: "none"
+    update: "update"
   }, function(e, a, r) {
     const o = e.assignedData || [], n = e.unassignedData || [];
     a.eachSeries(function(s) {
       var u;
-      s.id === "assignedTasks" && ((u = s.updateData) == null || u.call(s, o, a), applyDataZoomFilter(a, r), r.refreshSeries("assignedTasks", e));
+      s.id === "assignedTasks" && ((u = s.updateData) == null || u.call(s, o, a));
     }), a.eachComponent("unassignedBoard", function(s) {
-      var u, d;
-      s.id === "unassignedBoard" && (s.option.data = n, (d = (u = r.getViewOfComponentModel(s)) == null ? void 0 : u.render) == null || d.call(
-        u,
-        s,
-        a,
-        r,
-        e
-      ));
-    }), r.getZr().refresh();
+      s.id === "unassignedBoard" && (s.option.data = n);
+    });
   }), t.registerAction({
     type: "updateUnassignedBoardPosition"
   }, function(e, a, r) {
@@ -102960,7 +102939,7 @@ function installUnassignedBoardAction(t) {
           { type: "updateUnassignedBoardPosition", data: { y: o } }
         );
       } else if (d === "vertical") {
-        const h = updateYAxisVirtualPadding(a, r, o), C = (T = (g = (p = u.findRepresentativeAxisProxy) == null ? void 0 : p.call(u)) == null ? void 0 : g.getDataValueWindow) == null ? void 0 : T.call(g), x = u.getPercentRange(), y = getStableValueRange(C, x, h);
+        const h = updateYAxisVirtualPadding(a, r, o), C = (T = (g = (p = u.findRepresentativeAxisProxy) == null ? void 0 : p.call(u)) == null ? void 0 : g.getDataValueWindow) == null ? void 0 : T.call(g), I = u.getPercentRange(), y = getStableValueRange(C, I, h);
         u.option.bottom = c, u.option.height = void 0, u.setRawRange({
           startValue: y[0],
           endValue: y[1]
@@ -103130,13 +103109,72 @@ const TEXT = {
       font-size: 12px;
       color: #475569;
     }
-    .resource-filter__select {
+    .resource-filter__combobox {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .resource-filter__combobox-input {
+      width: 100%;
       height: 32px;
       border: 1px solid #CBD5E1;
       border-radius: 4px;
-      padding: 0 8px;
+      padding: 0 30px 0 8px;
+      box-sizing: border-box;
       background: #FFFFFF;
       color: #111827;
+      font-size: 13px;
+      outline: none;
+    }
+    .resource-filter__combobox-input:focus {
+      border-color: #2563EB;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+    .resource-filter__combobox-clear {
+      position: absolute;
+      right: 4px;
+      width: 24px;
+      height: 24px;
+      border: 0;
+      background: transparent;
+      color: #94A3B8;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+    }
+    .resource-filter__combobox-clear:hover {
+      color: #334155;
+    }
+    .resource-filter__combobox-menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 36px;
+      z-index: 2;
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid #CBD5E1;
+      border-radius: 4px;
+      background: #FFFFFF;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+    }
+    .resource-filter__combobox-option {
+      min-height: 32px;
+      padding: 7px 8px;
+      box-sizing: border-box;
+      color: #111827;
+      font-size: 13px;
+      line-height: 18px;
+      cursor: pointer;
+    }
+    .resource-filter__combobox-option:hover,
+    .resource-filter__combobox-option--selected {
+      background: #EFF6FF;
+      color: #1D4ED8;
+    }
+    .resource-filter__combobox-empty {
+      padding: 10px 8px;
+      color: #94A3B8;
       font-size: 13px;
     }
     .resource-filter__actions {
@@ -103215,25 +103253,63 @@ const TEXT = {
     n.type = "button", n.append(createFunnelIcon(d), s), n.onclick = () => this._openModal(e, a, r), u.textContent = String(l.length), u.title = d ? TEXT.active : TEXT.inactive, o.append(n, u), this._host.replaceChildren(o);
   }
   _openModal(e, a, r) {
-    const o = createElement$2("div", "resource-filter__backdrop"), n = createElement$2("div", "resource-filter__modal"), s = createElement$2("div", "resource-filter__modal-header"), u = createElement$2("span", "", TEXT.filter), d = createElement$2("button", "resource-filter__close", "×"), l = createElement$2("div", "resource-filter__body"), c = createElement$2("label", "resource-filter__field"), m = createElement$2("span", "", TEXT.name), p = createElement$2("select", "resource-filter__select"), g = createElement$2("div", "resource-filter__actions"), T = createElement$2("button", "resource-filter__action", TEXT.reset), f = createElement$2("button", "resource-filter__action resource-filter__action--primary", TEXT.apply);
-    d.type = "button", T.type = "button", f.type = "button";
-    const h = document.createElement("option");
-    h.value = r, h.textContent = TEXT.all, p.appendChild(h), a.forEach(([x, y]) => {
-      const S = document.createElement("option");
-      S.value = String(y), S.textContent = x || String(y), p.appendChild(S);
-    }), p.value = this._currentResourceId ? String(this._currentResourceId) : r;
-    const C = (x) => {
-      var S;
-      this._currentResourceId = x, this._writeStoredValue(e, x);
-      const y = this._getVisibleResources(a, r, x);
-      this._renderControl(e, a, r), (S = e.get("onChange")) == null || S({
-        filter: { resourceId: x },
-        visibleResources: y
+    const o = createElement$2("div", "resource-filter__backdrop"), n = createElement$2("div", "resource-filter__modal"), s = createElement$2("div", "resource-filter__modal-header"), u = createElement$2("span", "", TEXT.filter), d = createElement$2("button", "resource-filter__close", "×"), l = createElement$2("div", "resource-filter__body"), c = createElement$2("label", "resource-filter__field"), m = createElement$2("span", "", TEXT.name), p = createElement$2("div", "resource-filter__combobox"), g = createElement$2("input", "resource-filter__combobox-input"), T = createElement$2("button", "resource-filter__combobox-clear", "×"), f = createElement$2("div", "resource-filter__combobox-menu"), h = createElement$2("div", "resource-filter__actions"), C = createElement$2("button", "resource-filter__action", TEXT.reset), I = createElement$2("button", "resource-filter__action resource-filter__action--primary", TEXT.apply);
+    d.type = "button", C.type = "button", I.type = "button", g.type = "text", g.placeholder = "搜索资源名称或编号", g.setAttribute("aria-label", "搜索资源名称或编号"), g.setAttribute("role", "combobox"), g.setAttribute("aria-expanded", "false"), T.type = "button", T.title = "清除选择", T.setAttribute("aria-label", "清除选择"), f.setAttribute("role", "listbox"), f.hidden = !0;
+    let y = "";
+    const b = () => this._currentResourceId ? String(this._currentResourceId) : r, S = (B) => {
+      if (B === r)
+        return TEXT.all;
+      const v = a.find((O) => String(O[1]) === String(B));
+      return v ? v[0] || String(v[1]) : "";
+    }, A = () => {
+      const B = y.trim().toLocaleLowerCase(), v = a.filter(([w, $]) => B ? `${w || ""} ${$}`.toLocaleLowerCase().includes(B) : !0);
+      f.replaceChildren();
+      const O = [
+        [TEXT.all, r],
+        ...v
+      ];
+      O.forEach(([w, $]) => {
+        const W = createElement$2(
+          "div",
+          `resource-filter__combobox-option${String($) === b() ? " resource-filter__combobox-option--selected" : ""}`,
+          w || String($)
+        );
+        W.setAttribute("role", "option"), W.setAttribute("aria-selected", String($) === b() ? "true" : "false"), W.onmousedown = (q) => {
+          q.preventDefault(), this._currentResourceId = $, y = "", F(), D(), A();
+        }, f.appendChild(W);
+      }), O.length || f.appendChild(createElement$2("div", "resource-filter__combobox-empty", "暂无匹配资源"));
+    }, R = () => {
+      f.hidden = !1, g.setAttribute("aria-expanded", "true"), A();
+    }, D = () => {
+      f.hidden = !0, g.setAttribute("aria-expanded", "false");
+    }, F = () => {
+      g.value = y || S(b());
+    };
+    F(), A();
+    const Z = (B) => {
+      var O;
+      this._currentResourceId = B, this._writeStoredValue(e, B);
+      const v = this._getVisibleResources(a, r, B);
+      this._renderControl(e, a, r), (O = e.get("onChange")) == null || O({
+        filter: { resourceId: B },
+        visibleResources: v
       }), o.remove();
     };
-    d.onclick = () => o.remove(), T.onclick = () => C(r), f.onclick = () => C(p.value), o.onclick = (x) => {
-      x.target === o && o.remove();
-    }, s.append(u, d), c.append(m, p), l.appendChild(c), g.append(T, f), n.append(s, l, g), o.appendChild(n), document.body.appendChild(o);
+    d.onclick = () => o.remove(), C.onclick = () => Z(r), I.onclick = () => Z(b()), g.onfocus = () => {
+      y || (g.value = ""), R();
+    }, g.onclick = R, g.onblur = () => {
+      window.setTimeout(() => {
+        p.contains(document.activeElement) || (y = "", F(), D());
+      }, 0);
+    }, g.oninput = () => {
+      y = g.value, f.hidden = !1, g.setAttribute("aria-expanded", "true"), A();
+    }, g.onkeydown = (B) => {
+      B.key === "Escape" && D();
+    }, T.onclick = () => {
+      this._currentResourceId = r, y = "", F(), R(), g.focus();
+    }, o.onclick = (B) => {
+      B.target === o && o.remove();
+    }, s.append(u, d), p.append(g, T, f), c.append(m, p), l.appendChild(c), h.append(C, I), n.append(s, l, h), o.appendChild(n), document.body.appendChild(o);
   }
 };
 _ResourceFilterView.type = "resourceFilter";
@@ -104179,8 +104255,8 @@ function brushPath(t, e, a, r) {
   (!e.silent || d) && l && e.createPathProxy();
   var c = e.path || pathProxyForDraw, m = e.__dirty;
   if (!r) {
-    var p = a.fill, g = a.stroke, T = s && !!p.colorStops, f = n && !!g.colorStops, h = s && !!p.image, C = n && !!g.image, x = void 0, y = void 0, S = void 0, A = void 0, B = void 0;
-    (T || f) && (B = e.getBoundingRect()), T && (x = m ? getCanvasGradient(t, p, B) : e.__canvasFillGradient, e.__canvasFillGradient = x), f && (y = m ? getCanvasGradient(t, g, B) : e.__canvasStrokeGradient, e.__canvasStrokeGradient = y), h && (S = m || !e.__canvasFillPattern ? createCanvasPattern(t, p, e) : e.__canvasFillPattern, e.__canvasFillPattern = S), C && (A = m || !e.__canvasStrokePattern ? createCanvasPattern(t, g, e) : e.__canvasStrokePattern, e.__canvasStrokePattern = S), T ? t.fillStyle = x : h && (S ? t.fillStyle = S : s = !1), f ? t.strokeStyle = y : C && (A ? t.strokeStyle = A : n = !1);
+    var p = a.fill, g = a.stroke, T = s && !!p.colorStops, f = n && !!g.colorStops, h = s && !!p.image, C = n && !!g.image, I = void 0, y = void 0, b = void 0, S = void 0, A = void 0;
+    (T || f) && (A = e.getBoundingRect()), T && (I = m ? getCanvasGradient(t, p, A) : e.__canvasFillGradient, e.__canvasFillGradient = I), f && (y = m ? getCanvasGradient(t, g, A) : e.__canvasStrokeGradient, e.__canvasStrokeGradient = y), h && (b = m || !e.__canvasFillPattern ? createCanvasPattern(t, p, e) : e.__canvasFillPattern, e.__canvasFillPattern = b), C && (S = m || !e.__canvasStrokePattern ? createCanvasPattern(t, g, e) : e.__canvasStrokePattern, e.__canvasStrokePattern = b), T ? t.fillStyle = I : h && (b ? t.fillStyle = b : s = !1), f ? t.strokeStyle = y : C && (S ? t.strokeStyle = S : n = !1);
   }
   var R = e.getGlobalScale();
   c.setScale(R[0], R[1], e.segmentIgnoreThreshold);
@@ -104349,27 +104425,27 @@ var Layer = function(t) {
     if (this.__firstTimePaint)
       return this.__firstTimePaint = !1, null;
     var s = [], u = this.maxRepaintRectCount, d = !1, l = new BoundingRect$1(0, 0, 0, 0);
-    function c(x) {
-      if (!(!x.isFinite() || x.isZero()))
+    function c(I) {
+      if (!(!I.isFinite() || I.isZero()))
         if (s.length === 0) {
           var y = new BoundingRect$1(0, 0, 0, 0);
-          y.copy(x), s.push(y);
+          y.copy(I), s.push(y);
         } else {
-          for (var S = !1, A = 1 / 0, B = 0, R = 0; R < s.length; ++R) {
+          for (var b = !1, S = 1 / 0, A = 0, R = 0; R < s.length; ++R) {
             var D = s[R];
-            if (D.intersect(x)) {
+            if (D.intersect(I)) {
               var F = new BoundingRect$1(0, 0, 0, 0);
-              F.copy(D), F.union(x), s[R] = F, S = !0;
+              F.copy(D), F.union(I), s[R] = F, b = !0;
               break;
             } else if (d) {
-              l.copy(x), l.union(D);
-              var Z = x.width * x.height, b = D.width * D.height, v = l.width * l.height, M = v - Z - b;
-              M < A && (A = M, B = R);
+              l.copy(I), l.union(D);
+              var Z = I.width * I.height, B = D.width * D.height, v = l.width * l.height, O = v - Z - B;
+              O < S && (S = O, A = R);
             }
           }
-          if (d && (s[B].union(x), S = !0), !S) {
+          if (d && (s[A].union(I), b = !0), !b) {
             var y = new BoundingRect$1(0, 0, 0, 0);
-            y.copy(x), s.push(y);
+            y.copy(I), s.push(y);
           }
           d || (d = s.length >= u);
         }
@@ -104415,26 +104491,26 @@ var Layer = function(t) {
     var l = this.motionBlur && !a, c = this.lastFrameAlpha, m = this.dpr, p = this;
     l && (this.domBack || this.createBackBuffer(), this.ctxBack.globalCompositeOperation = "copy", this.ctxBack.drawImage(n, 0, 0, u / m, d / m));
     var g = this.domBack;
-    function T(f, h, C, x) {
-      if (s.clearRect(f, h, C, x), r && r !== "transparent") {
+    function T(f, h, C, I) {
+      if (s.clearRect(f, h, C, I), r && r !== "transparent") {
         var y = void 0;
         if (isGradientObject(r)) {
-          var S = r.global || r.__width === C && r.__height === x;
-          y = S && r.__canvasGradient || getCanvasGradient(s, r, {
+          var b = r.global || r.__width === C && r.__height === I;
+          y = b && r.__canvasGradient || getCanvasGradient(s, r, {
             x: 0,
             y: 0,
             width: C,
-            height: x
-          }), r.__canvasGradient = y, r.__width = C, r.__height = x;
+            height: I
+          }), r.__canvasGradient = y, r.__width = C, r.__height = I;
         } else
           isImagePatternObject(r) && (r.scaleX = r.scaleX || m, r.scaleY = r.scaleY || m, y = createCanvasPattern(s, r, {
             dirty: function() {
               p.setUnpainted(), p.__painter.refresh();
             }
           }));
-        s.save(), s.fillStyle = y || r, s.fillRect(f, h, C, x), s.restore();
+        s.save(), s.fillStyle = y || r, s.fillRect(f, h, C, I), s.restore();
       }
-      l && (s.save(), s.globalAlpha = c, s.drawImage(g, f, h, C, x), s.restore());
+      l && (s.save(), s.globalAlpha = c, s.drawImage(g, f, h, C, I), s.restore());
     }
     !o || l ? T(0, 0, u, d) : o.length && each(o, function(f) {
       T(f.x * m, f.y * m, f.width * m, f.height * m);
@@ -104552,16 +104628,16 @@ var CanvasPainter = function() {
       l.__builtin__ && l !== this._hoverlayer && (l.__dirty || r) && n.push(l);
     }
     for (var c = !0, m = !1, p = function(f) {
-      var h = n[f], C = h.ctx, x = s && h.createRepaintRects(e, a, g._width, g._height), y = r ? h.__startIndex : h.__drawIndex, S = !r && h.incremental && Date.now, A = S && Date.now(), B = h.zlevel === g._zlevelList[0] ? g._backgroundColor : null;
+      var h = n[f], C = h.ctx, I = s && h.createRepaintRects(e, a, g._width, g._height), y = r ? h.__startIndex : h.__drawIndex, b = !r && h.incremental && Date.now, S = b && Date.now(), A = h.zlevel === g._zlevelList[0] ? g._backgroundColor : null;
       if (h.__startIndex === h.__endIndex)
-        h.clear(!1, B, x);
+        h.clear(!1, A, I);
       else if (y === h.__startIndex) {
         var R = e[y];
-        (!R.incremental || !R.notClear || r) && h.clear(!1, B, x);
+        (!R.incremental || !R.notClear || r) && h.clear(!1, A, I);
       }
       y === -1 && (console.error("For some unknown reason. drawIndex is -1"), y = h.__startIndex);
-      var D, F = function(M) {
-        var W = {
+      var D, F = function(O) {
+        var w = {
           inHover: !1,
           allClipped: !1,
           prevEl: null,
@@ -104569,21 +104645,21 @@ var CanvasPainter = function() {
           viewHeight: o._height
         };
         for (D = y; D < h.__endIndex; D++) {
-          var K = e[D];
-          if (K.__inHover && (m = !0), o._doPaintEl(K, h, s, M, W, D === h.__endIndex - 1), S) {
-            var $ = Date.now() - A;
-            if ($ > 15)
+          var $ = e[D];
+          if ($.__inHover && (m = !0), o._doPaintEl($, h, s, O, w, D === h.__endIndex - 1), b) {
+            var W = Date.now() - S;
+            if (W > 15)
               break;
           }
         }
-        W.prevElClipPaths && C.restore();
+        w.prevElClipPaths && C.restore();
       };
-      if (x)
-        if (x.length === 0)
+      if (I)
+        if (I.length === 0)
           D = h.__endIndex;
         else
-          for (var Z = g.dpr, b = 0; b < x.length; ++b) {
-            var v = x[b];
+          for (var Z = g.dpr, B = 0; B < I.length; ++B) {
+            var v = I[B];
             C.save(), C.beginPath(), C.rect(v.x * Z, v.y * Z, v.width * Z, v.height * Z), C.clip(), F(v), C.restore();
           }
       else
@@ -105044,10 +105120,10 @@ var Easing = Object.freeze({
             o[s] = d ? [] : {};
             var m = r[s];
             if (!this._isDynamic) {
-              var x = {};
+              var I = {};
               for (var C in m)
-                x[C] = m[C];
-              r[s] = m = x;
+                I[C] = m[C];
+              r[s] = m = I;
             }
             this._setupProperties(h, a[s], m, o[s], n);
           } else
@@ -105161,7 +105237,7 @@ class ZTweenManager {
         return this._setElementStyle(a, { opacity: (o = r.fromOpacity) != null ? o : 0 }), this.animateElement(
           a,
           { style: { opacity: (n = r.toOpacity) != null ? n : 1 } },
-          H({ duration: 240 }, r)
+          K({ duration: 240 }, r)
         );
       },
       fadeOut: (a, r = {}) => {
@@ -105169,7 +105245,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { style: { opacity: (o = r.toOpacity) != null ? o : 0 } },
-          H({ duration: 240 }, r)
+          K({ duration: 240 }, r)
         );
       },
       pulse: (a, r = {}) => {
@@ -105178,7 +105254,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { style: { opacity: (s = r.minOpacity) != null ? s : 0.35 } },
-          le(H({
+          le(K({
             duration: 700,
             loop: !0,
             yoyo: !0,
@@ -105197,7 +105273,7 @@ class ZTweenManager {
         return this.animateElement(
           a,
           { scale: [s, u] },
-          le(H({
+          le(K({
             duration: 900,
             loop: !0,
             yoyo: !0,
@@ -105216,7 +105292,7 @@ class ZTweenManager {
         return this._setElementShape(a, { x: s }), this.animateElement(
           a,
           { shape: { x: u } },
-          H({
+          K({
             duration: 1e3,
             loop: !0,
             easing: Easing.Linear.None
@@ -105234,7 +105310,7 @@ class ZTweenManager {
               opacity: (c = r.opacity) != null ? c : 0.72
             }
           },
-          le(H({
+          le(K({
             duration: 260,
             repeat: 1,
             yoyo: !0,
@@ -105253,7 +105329,7 @@ class ZTweenManager {
         return r.fromY != null && this._setElementAttrs(a, { position: [o[0], n] }), this.animateElement(
           a,
           { position: [o[0], s] },
-          le(H({
+          le(K({
             duration: 180,
             loop: !0,
             yoyo: !0,
@@ -105277,7 +105353,7 @@ class ZTweenManager {
   }
   animateElement(e, a, r = {}) {
     const o = this._createElementTweenState(e, a), n = o.to;
-    return this.animate(o.current, n, le(H({}, r), {
+    return this.animate(o.current, n, le(K({}, r), {
       onUpdate: (s, u) => {
         var d;
         this._applyElementTweenState(e, s, o), (d = r.onUpdate) == null || d.call(r, s, u);
@@ -105311,26 +105387,26 @@ class ZTweenManager {
     return !this._group.allStopped();
   }
   _createElementTweenState(e, a) {
-    var p, g, T, f, h, C, x;
+    var p, g, T, f, h, C, I;
     const r = {}, o = {}, n = this._getElementShape(e), s = this._getElementStyle(e), u = Object.keys(a.shape || {}), d = Object.keys(a.style || {}), l = ((p = a.position) == null ? void 0 : p.length) || 0, c = ((g = a.scale) == null ? void 0 : g.length) || 0, m = a.rotation != null;
     u.forEach((y) => {
-      var A;
-      const S = `shape.${y}`;
-      r[S] = (A = n[y]) != null ? A : 0, o[S] = a.shape[y];
+      var S;
+      const b = `shape.${y}`;
+      r[b] = (S = n[y]) != null ? S : 0, o[b] = a.shape[y];
     }), d.forEach((y) => {
-      var A;
-      const S = `style.${y}`;
-      r[S] = (A = s[y]) != null ? A : 0, o[S] = a.style[y];
+      var S;
+      const b = `style.${y}`;
+      r[b] = (S = s[y]) != null ? S : 0, o[b] = a.style[y];
     });
     for (let y = 0; y < l; y++) {
-      const S = `position.${y}`;
-      r[S] = (f = (T = e.position) == null ? void 0 : T[y]) != null ? f : 0, o[S] = a.position[y];
+      const b = `position.${y}`;
+      r[b] = (f = (T = e.position) == null ? void 0 : T[y]) != null ? f : 0, o[b] = a.position[y];
     }
     for (let y = 0; y < c; y++) {
-      const S = `scale.${y}`;
-      r[S] = (C = (h = e.scale) == null ? void 0 : h[y]) != null ? C : 1, o[S] = a.scale[y];
+      const b = `scale.${y}`;
+      r[b] = (C = (h = e.scale) == null ? void 0 : h[y]) != null ? C : 1, o[b] = a.scale[y];
     }
-    return m && (r.rotation = (x = e.rotation) != null ? x : 0, o.rotation = a.rotation), {
+    return m && (r.rotation = (I = e.rotation) != null ? I : 0, o.rotation = a.rotation), {
       current: r,
       to: o,
       shapeKeys: u,
@@ -105373,10 +105449,10 @@ class ZTweenManager {
     return e.style || {};
   }
   _setElementShape(e, a) {
-    e.setShape ? e.setShape(a) : e.shape = H(H({}, e.shape || {}), a);
+    e.setShape ? e.setShape(a) : e.shape = K(K({}, e.shape || {}), a);
   }
   _setElementStyle(e, a) {
-    e.setStyle ? e.setStyle(a) : e.style = H(H({}, e.style || {}), a);
+    e.setStyle ? e.setStyle(a) : e.style = K(K({}, e.style || {}), a);
   }
   _setElementAttrs(e, a) {
     e.attr ? e.attr(a) : Object.assign(e, a);
@@ -105385,7 +105461,7 @@ class ZTweenManager {
 const DEFAULT_RECONNECT_DELAY = 1e3, DEFAULT_MAX_RECONNECT_DELAY = 1e4, DEFAULT_HEARTBEAT_INTERVAL = 3e4;
 class WebSocketClient {
   constructor(e) {
-    this.socket = null, this.status = "idle", this.reconnectAttempts = 0, this.reconnectTimer = null, this.heartbeatTimer = null, this.manuallyClosed = !1, this.messageHandlers = /* @__PURE__ */ new Set(), this.rawMessageHandlers = /* @__PURE__ */ new Set(), this.statusHandlers = /* @__PURE__ */ new Set(), this.options = H({
+    this.socket = null, this.status = "idle", this.reconnectAttempts = 0, this.reconnectTimer = null, this.heartbeatTimer = null, this.manuallyClosed = !1, this.messageHandlers = /* @__PURE__ */ new Set(), this.rawMessageHandlers = /* @__PURE__ */ new Set(), this.statusHandlers = /* @__PURE__ */ new Set(), this.options = K({
       reconnect: !0,
       reconnectDelay: DEFAULT_RECONNECT_DELAY,
       maxReconnectDelay: DEFAULT_MAX_RECONNECT_DELAY,
@@ -105528,12 +105604,12 @@ class WsManager {
     this.runtime = null, this.configKey = "disabled";
   }
   configure(e) {
-    const a = e || {}, r = a.enabled === !0 && !!a.url, o = r ? JSON.stringify(le(H({}, a), {
+    const a = e || {}, r = a.enabled === !0 && !!a.url, o = r ? JSON.stringify(le(K({}, a), {
       heartbeatMessage: typeof a.heartbeatMessage == "function" ? "[function]" : a.heartbeatMessage
     })) : "disabled";
     if (o === this.configKey || (this.disposeRuntime(), this.configKey = o, !r))
       return;
-    const l = a, { enabled: n, url: s } = l, u = va(l, ["enabled", "url"]), d = new WebSocketClient(H({
+    const l = a, { enabled: n, url: s } = l, u = va(l, ["enabled", "url"]), d = new WebSocketClient(K({
       url: s
     }, u));
     this.runtime = installWsPush(d), d.connect();
@@ -105972,7 +106048,7 @@ Gantt.internalField = function() {
         this._model,
         this._api
       ), g = g || extend$1({}, h), g.type = s.event || g.type, p.push(g), f) {
-        const { queryOptionMap: C, mainTypeSpecified: x } = preParseFinder(t), y = x ? C.keys()[0] : "series";
+        const { queryOptionMap: C, mainTypeSpecified: I } = preParseFinder(t), y = I ? C.keys()[0] : "series";
         updateDirectly(
           this,
           d,
