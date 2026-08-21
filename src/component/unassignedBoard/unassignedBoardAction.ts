@@ -2,18 +2,46 @@ import { ExtensionInstallRegisters } from "../../../extension";
 import GlobalModel from "../../model/Global";
 import ExtensionAPI from "../../core/ExtensionAPI";
 import { DATAZOOM_SPLIT_GAP } from '../split/SliderSplitView';
+import type { TaskData, UnassignedBoardOption } from './UnassignedBoardView'
+import type { Payload } from '../../util/types'
+import SeriesModel from '../../model/Series'
+import ComponentModel from '../../model/Component'
+
+interface TaskDataUpdatePayload extends Payload {
+  assignedData?: unknown[]
+  unassignedData?: TaskData[]
+  resourceData?: unknown[]
+  resources?: UnassignedBoardOption['resources']
+}
+
+interface PositionUpdatePayload extends Payload {
+  data?: { y?: number }
+}
+
+type ActionSeriesModel = SeriesModel & {
+  updateData?: (data: unknown[], model: GlobalModel) => void
+}
+
+type ActionComponentModel = ComponentModel & {
+  option: ComponentModel['option'] & {
+    data?: TaskData[]
+    resources?: UnassignedBoardOption['resources']
+    splitY?: number
+    verticalSplitX?: number
+  }
+}
 
 export default function installUnassignedBoardAction(registers: ExtensionInstallRegisters) {
   registers.registerAction({
     type: 'updateResourceFilter',
     update: 'update',
-  }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
+  }, function(payload: TaskDataUpdatePayload, model: GlobalModel, api: ExtensionAPI) {
     const assignedData = payload.assignedData || []
     const unassignedData = payload.unassignedData || []
     const resourceData = payload.resourceData || []
     const resources = payload.resources || []
 
-    model.eachSeries(function(seriesModel: any) {
+    model.eachSeries(function(seriesModel: ActionSeriesModel) {
       if (seriesModel.id === 'assignedTasks') {
         seriesModel.updateData?.(assignedData, model)
       }
@@ -22,7 +50,7 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       }
     })
 
-    model.eachComponent('unassignedBoard', function(boardModel: any) {
+    model.eachComponent('unassignedBoard', function(boardModel: ActionComponentModel) {
       if (boardModel.id !== 'unassignedBoard') return
 
       boardModel.option.data = unassignedData
@@ -33,16 +61,16 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
   registers.registerAction({
     type: 'updateTaskData',
     update: 'update',
-  }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
+  }, function(payload: TaskDataUpdatePayload, model: GlobalModel, api: ExtensionAPI) {
     const assignedData = payload.assignedData || []
     const unassignedData = payload.unassignedData || []
-    model.eachSeries(function(seriesModel: any) {
+    model.eachSeries(function(seriesModel: ActionSeriesModel) {
       if (seriesModel.id !== 'assignedTasks') return
 
       seriesModel.updateData?.(assignedData, model)
     })
 
-    model.eachComponent('unassignedBoard', function(boardModel: any) {
+    model.eachComponent('unassignedBoard', function(boardModel: ActionComponentModel) {
       if (boardModel.id !== 'unassignedBoard') return
 
       boardModel.option.data = unassignedData
@@ -51,7 +79,7 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
 
   registers.registerAction({
     type: 'updateUnassignedBoardPosition',
-  }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
+  }, function(payload: PositionUpdatePayload, model: GlobalModel, api: ExtensionAPI) {
     const newY = payload.data?.y
     if (newY == null) return
 
