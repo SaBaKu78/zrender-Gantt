@@ -1,4 +1,5 @@
 import { BaseStateMachine } from './BaseStateMachine'
+import type { TaskData } from '../component/unassignedBoard/UnassignedBoardView'
 
 export type AssignmentState =
   | 'idle'
@@ -29,7 +30,7 @@ export type AssignmentEvent =
 
 export interface AssignmentContext {
   taskId?: string | number
-  taskData?: any
+  taskData?: TaskData
   hoverResourceId?: string | number
   hoverResourceIndex?: number
   hoverY?: number
@@ -103,7 +104,7 @@ export default class AssignmentStateMachine extends BaseStateMachine<
     })
   }
 
-  selectTask(taskData: any): boolean {
+  selectTask(taskData: TaskData): boolean {
     const taskId = taskData?.id ?? taskData?.taskId
     const current = this.getContext()
 

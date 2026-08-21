@@ -2,6 +2,7 @@ import { ExtensionInstallRegisters } from '../../../extension'
 import ComponentModel from '../../model/Component'
 import { ComponentOption, ZRColor } from '../../util/types'
 import UnassignedBoardView from './UnassignedBoardView'
+import type { TaskData } from './UnassignedBoardView'
 
 export interface UnassignedBoardOption extends ComponentOption {
   show?: boolean
@@ -10,7 +11,7 @@ export interface UnassignedBoardOption extends ComponentOption {
   borderWidth?: number
   itemGap?: number
   padding?: number[]
-  data?: any[]
+  data?: TaskData[]
   resourceRowOffset?: number
 }
 
