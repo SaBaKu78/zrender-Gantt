@@ -8,6 +8,10 @@ import { createResourceIndexMaps } from './src/config/taskTransform'
 const RESOURCE_ROW_OFFSET = 0
 const dom = document.getElementById('main')
 
+if (import.meta.env.DEV) {
+  await import('./src/mock/index')
+}
+
 const data1 = await getResourceList({})
 const data2 = await getTask({})
 const resource = (Array.isArray(data1) ? data1 : []).map((r) => [r.displayName, r.id])
@@ -57,4 +61,3 @@ gantt.setOption(createGanttOption({
   resourceTotalCount: resource.length,
   resourceFilterOnChange: ({ visibleResources }) => applyResourceFilter(visibleResources),
 }))
-
