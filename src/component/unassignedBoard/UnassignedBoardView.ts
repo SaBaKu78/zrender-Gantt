@@ -608,6 +608,7 @@ export default class UnassignedBoardView extends ComponentView {
           eventTool.stop(event.event)
         },
       })
+      ;(hitRect as any).__testId = `unassigned-task-${task.id}`
       group.add(hitRect)
     }
 

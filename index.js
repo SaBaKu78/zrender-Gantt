@@ -12,6 +12,9 @@ const data1 = await getResourceList({})
 const data2 = await getTask({})
 const resource = (Array.isArray(data1) ? data1 : []).map((r) => [r.displayName, r.id])
 const gantt = init(dom)
+if (import.meta.env.DEV) {
+  window.__gantt__ = gantt
+}
 const resourceIndexMaps = createResourceIndexMaps(resource)
 const taskController = createTaskController({
   gantt,
@@ -54,5 +57,4 @@ gantt.setOption(createGanttOption({
   resourceTotalCount: resource.length,
   resourceFilterOnChange: ({ visibleResources }) => applyResourceFilter(visibleResources),
 }))
-
 

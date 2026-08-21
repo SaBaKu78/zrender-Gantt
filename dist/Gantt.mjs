@@ -105587,15 +105587,17 @@ class WsMessageRouter {
     this.handlers.clear(), this.wildcardHandlers.clear();
   }
 }
+function installWsHandler(t, e, a) {
+  return t.on(e, a);
+}
 function installWsPush(t) {
-  const e = new WsMessageRouter(), a = t.onMessage((r) => {
-    e.dispatch(r);
-  });
+  const e = new WsMessageRouter();
   return {
     client: t,
     router: e,
+    on: (a, r) => e.register(a, r),
     dispose: () => {
-      a(), e.clear();
+      e.clear();
     }
   };
 }
@@ -105684,14 +105686,15 @@ function resolveTaskEventType(t) {
       return null;
   }
 }
-function installTaskWsHandlers(t) {
-  const e = t.client.onMessage((a) => {
-    sendAckIfNeeded(t.client, a), normalizeWsMessage(a).forEach((r) => {
-      t.router.dispatch(r);
+function installTaskWsPush(t, e) {
+  const a = e ? installWsHandler(t, "TASK_EVENT", e) : () => {
+  }, r = t.client.onMessage((o) => {
+    sendAckIfNeeded(t.client, o), normalizeWsMessage(o).forEach((n) => {
+      t.router.dispatch(n);
     });
   });
   return () => {
-    e();
+    r(), a();
   };
 }
 function sendAckIfNeeded(t, e) {
@@ -105822,10 +105825,10 @@ class Gantt extends Eventful$2 {
   getWsRuntime() {
     return this._wsManager.getRuntime();
   }
-  syncTaskWsHandlers() {
-    var a;
-    const e = this._wsManager.getRuntime();
-    e !== this._taskWsRuntime && ((a = this._disposeTaskWsHandlers) == null || a.call(this), this._disposeTaskWsHandlers = null, this._taskWsRuntime = e, e && (this._disposeTaskWsHandlers = installTaskWsHandlers(e)));
+  syncTaskWsHandlers(e) {
+    var r;
+    const a = this._wsManager.getRuntime();
+    a === this._taskWsRuntime && e === this._taskWsEventHandler || ((r = this._disposeTaskWsHandlers) == null || r.call(this), this._disposeTaskWsHandlers = null, this._taskWsRuntime = a, this._taskWsEventHandler = e, a && (this._disposeTaskWsHandlers = installTaskWsPush(a, e)));
   }
   getComponentViewMap() {
     return this._componentsViews;
@@ -105858,24 +105861,26 @@ class Gantt extends Eventful$2 {
       return;
     let o, n, s;
     if (isObject$1(a) && (r = a.lazyUpdate, n = a.silent, o = a.replaceMerge, s = a.transition, a = a.notMerge), this[IN_MAIN_PROCESS_KEY] = !0, !this._model) {
-      const d = new OptionManager(), l = this._model = new GlobalModel();
-      l.scheduler = this._scheduler, l.init(null, null, null, this._locale, d);
+      const l = new OptionManager(), c = this._model = new GlobalModel();
+      c.scheduler = this._scheduler, c.init(null, null, null, this._locale, l);
     }
-    this._model.setOption(e, { replaceMerge: o }), this._wsManager.configure(this._model.getOption().ws), this.syncTaskWsHandlers();
-    const u = {
+    this._model.setOption(e, { replaceMerge: o });
+    const u = this._model.getOption().ws;
+    this._wsManager.configure(u), this.syncTaskWsHandlers(u == null ? void 0 : u.onTaskEvent);
+    const d = {
       seriesTransition: s,
       optionChanged: !0
     };
     if (r)
       this[PENDING_UPDATE] = {
         silent: n,
-        updateParams: u
+        updateParams: d
       }, this[IN_MAIN_PROCESS_KEY] = !1, this.getZr().wakeUp();
     else {
       try {
-        prepare(this), updateMethods.update.call(this, null, u);
-      } catch (d) {
-        throw this[PENDING_UPDATE] = null, this[IN_MAIN_PROCESS_KEY] = !1, d;
+        prepare(this), updateMethods.update.call(this, null, d);
+      } catch (l) {
+        throw this[PENDING_UPDATE] = null, this[IN_MAIN_PROCESS_KEY] = !1, l;
       }
       this._ssr || this._zr.flush(), this[PENDING_UPDATE] = null, this[IN_MAIN_PROCESS_KEY] = !1, flushPendingActions.call(this, n), triggerUpdatedEvent.call(this, n);
     }

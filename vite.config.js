@@ -4,6 +4,7 @@ const replace = require('@rollup/plugin-replace');
 import externalGlobals from "rollup-plugin-external-globals";
 
 export default defineConfig({
+    cacheDir: ".vite-cache",
     server:{
         port:8099
     },

@@ -99,7 +99,7 @@ import ZTweenManager from './ztween'
 import WsManager from '../ws/WsManager'
 import type { WsRuntime } from '../ws/installWsPush'
 import type { WsOption } from '../ws/types'
-import { installTaskWsHandlers } from '../ws/task/installTaskWsPush'
+import { installTaskWsPush } from '../ws/task/installTaskWsPush'
 
 //----------------------------------- 变量 定义区 --------------------------------------------------------
 
@@ -402,6 +402,8 @@ class Gantt extends Eventful<EventDefinition> {
 
   private _taskWsRuntime: WsRuntime | null = null
 
+  private _taskWsEventHandler: WsOption['onTaskEvent'] | undefined
+
   private _disposeTaskWsHandlers: (() => void) | null = null
 
   private [PENDING_UPDATE]: {
@@ -546,16 +548,22 @@ class Gantt extends Eventful<EventDefinition> {
     return this._wsManager.getRuntime()
   }
 
-  private syncTaskWsHandlers(): void {
+  private syncTaskWsHandlers(onTaskEvent?: WsOption['onTaskEvent']): void {
     const runtime = this._wsManager.getRuntime()
-    if (runtime === this._taskWsRuntime) return
+    if (
+      runtime === this._taskWsRuntime &&
+      onTaskEvent === this._taskWsEventHandler
+    ) {
+      return
+    }
 
     this._disposeTaskWsHandlers?.()
     this._disposeTaskWsHandlers = null
     this._taskWsRuntime = runtime
+    this._taskWsEventHandler = onTaskEvent
 
     if (runtime) {
-      this._disposeTaskWsHandlers = installTaskWsHandlers(runtime)
+      this._disposeTaskWsHandlers = installTaskWsPush(runtime, onTaskEvent)
     }
   }
 
@@ -650,8 +658,9 @@ class Gantt extends Eventful<EventDefinition> {
       piModel.init(null, null, null, this._locale, optionManager)
     }
     this._model.setOption(option, { replaceMerge })
-    this._wsManager.configure(this._model.getOption().ws as WsOption | undefined)
-    this.syncTaskWsHandlers()
+    const wsOption = this._model.getOption().ws as WsOption | undefined
+    this._wsManager.configure(wsOption)
+    this.syncTaskWsHandlers(wsOption?.onTaskEvent)
     const updateParams = {
       seriesTransition: transitionOpt,
       optionChanged: true,
