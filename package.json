@@ -14,7 +14,15 @@
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug"
   },
-  "keywords": [],
+  "keywords": [
+    "Gantt",
+    "zrender",
+    "Echarts",
+    "typescript",
+    "vite",
+    "vitest",
+    "playwright"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
