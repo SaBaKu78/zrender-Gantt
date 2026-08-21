@@ -163,6 +163,13 @@ hover：
 
   `http://localhost:8099`
 
+- 测试项目
+
+  vite --verision@7.3.6
+  vitest --version@3.0.0
+  playwright/test --version@1.62.1
+  `npm test`
+
 ### 二、项目打包步骤
 
 - 执行命令

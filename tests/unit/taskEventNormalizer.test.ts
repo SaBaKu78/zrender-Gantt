@@ -3,7 +3,7 @@ import {
   normalizeBackendEnvelope,
   normalizeWsMessage,
   parseBackendEnvelope,
-} from '../src/ws/task/TaskEventNormalizer'
+} from '../../src/ws/task/TaskEventNormalizer'
 
 describe('TaskEventNormalizer', () => {
   it('rejects malformed websocket envelopes', () => {

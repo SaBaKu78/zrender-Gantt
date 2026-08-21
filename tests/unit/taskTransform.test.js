@@ -4,7 +4,7 @@ import {
   buildAssignedTasks,
   buildUnassignedTasks,
   createResourceIndexMaps,
-} from '../src/config/taskTransform.js'
+} from '../../src/config/taskTransform.js'
 
 describe('taskTransform', () => {
   it('maps resource ids and string resource ids to indexes', () => {

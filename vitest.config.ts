@@ -1,9 +1,8 @@
-import { defineConfig } from 'vitest/config'
-
-export default defineConfig({
+export default {
   cacheDir: '.vitest-cache',
   test: {
     environment: 'node',
-    include: ['tests/**/*.{test,spec}.{js,ts}'],
+    include: ['tests/unit/**/*.{test,spec}.{js,ts}'],
+    exclude: ['tests/e2e/**'],
   },
-})
+}
