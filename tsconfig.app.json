@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+      "zrender/src/*": ["node_modules/zrender/lib/*"]
+    },
+    "esModuleInterop": true,
+    "allowJs": true,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "strict": false,
+    "lib": ["ES2015", "DOM"],
+    "types": [],
+    "noEmit": true
+  },
+  "include": [
+    "global.d.ts",
+    "extension.ts",
+    "src/**/*.ts",
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests",
+    "src/mock/**"
+  ]
+}

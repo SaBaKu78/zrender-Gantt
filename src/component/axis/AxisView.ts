@@ -6,6 +6,7 @@ import { Payload } from '../../util/types'
 import ComponentView from '../../view/Component'
 
 class AxisView extends ComponentView {
+  api: ExtensionAPI
   static type = 'axis'
   type = AxisView.type
 

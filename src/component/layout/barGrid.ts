@@ -1,5 +1,5 @@
 import GlobalModel from "../../model/Global";
-import BarSeriesModel from "../bar/barSeries";
+import BarSeriesModel from "../bar/BarSeries";
 
 export function prepareLayoutBarSeries(seriesType: string, ecModel: GlobalModel): BarSeriesModel[] {
     const seriesModels: BarSeriesModel[] = [];
