@@ -1,7 +1,6 @@
 import * as zrender from 'zrender'
 import { warn } from '../util/log'
 import * as modelUtil from '../util/model'
-import '../mock/index'
 import {
   ActionHandler,
   ActionInfo,
