@@ -155,7 +155,7 @@ class SliderZoomView extends DataZoomView {
     }
 
     this._updateView()
-    this.group.attr({
+    ;(this.group as any).attr({
       invisible: !!dataZoomModel.get('invisible' as any),
       silent: !!dataZoomModel.get('invisible' as any),
     })
@@ -173,7 +173,7 @@ class SliderZoomView extends DataZoomView {
 
     this._resetLocation()
     this._positionGroup()
-    this.group.attr({
+    ;(this.group as any).attr({
       invisible: !!dataZoomModel.get('invisible' as any),
       silent: !!dataZoomModel.get('invisible' as any),
     })

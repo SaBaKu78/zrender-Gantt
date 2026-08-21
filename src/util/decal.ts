@@ -296,7 +296,7 @@ export function createOrUpdatePatternFromDecal(
           }
         } else {
           // Paint to canvas for all other renderers.
-          brushSingle(ctx, symbol)
+          brushSingle(ctx, symbol as any)
         }
       }
     }

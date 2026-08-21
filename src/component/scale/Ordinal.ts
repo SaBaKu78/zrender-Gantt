@@ -85,6 +85,10 @@ class OrdinalScale extends Scale<OrdinalScaleSetting> {
   calcTicks(): void {}
 
   calcNiceExtent() {}
+
+  getLabel(tick: OrdinalScaleTick): string {
+    return String(tick.value)
+  }
 }
 
 Scale.registerClass(OrdinalScale)
