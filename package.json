@@ -26,8 +26,8 @@
     "rollup-plugin-external-globals": "^0.8.0",
     "terser": "^5.21.0",
     "typescript": "^5.2.2",
-    "vite": "^8.2.2",
-    "vitest": "^1.6.1"
+    "vite": "^7.3.6",
+    "vitest": "^3.0.0"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0",
