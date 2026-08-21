@@ -1,3 +1,5 @@
+import type { TaskEvent } from './task/types'
+
 export type WsStatus =
   | 'idle'
   | 'connecting'
@@ -39,4 +41,8 @@ export interface WsOption extends Omit<WebSocketClientOptions, 'url'> {
    * WebSocket 服务地址。
    */
   url?: string
+  /**
+   * 标准化任务事件处理器。
+   */
+  onTaskEvent?: (event: TaskEvent) => void
 }

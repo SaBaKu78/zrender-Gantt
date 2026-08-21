@@ -243,6 +243,9 @@ export default class SliderSplitView extends SplitView {
       zlevel: zlevel,
       z2: 10001,
     })
+    if (this._orient === HORIZONTAL) {
+      ;(handleIcon as any).__testId = 'horizontal-split-handle'
+    }
     handleIcon.attr(this._getHandleIconPosition(this._hanldeEnd))
     if (this._orient !== HORIZONTAL) {
       sliderGroup.add(bRect)

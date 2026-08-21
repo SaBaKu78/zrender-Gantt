@@ -55,6 +55,7 @@ export const createGanttOption = ({
   resourceRowOffset = 0,
   resourceTotalCount = resource.length,
   resourceFilterOnChange,
+  onTaskEvent,
 }) => {
   const virtualResourcePaddingRows = Math.ceil(
     (dom.clientHeight * DEFAULT_UNASSIGNED_PANEL_RATIO) / TARGET_RESOURCE_ROW_HEIGHT,
@@ -67,6 +68,7 @@ export const createGanttOption = ({
     ws: {
       enabled: true,
       url: WS_URL,
+      onTaskEvent,
       reconnect: true,
       reconnectDelay: 1000,
       maxReconnectDelay: 10000,
