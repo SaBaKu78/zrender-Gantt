@@ -6,7 +6,14 @@ import externalGlobals from "rollup-plugin-external-globals";
 export default defineConfig({
     cacheDir: ".vite-cache",
     server:{
-        port:8099
+        host: '127.0.0.1',
+        port:8099,
+        proxy: {
+          '/resource': {
+            target: 'http://127.0.0.1:5001',
+            changeOrigin: true
+          }
+        }
     },
     plugins:[
         replace({

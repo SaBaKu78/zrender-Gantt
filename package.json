@@ -6,6 +6,7 @@
   "module": "ES2020",
   "scripts": {
     "dev": "vite --mode dev",
+    "dev:mock": "vite --mode mock",
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",

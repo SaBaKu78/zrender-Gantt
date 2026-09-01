@@ -8,11 +8,11 @@ import { createResourceIndexMaps } from './src/config/taskTransform'
 const RESOURCE_ROW_OFFSET = 0
 const dom = document.getElementById('main')
 
-if (import.meta.env.DEV) {
+if (import.meta.env.VITE_USE_MOCK === 'true') {
   await import('./src/mock/index')
 }
 
-const data1 = await getResourceList({})
+const data1 = await getResourceList({resourceCategoryCode: 'staff'})
 const data2 = await getTask({})
 const resource = (Array.isArray(data1) ? data1 : []).map((r) => [r.displayName, r.id])
 const gantt = init(dom)

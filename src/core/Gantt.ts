@@ -63,7 +63,6 @@ import { install as GanttQueryInstall } from '../component/ganttQuery/install'
 import { install as LiquidGlassLayerInstall } from '../component/liquidGlassLayer/install'
 import ExtensionAPI from './ExtensionAPI'
 import EventController from './EventController'
-import { getResourceList } from '../api/resource'
 import Scheduler from './Scheduler'
 import {
   UpdateLifecycleParams,

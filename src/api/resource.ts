@@ -5,7 +5,7 @@ export function getResourceList(params) {
     axios({
       url: '/resource/resource/search',
       method: 'post',
-      params,
+      data: params,
     })
       .then((response) => {
         const {data: {code, data}} = response
