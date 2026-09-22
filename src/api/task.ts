@@ -5,7 +5,7 @@ export function getTask(params) {
     axios({
       url: '/basedata/task/base/task/searchTask',
       method: 'post',
-      params,
+      data: params,
     })
       .then((response) => {
         const {data: {code, data}} = response
