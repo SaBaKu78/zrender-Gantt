@@ -61683,13 +61683,14 @@ export const taskData = Mock.mock(data)
 
 export function assignMockTask(params: any) {
   const taskId = params?.taskId
-  const newResourceId = params?.newResourceId
+  const resourceId = params?.resourceId
+  const shiftDailyId = params?.shiftDailyId
   const target = taskData.find((item: any) => {
     const id = item.id ?? item.taskId
     return String(id) === String(taskId)
   })
 
-  if (!target || !newResourceId) {
+  if (!target || !resourceId || !shiftDailyId) {
     return {
       success: false,
       taskId,
@@ -61700,7 +61701,8 @@ export function assignMockTask(params: any) {
     {
       id: Number(`${Date.now()}${Math.floor(Math.random() * 1000)}`),
       taskId: target.id || target.taskId,
-      currentResourceId: newResourceId,
+      currentResourceId: resourceId,
+      currentShiftDailyId: shiftDailyId,
       currentResourceName: '',
     },
   ]

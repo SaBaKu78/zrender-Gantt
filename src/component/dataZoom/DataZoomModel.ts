@@ -298,18 +298,18 @@ class DataZoomModel<
     targetAxisIndexMap: DataZoomTargetAxisInfoMap,
     orient: LayoutOrient
   ): void {
-    const ecModel = this.piModel
+    const piModel = this.piModel
     let needAuto = true
 
     // Find axis that parallel to dataZoom as default.
     if (needAuto) {
       const axisDim = orient === 'vertical' ? 'y' : 'x'
-      const axisModels = ecModel.findComponents({ mainType: axisDim + 'Axis' })
+      const axisModels = piModel.findComponents({ mainType: axisDim + 'Axis' })
       setParallelAxis(axisModels, axisDim)
     }
     // Find axis that parallel to dataZoom as default.
     // if (needAuto) {
-    //   const axisModels = ecModel.findComponents({
+    //   const axisModels = piModel.findComponents({
     //     mainType: 'singleAxis',
     //     filter: (axisModel: SingleAxisModel) =>
     //       axisModel.get('orient', true) === orient,
@@ -360,7 +360,7 @@ class DataZoomModel<
     //       if (!needAuto) {
     //         return
     //       }
-    //       const axisModels = ecModel.findComponents({
+    //       const axisModels = piModel.findComponents({
     //         mainType: getAxisMainType(axisDim),
     //         filter: (axisModel: SingleAxisModel) =>
     //           axisModel.get('type', true) === 'category',

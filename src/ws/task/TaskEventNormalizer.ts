@@ -6,7 +6,7 @@ import type {
   TaskEventType,
 } from './types'
 
-const TASK_CATEGORY = 'gateTask'
+const TASK_CATEGORIES = new Set(['task', 'gateTask'])
 
 export function parseBackendEnvelope(input: unknown): BackendWsEnvelope | null {
   if (!input || typeof input !== 'object') {
@@ -14,7 +14,7 @@ export function parseBackendEnvelope(input: unknown): BackendWsEnvelope | null {
   }
 
   const envelope = input as BackendWsEnvelope
-  if (typeof envelope.message !== 'string') {
+  if (typeof envelope.message !== 'string' && !envelope.category) {
     return null
   }
 
@@ -24,6 +24,15 @@ export function parseBackendEnvelope(input: unknown): BackendWsEnvelope | null {
 export function parseBackendTaskPayloads(
   envelope: BackendWsEnvelope
 ): BackendTaskPayload[] {
+  if (envelope.category) {
+    return [{
+      category: envelope.category,
+      action: envelope.action,
+      type: envelope.action,
+      data: envelope.data,
+      taskIds: envelope.data?.taskIds,
+    }]
+  }
   if (!envelope.message) return []
 
   try {
@@ -38,11 +47,13 @@ export function normalizeBackendTaskPayload(
   payload: BackendTaskPayload,
   envelope: BackendWsEnvelope
 ): TaskEvent | null {
-  if (payload.category !== TASK_CATEGORY) {
+  if (!TASK_CATEGORIES.has(payload.category || '')) {
     return null
   }
 
-  const taskIds = Array.isArray(payload.taskIds) ? payload.taskIds : []
+  const taskIds = Array.isArray(payload.taskIds)
+    ? payload.taskIds
+    : payload.data?.taskIds || (payload.data?.taskId != null ? [payload.data.taskId] : [])
   const eventType = resolveTaskEventType(payload)
 
   if (!eventType || !taskIds.length) {
@@ -57,6 +68,7 @@ export function normalizeBackendTaskPayload(
       eventType,
       taskIds,
       category: payload.category,
+      action: payload.action,
       businessType: payload.businessType,
       reason: payload.type,
       source: 'ws',
@@ -86,6 +98,7 @@ function resolveTaskEventType(
     case 'cancel':
       return 'remove'
     case 'update':
+    case 'updated':
       return 'upsert'
     case 'refresh':
     case 'refreshAll':

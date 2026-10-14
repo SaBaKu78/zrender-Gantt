@@ -228,8 +228,8 @@ export function makeSeriesEncodeForAxisCoordSys(
   const encodeItemName: DimensionIndex[] = []
   const encodeSeriesName: DimensionIndex[] = []
 
-  const ecModel = seriesModel.piModel
-  const datasetMap = innerGlobalModel(ecModel).datasetMap
+  const piModel = seriesModel.piModel
+  const datasetMap = innerGlobalModel(piModel).datasetMap
   const key = datasetModel.uid + '_' + source.seriesLayoutBy
 
   let baseCategoryDimIndex: number

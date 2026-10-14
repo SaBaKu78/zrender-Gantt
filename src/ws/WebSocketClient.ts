@@ -147,7 +147,9 @@ export default class WebSocketClient {
 
     try {
       const parsed = JSON.parse(data)
-      return parsed?.type ? parsed : null
+      const isTypedMessage = !!parsed?.type
+      const isTaskEnvelope = parsed?.category === 'task' && !!parsed?.action
+      return isTypedMessage || isTaskEnvelope ? parsed : null
     } catch (_error) {
       return null
     }
@@ -212,4 +214,3 @@ export default class WebSocketClient {
     this.reconnectTimer = null
   }
 }
-

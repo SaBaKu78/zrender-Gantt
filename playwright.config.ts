@@ -9,7 +9,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: {
-    command: 'npm run dev -- --host 127.0.0.1',
+    command: 'npm run dev:mock -- --host 127.0.0.1',
     url: 'http://127.0.0.1:8099',
     reuseExistingServer: true,
   },
@@ -19,9 +19,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         channel: 'chrome',
-        launchOptions: {
-          slowMo: 1000
-        }
+        launchOptions: { slowMo: 1000 },
       },
     },
   ],

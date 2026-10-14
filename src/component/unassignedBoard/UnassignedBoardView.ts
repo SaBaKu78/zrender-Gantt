@@ -8,6 +8,7 @@ import { parseRatio } from '../split/SliderSplitView'
 import * as eventTool from 'zrender/src/core/event'
 import AssignmentStateMachine from '../../interaction/AssignmentStateMachine'
 import type { Tween } from '@tweenjs/tween.js'
+import { showToast } from '../../util/toast'
 
 const BOARD_ZLEVEL = 999
 
@@ -39,10 +40,8 @@ export interface UnassignedBoardOption {
   gridWidth?: number
   resources?: Array<[string, string | number]>
   onAssignTask?: (params: {
-    newResourceId: string | number
+    resourceId: string | number
     taskId: string | number
-    date: string
-    force: boolean
   }) => Promise<{ success: boolean }> | { success: boolean }
 }
 
@@ -650,10 +649,30 @@ export default class UnassignedBoardView extends ComponentView {
   private async _handleGlobalClick(event: any): Promise<void> {
     const context = this._assignmentMachine?.getContext()
     const task = context?.taskData as TaskData
-    if (!task || this._assigning) return
+    if (this._assigning) return
+
+    if (!task) {
+      const hit = this._hitMainResourceRow(event.offsetX, event.offsetY)
+      if (hit) {
+        showToast(
+          '尚未选中待派遣任务，因此没有发送请求。请先双击下方未分配任务，再点击目标资源行。',
+          { title: '未选择派遣任务', duration: 5000 }
+        )
+      }
+      return
+    }
 
     const hit = this._hitMainResourceRow(event.offsetX, event.offsetY)
-    if (!hit) return
+    if (!hit) {
+      const clickedTask = String(event?.target?.__testId || '').startsWith('unassigned-task-')
+      if (!clickedTask) {
+        showToast(
+          '没有命中主甘特区的资源行，因此未发送派遣请求。请点击上方目标资源所在行。',
+          { title: '未选择目标资源', duration: 5000 }
+        )
+      }
+      return
+    }
 
     if (this._assignmentMachine.getState() === 'selected') {
       this._assignmentMachine.enterGrid()
@@ -664,7 +683,13 @@ export default class UnassignedBoardView extends ComponentView {
       hoverY: hit.rowY,
     })
 
-    if (!this._assignmentMachine.clickGrid()) return
+    if (!this._assignmentMachine.clickGrid()) {
+      showToast(
+        '当前派遣状态不允许提交，请重新双击未分配任务后再选择目标资源。',
+        { title: '派遣未提交', duration: 5000 }
+      )
+      return
+    }
     await this._assignSelectedTask(task, hit)
   }
 
@@ -679,18 +704,37 @@ export default class UnassignedBoardView extends ComponentView {
   ): Promise<void> {
     const handler = this._getAssignTaskHandler()
     const taskId = task.id ?? task.taskId
-    if (!handler || taskId == null) return
+    if (!handler) {
+      showToast('派遣处理器未配置，因此无法发送请求。', {
+        title: '派遣未提交',
+        duration: 5000,
+      })
+      return
+    }
+    if (taskId == null) {
+      showToast('当前任务缺少任务 ID，因此无法发送请求。请刷新任务列表后重试。', {
+        title: '派遣未提交',
+        duration: 5000,
+      })
+      return
+    }
 
     this._assigning = true
     this._assignmentMachine.confirm()
 
     try {
       const result = await handler({
-        newResourceId: hit.resourceId,
+        resourceId: hit.resourceId,
         taskId,
-        date: this._formatDate(task.taskDate ?? task.scheduleStartTime ?? task.startTime),
-        force: false,
       })
+
+      // 旧派遣接口参数（保留用于后续问题排查，请勿恢复执行）：
+      // {
+      //   newResourceId: hit.resourceId,
+      //   taskId,
+      //   date: this._formatDate(task.taskDate ?? task.scheduleStartTime ?? task.startTime),
+      //   force: false,
+      // }
 
       if (result?.success) {
         console.info('派遣成功')
@@ -703,6 +747,30 @@ export default class UnassignedBoardView extends ComponentView {
         this._assignmentMachine.fail('SUBMIT_FAIL', 'assign failed')
       }
     } catch (error) {
+      const code = (error as any)?.code
+      const preflightMessages: Record<string, { title: string; message: string }> = {
+        TASK_NOT_FOUND: {
+          title: '任务数据未匹配',
+          message: '当前任务不在最新的未分配任务结果中，因此未发送请求。请刷新甘特数据后重试。',
+        },
+        RESOURCE_NOT_FOUND: {
+          title: '资源数据未匹配',
+          message: '目标资源不在当前查询结果中，因此未发送请求。请重新选择资源或刷新数据。',
+        },
+        SHIFT_DAILY_ID_NOT_FOUND: {
+          title: '缺少班次 ID',
+          message: '目标资源在该任务时段内没有匹配的班次 ID（shiftDailyId），因此未发送请求。请选择有覆盖该时段班次的资源。',
+        },
+      }
+      const preflight = preflightMessages[code]
+      if (preflight) {
+        showToast(preflight.message, { title: preflight.title, duration: 6000 })
+      } else {
+        showToast((error as Error)?.message || '派遣请求处理失败，请稍后重试。', {
+          title: '派遣失败',
+          duration: 6000,
+        })
+      }
       this._assignmentMachine.fail('SUBMIT_FAIL', error as Error)
     } finally {
       this._assigning = false

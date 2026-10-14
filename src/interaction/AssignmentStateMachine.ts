@@ -39,6 +39,11 @@ export interface AssignmentContext {
 }
 
 const initialContext: AssignmentContext = {}
+const recoverablePreflightErrors = new Set([
+  'TASK_NOT_FOUND',
+  'RESOURCE_NOT_FOUND',
+  'SHIFT_DAILY_ID_NOT_FOUND',
+])
 
 export default class AssignmentStateMachine extends BaseStateMachine<
   AssignmentState,
@@ -75,7 +80,12 @@ export default class AssignmentStateMachine extends BaseStateMachine<
         },
         submitting: {
           SUBMIT_OK: 'waiting_ws',
-          SUBMIT_FAIL: 'error',
+          // 请求前校验失败保留当前任务，允许直接换资源重试；
+          // 网络或未知提交错误保持 error，避免不确定结果下重复派遣。
+          SUBMIT_FAIL: (ctx) => {
+            const code = (ctx.error as Error & { code?: string })?.code
+            return code && recoverablePreflightErrors.has(code) ? 'selected' : 'error'
+          },
         },
         waiting_ws: {
           WS_UPDATE: 'refreshing',
@@ -106,13 +116,9 @@ export default class AssignmentStateMachine extends BaseStateMachine<
 
   selectTask(taskData: TaskData): boolean {
     const taskId = taskData?.id ?? taskData?.taskId
-    const current = this.getContext()
 
-    if (this.getState() !== 'idle' && current.taskId === taskId) {
-      this.reset()
-      return true
-    }
-
+    // 双击始终表达“选择这个任务”。即使是同一任务或刚从错误中恢复，
+    // 也重新建立 selected 上下文；取消操作仅由 Esc / cancel 明确触发。
     if (this.getState() !== 'idle') {
       this.reset()
     }
@@ -161,7 +167,13 @@ export default class AssignmentStateMachine extends BaseStateMachine<
   }
 
   fail(event: 'SUBMIT_FAIL' | 'WS_TIMEOUT' | 'REFRESH_FAIL', error: Error | string): boolean {
-    return this.transition(event, { error })
+    return this.transition(event, {
+      error,
+      hoverResourceId: undefined,
+      hoverResourceIndex: undefined,
+      hoverY: undefined,
+      requestId: undefined,
+    })
   }
 
   wsUpdate(): boolean {

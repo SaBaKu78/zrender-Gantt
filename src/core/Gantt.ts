@@ -789,26 +789,26 @@ class Gantt extends Eventful<EventDefinition> {
       triggerUpdatedEvent.call(this, silent)
     } else if (scheduler?.unfinished) {
       let remainTime = TEST_FRAME_REMAIN_TIME
-      const ecModel = this._model
+      const piModel = this._model
       const api = this._api
       scheduler.unfinished = false
       do {
         const startTime = +new Date()
 
-        scheduler.performSeriesTasks(ecModel)
+        scheduler.performSeriesTasks(piModel)
 
         // Currently dataProcessorFuncs do not check threshold.
-        scheduler.performDataProcessorTasks(ecModel)
-        updateStreamModes(this, ecModel)
+        scheduler.performDataProcessorTasks(piModel)
+        updateStreamModes(this, piModel)
 
         // Do not update coordinate system here. Because that coord system update in
         // each frame is not a good user experience. So we follow the rule that
         // the extent of the coordinate system is determined in the first frame (the
         // frame is executed immediately after task reset.
-        // this._coordSysMgr.update(ecModel, api);
+        // this._coordSysMgr.update(piModel, api);
 
         // console.log('--- ec frame visual ---', remainTime);
-        scheduler.performVisualTasks(ecModel)
+        scheduler.performVisualTasks(piModel)
 
         renderSeries(this, this._model, api, 'remain', {})
 
@@ -906,9 +906,9 @@ class Gantt extends Eventful<EventDefinition> {
       mainType: ComponentMainType,
       subType?: ComponentSubType
     ): void {
-      const ecModel = piIns._model
+      const piModel = piIns._model
 
-      ecModel.setUpdatePayload(payload)
+      piModel.setUpdatePayload(payload)
 
       // broadcast
       if (!mainType) {
@@ -946,8 +946,8 @@ class Gantt extends Eventful<EventDefinition> {
       }
 
       // If dispatchAction before setOption, do nothing.
-      ecModel &&
-        ecModel.eachComponent(
+      piModel &&
+        piModel.eachComponent(
           condition,
           function (model) {
             const isExcluded =
@@ -1007,8 +1007,8 @@ class Gantt extends Eventful<EventDefinition> {
           piIns
         )
 
-      ecModel &&
-        ecModel.eachComponent(
+      piModel &&
+        piModel.eachComponent(
           condition,
           function (model) {
             const isExcluded =
@@ -1029,7 +1029,7 @@ class Gantt extends Eventful<EventDefinition> {
         view &&
           view.__alive &&
           (view as any)[method] &&
-          (view as any)[method](view.__model, ecModel, piIns._api, payload)
+          (view as any)[method](view.__model, piModel, piIns._api, payload)
       }
     }
 

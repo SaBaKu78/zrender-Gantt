@@ -3,9 +3,8 @@
     "target": "ES2015",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "baseUrl": ".",
     "paths": {
-      "zrender/src/*": ["node_modules/zrender/lib/*"]
+      "zrender/src/*": ["./node_modules/zrender/lib/*"]
     },
     "esModuleInterop": true,
     "allowJs": true,

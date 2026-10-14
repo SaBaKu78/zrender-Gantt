@@ -900,7 +900,7 @@ export interface StageHandler {
   seriesType?: string
   performRawSeries?: boolean
   getTargetSeries?: (
-    ecModel: GlobalModel,
+    piModel: GlobalModel,
     api: ExtensionAPI
   ) => HashMap<SeriesModel>
   plan?: StageHandlerPlan
@@ -911,7 +911,7 @@ export interface StageHandler {
 export interface StageHandlerReset {
   (
     seriesModel: SeriesModel,
-    ecModel: GlobalModel,
+    piModel: GlobalModel,
     api: ExtensionAPI,
     payload?: Payload
   ): StageHandlerProgressExecutor | StageHandlerProgressExecutor[] | void
@@ -940,7 +940,7 @@ export type StageHandlerPlanReturn = TaskPlanCallbackReturn
 export interface StageHandlerPlan {
   (
     seriesModel: SeriesModel,
-    ecModel: GlobalModel,
+    piModel: GlobalModel,
     api: ExtensionAPI,
     payload?: Payload
   ): StageHandlerPlanReturn

@@ -1,6 +1,12 @@
 import type { WsMessage } from '../types'
 
 export interface BackendWsEnvelope {
+  eventId?: string | number
+  projectId?: string | number
+  category?: string
+  action?: string
+  changedAt?: string
+  data?: { taskId?: string | number; taskIds?: Array<string | number> }
   messageId?: string | number
   needAck?: boolean
   subSystem?: string
@@ -10,6 +16,8 @@ export interface BackendWsEnvelope {
 export interface BackendTaskPayload {
   category?: string
   type?: string
+  action?: string
+  data?: { taskId?: string | number; taskIds?: Array<string | number> }
   businessType?: number
   taskIds?: Array<string | number>
 }
@@ -22,6 +30,7 @@ export interface TaskEvent extends WsMessage {
     eventType: TaskEventType
     taskIds: Array<string | number>
     category?: string
+    action?: string
     businessType?: number
     reason?: string
     source: 'ws'
@@ -34,4 +43,3 @@ export interface BackendAckMessage {
   messageId: string | number
   type: 'ack'
 }
-

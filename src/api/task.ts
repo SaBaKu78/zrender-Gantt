@@ -17,23 +17,44 @@ export function getTask(params) {
   })
 }
 
-export function assignTask(params) {
-  return new Promise((resolve, reject) => {
-    axios({
-      url: '/api2/ips/task/manage/assign',
-      method: 'post',
-      data: params,
-    })
-      .then((response) => {
-        const {
-          data: { code, data },
-        } = response
-        if (code == 200) {
-          resolve(data)
-        }
-      })
-      .catch((error) => reject(error))
+export interface AssignmentCreateParams {
+  taskId: string | number
+  resourceId: string | number
+  shiftDailyId: string | number
+}
+
+export async function findTaskById(taskId: string | number) {
+  const response = await axios({
+    url: '/basedata/task/base/task/findById',
+    method: 'post',
+    data: { taskId },
   })
+  const payload = response.data
+
+  if (payload?.code != null && payload.code !== 200) {
+    throw new Error(payload.message || `Find task failed with code ${payload.code}`)
+  }
+
+  return payload?.data ?? payload
+}
+
+export async function assignTask(params: AssignmentCreateParams) {
+  const response = await axios({
+    url: '/assign',
+    method: 'post',
+    data: {
+      taskId: params.taskId,
+      resourceId: params.resourceId,
+      shiftDailyId: params.shiftDailyId,
+    },
+  })
+  const payload = response.data
+
+  if (payload?.code != null && payload.code !== 200) {
+    throw new Error(payload.message || `Assign task failed with code ${payload.code}`)
+  }
+
+  return payload?.data ?? payload
 }
 
 export function searchTaskByIds(taskIds) {

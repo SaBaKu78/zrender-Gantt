@@ -35,13 +35,14 @@ export const installTaskWsHandlers = installTaskWsPush
 
 function sendAckIfNeeded(client: WebSocketClient, message: WsMessage): void {
   const envelope = message as BackendWsEnvelope
-  if (!envelope.needAck || envelope.messageId == null) {
+  const messageId = envelope.messageId ?? envelope.eventId
+  if (!envelope.needAck || messageId == null) {
     return
   }
 
   const ack: BackendAckMessage = {
     type: 'ack',
-    messageId: envelope.messageId,
+    messageId,
   }
   client.send(ack)
 }

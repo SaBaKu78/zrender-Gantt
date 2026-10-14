@@ -16,6 +16,10 @@ export default defineConfig({
           '/basedata': {
             target: 'http://127.0.0.1:5001',
             changeOrigin: true
+          },
+          '/assign': {
+            target: 'http://127.0.0.1:5001',
+            changeOrigin: true
           }
         }
     },

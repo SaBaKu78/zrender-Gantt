@@ -58,7 +58,7 @@ class ComponentView {
   toggleBlurSeries(
     seriesModels: SeriesModel[],
     isBlur: boolean,
-    ecModel: GlobalModel
+    piModel: GlobalModel
   ): void {
     // Do nothing;
   }

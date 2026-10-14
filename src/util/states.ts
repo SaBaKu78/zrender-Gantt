@@ -772,13 +772,13 @@ export function updateSeriesElementSelection(seriesModel: SeriesModel) {
   })
 }
 
-export function getAllSelectedIndices(ecModel: GlobalModel) {
+export function getAllSelectedIndices(piModel: GlobalModel) {
   const ret: {
     seriesIndex: number
     dataType?: SeriesDataType
     dataIndex: number[]
   }[] = []
-  ecModel.eachSeries(function (seriesModel) {
+  piModel.eachSeries(function (seriesModel) {
     const allData = seriesModel.getAllData()
     each(allData, function ({ data, type }) {
       const dataIndices = seriesModel.getSelectedDataIndices()

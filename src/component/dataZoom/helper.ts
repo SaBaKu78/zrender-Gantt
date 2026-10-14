@@ -78,7 +78,7 @@ export function collectReferCoordSysModelInfo(dataZoomModel: DataZoomModel): {
 }
 
 export function findEffectedDataZooms(
-  ecModel: GlobalModel,
+  piModel: GlobalModel,
   payload: Payload
 ): DataZoomModel[] {
   // Key: `DataZoomAxisDimension`
@@ -88,7 +88,7 @@ export function findEffectedDataZooms(
   const effectedModelMap = createHashMap<boolean>()
 
   // Find the dataZooms specified by payload.
-  ecModel.eachComponent(
+  piModel.eachComponent(
     { mainType: 'dataZoom', query: payload },
     function (dataZoomModel: DataZoomModel) {
       if (!effectedModelMap.get(dataZoomModel.uid)) {
@@ -102,7 +102,7 @@ export function findEffectedDataZooms(
   let foundNewLink
   do {
     foundNewLink = false
-    ecModel.eachComponent('dataZoom', processSingle)
+    piModel.eachComponent('dataZoom', processSingle)
   } while (foundNewLink)
 
   function processSingle(dataZoomModel: DataZoomModel): void {

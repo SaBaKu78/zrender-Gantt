@@ -96,8 +96,8 @@ function setTextStyleCommon(
 ) {
   // Consider there will be abnormal when merge hover style to normal style if given default value.
   opt = opt || EMPTY_OBJ
-  const ecModel = textStyleModel.piModel
-  const globalTextStyle = ecModel && ecModel.option.textStyle
+  const piModel = textStyleModel.piModel
+  const globalTextStyle = piModel && piModel.option.textStyle
   // Consider case:
   // {
   //     data: [{
