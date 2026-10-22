@@ -68,6 +68,12 @@ export default class UnassignedBoardView extends ComponentView {
 
   private _taskContentGroup: Group
 
+  private _taskRows: Array<{ id: string; group: Group | null }> = []
+
+  private _taskRowHeight = 44
+
+  private _taskItemHeight = 36
+
   private _assignmentGhostGroup: Group
 
   private _scrollbarGroup: Group
@@ -188,6 +194,69 @@ export default class UnassignedBoardView extends ComponentView {
     }
   }
 
+  updateTasks(tasks: TaskData[], affectedIds: string[]): void {
+    if (!this._taskContentGroup || !this._taskViewportGroup || !affectedIds?.length) {
+      this._renderBoard(tasks)
+      return
+    }
+    if (!tasks.length) {
+      this._renderBoard(tasks)
+      return
+    }
+
+    const affected = new Set(affectedIds.map(String))
+    let firstIndex = this._taskRows.findIndex((item) => affected.has(item.id))
+    tasks.forEach((task, index) => {
+      if (affected.has(String(task.id ?? task.taskId))) {
+        firstIndex = firstIndex < 0 ? index : Math.min(firstIndex, index)
+      }
+    })
+    if (firstIndex < 0) return
+
+    for (let index = this._taskRows.length - 1; index >= firstIndex; index--) {
+      const row = this._taskRows[index]
+      row.group && this._taskContentGroup.remove(row.group)
+    }
+    this._taskRows.length = firstIndex
+
+    const grid = this._getGrid()
+    if (!grid) return
+    const rect = grid.getRect()
+    const height = Math.max(0, this.api.getHeight() - this._splitY)
+    const rowHeight = this._taskRowHeight
+    const itemHeight = this._taskItemHeight
+    const contentHeight = tasks.length * rowHeight
+    this._scrollMax = Math.max(0, contentHeight - height)
+    this._scrollOffset = Math.min(this._scrollOffset, this._scrollMax)
+    ;(this._taskContentGroup as any).attr({ y: -this._scrollOffset })
+
+    for (let index = firstIndex; index < tasks.length; index++) {
+      const task = tasks[index]
+      const yOffset = index * rowHeight + (rowHeight - itemHeight) / 2
+      const taskGroup = this._renderTaskItem(
+        task,
+        grid,
+        yOffset,
+        itemHeight,
+        this._isTaskSelected(task)
+      )
+      if (taskGroup) {
+        this._bindTaskEvents(taskGroup, task)
+        this._applySelectedTaskEffect(taskGroup, task)
+        this._taskContentGroup.add(taskGroup)
+      }
+      this._taskRows.push({ id: String(task.id ?? task.taskId), group: taskGroup })
+    }
+
+    this._taskRecords = tasks
+    this._scrollbarGroup && this.group.remove(this._scrollbarGroup)
+    this._scrollbarGroup = null
+    this._renderVerticalDataZoom(rect, height, contentHeight)
+    this.api.getZr().refresh()
+  }
+
+  private _taskRecords: TaskData[] = []
+
   private _updateBoardLayout(): void {
     const splitY = this._splitY
     const width = this.api.getWidth()
@@ -304,6 +373,8 @@ export default class UnassignedBoardView extends ComponentView {
       this.group.remove(this._scrollbarGroup)
     }
 
+    this._taskRows = []
+    this._taskRecords = tasks.slice()
     if (!tasks.length) return
 
     const grid = this._getGrid()
@@ -314,6 +385,8 @@ export default class UnassignedBoardView extends ComponentView {
     const rowHeight = this._getRowHeight()
     const itemGap = 8
     const itemHeight = Math.min(36, Math.max(24, rowHeight - 8))
+    this._taskRowHeight = rowHeight
+    this._taskItemHeight = itemHeight
     const contentHeight = tasks.length * rowHeight
 
     this._scrollMax = Math.max(0, contentHeight - height)
@@ -361,6 +434,7 @@ export default class UnassignedBoardView extends ComponentView {
         this._applySelectedTaskEffect(taskGroup, task)
         contentGroup.add(taskGroup)
       }
+      this._taskRows.push({ id: String(task.id ?? task.taskId), group: taskGroup || null })
     })
 
     viewportGroup.add(contentGroup)
@@ -619,6 +693,13 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _handleGlobalMouseMove(event: any): void {
+    const assignmentState = this._assignmentMachine?.getState()
+    const canInteractWithResource = assignmentState === 'selected' || assignmentState === 'previewing'
+    if (!canInteractWithResource) {
+      this._clearAssignmentGhost()
+      return
+    }
+
     const context = this._assignmentMachine?.getContext()
     const task = context?.taskData as TaskData
     if (!task || this._assigning) {
@@ -647,9 +728,18 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private async _handleGlobalClick(event: any): Promise<void> {
+    const assignmentState = this._assignmentMachine?.getState()
+    const canSubmitAssignment = assignmentState === 'selected' || assignmentState === 'previewing'
     const context = this._assignmentMachine?.getContext()
     const task = context?.taskData as TaskData
     if (this._assigning) return
+
+    // 资源行点击只有在双击任务进入 selected/previewing 后才允许参与派遣。
+    // idle/error/waiting_ws 等状态下直接忽略，避免复用上一次任务上下文。
+    if (!canSubmitAssignment) {
+      this._clearAssignmentGhost()
+      return
+    }
 
     if (!task) {
       const hit = this._hitMainResourceRow(event.offsetX, event.offsetY)
@@ -738,10 +828,16 @@ export default class UnassignedBoardView extends ComponentView {
 
       if (result?.success) {
         console.info('派遣成功')
+        showToast('任务已成功派遣，等待服务端同步最新任务状态。', {
+          title: '派遣成功',
+          duration: 4000,
+        })
+        // 先清理交互态，再等待 WS 更新，避免成功后鼠标仍携带旧任务虚影。
+        this._clearAssignmentGhost()
+        this._clearSelectedTaskTweens()
         this._assignmentMachine.submitOk()
         this._assignmentMachine.wsUpdate()
         this._assignmentMachine.refreshOk()
-        this._clearAssignmentGhost()
       } else {
         console.info('派遣失败')
         this._assignmentMachine.fail('SUBMIT_FAIL', 'assign failed')

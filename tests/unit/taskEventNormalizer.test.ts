@@ -31,6 +31,22 @@ describe('TaskEventNormalizer', () => {
     })
   })
 
+  it('normalizes the current task updated envelope', () => {
+    const events = normalizeWsMessage({
+      category: 'task',
+      action: 'updated',
+      data: { taskId: 'task-17' },
+      messageId: 'event-9',
+    } as any)
+
+    expect(events).toHaveLength(1)
+    expect(events[0]).toMatchObject({
+      type: 'TASK_EVENT',
+      traceId: 'event-9',
+      payload: { eventType: 'upsert', taskIds: ['task-17'] },
+    })
+  })
+
   it('returns an empty list for invalid message payloads', () => {
     expect(normalizeWsMessage({ message: '{invalid' } as any)).toEqual([])
     expect(normalizeWsMessage({ message: JSON.stringify({ category: 'gateTask', type: 'delete' }) } as any)).toEqual([])

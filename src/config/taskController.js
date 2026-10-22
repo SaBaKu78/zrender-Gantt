@@ -62,10 +62,22 @@ export const resolveShiftDailyId = ({ rows, resourceId, task }) => {
   return candidates[0].shiftDailyId
 }
 
-export const createTaskController = ({ gantt, initialResult, searchParams, initialVisibleResources, resourceRowOffset = 0 }) => {
+export const createTaskController = ({
+  gantt,
+  initialResult,
+  searchParams,
+  initialVisibleResources,
+  resourceRowOffset = 0,
+  findTaskById: fetchTaskById = findTaskById,
+  updateWindowMs = 50,
+  maxConcurrentUpdates = 8,
+}) => {
   let currentResult = initialResult
   let currentVisibleResources = initialVisibleResources
-  let wsUpdateQueue = Promise.resolve()
+  let updateTimer = null
+  let processing = false
+  const queuedEvents = new Map()
+  const eventWaiters = []
 
   const setVisibleResources = (resources) => { currentVisibleResources = resources }
   const getAssignedTasks = () => buildAssignedTasks(currentResult?.rows, currentVisibleResources, resourceRowOffset)
@@ -89,17 +101,30 @@ export const createTaskController = ({ gantt, initialResult, searchParams, initi
     return currentResult
   }
 
-  const renderTaskData = () => {
-    gantt.setOption({
-      series: [{ id: 'assignedTasks', data: getAssignedTasks() }],
-      unassignedBoard: { id: 'unassignedBoard', data: getUnassignedTasks() },
-    })
+  const expandAffectedTaskIds = (before, after, seeds) => {
+    const affected = new Set(Array.from(seeds, String))
+    const expand = (items) => {
+      let changed = true
+      while (changed) {
+        changed = false
+        const selected = items.filter((item) => affected.has(String(item[0])))
+        items.forEach((candidate) => {
+          if (affected.has(String(candidate[0]))) return
+          const connected = selected.some((item) => item[1] === candidate[1]
+            && item[2] < candidate[3] && candidate[2] < item[3])
+          if (connected) {
+            affected.add(String(candidate[0]))
+            changed = true
+          }
+        })
+      }
+    }
+    expand(before)
+    expand(after)
+    return Array.from(affected)
   }
 
-  const applyTaskDetail = (detail) => {
-    const taskId = getTaskId(detail)
-    if (taskId == null) return
-
+  const removeTaskFromSnapshot = (taskId) => {
     const idKey = String(taskId)
     currentResult.rows.forEach((row) => {
       row.assignedTasks = (Array.isArray(row.assignedTasks) ? row.assignedTasks : [])
@@ -108,6 +133,14 @@ export const createTaskController = ({ gantt, initialResult, searchParams, initi
     currentResult.unassignedTasks = (Array.isArray(currentResult.unassignedTasks)
       ? currentResult.unassignedTasks
       : []).filter((task) => String(getTaskId(task)) !== idKey)
+  }
+
+  const applyTaskDetail = (detail) => {
+    const taskId = getTaskId(detail)
+    if (taskId == null) return null
+
+    const idKey = String(taskId)
+    removeTaskFromSnapshot(taskId)
 
     const task = {
       id: taskId,
@@ -138,20 +171,105 @@ export const createTaskController = ({ gantt, initialResult, searchParams, initi
       })
     }
 
-    renderTaskData()
+    return idKey
+  }
+
+  const renderTaskChanges = (before, changedIds) => {
+    if (!changedIds.size) return
+    const after = getAssignedTasks()
+    const affectedIds = expandAffectedTaskIds(before, after, changedIds)
+    if (typeof gantt.updateTaskItems === 'function') {
+      gantt.updateTaskItems({ data: after, affectedIds })
+    } else {
+      gantt.dispatchAction({
+        type: 'updateTaskData',
+        assignedData: after,
+        unassignedData: getUnassignedTasks(),
+      })
+    }
+    if (typeof gantt.updateUnassignedTasks === 'function') {
+      gantt.updateUnassignedTasks({ data: getUnassignedTasks(), affectedIds: Array.from(changedIds) })
+    }
+  }
+
+  const isNotFound = (error) => error?.response?.status === 404
+
+  const resolveWaiters = () => {
+    if (processing || queuedEvents.size || updateTimer != null) return
+    eventWaiters.splice(0).forEach((resolve) => resolve())
+  }
+
+  const processQueuedEvents = async () => {
+    if (processing || !queuedEvents.size) {
+      resolveWaiters()
+      return
+    }
+    processing = true
+    const batch = Array.from(queuedEvents.entries())
+    queuedEvents.clear()
+    const before = getAssignedTasks()
+    const changedIds = new Set()
+    let cursor = 0
+    const workerCount = Math.max(1, Math.min(maxConcurrentUpdates, batch.length))
+    const workers = Array.from({ length: workerCount }, async () => {
+      while (cursor < batch.length) {
+        const [idKey, eventType] = batch[cursor++]
+        const taskId = idKey
+        if (eventType === 'remove') {
+          removeTaskFromSnapshot(taskId)
+          changedIds.add(idKey)
+          continue
+        }
+
+        try {
+          const detail = await fetchTaskById(taskId)
+          const changedId = detail && applyTaskDetail(detail)
+          if (changedId) changedIds.add(changedId)
+        } catch (error) {
+          if (isNotFound(error)) {
+            removeTaskFromSnapshot(taskId)
+            changedIds.add(idKey)
+          } else {
+            console.error('[TASK_WS_UPDATE_FAILED]', { taskId, error })
+          }
+        }
+      }
+    })
+    await Promise.all(workers)
+    renderTaskChanges(before, changedIds)
+    processing = false
+    if (queuedEvents.size) {
+      if (updateTimer != null) clearTimeout(updateTimer)
+      updateTimer = null
+      processQueuedEvents()
+      return
+    }
+    resolveWaiters()
   }
 
   const handleTaskEvent = (event) => {
-    const taskIds = event?.payload?.taskIds || []
-    wsUpdateQueue = wsUpdateQueue.then(async () => {
-      for (const taskId of taskIds) {
-        const detail = await findTaskById(taskId)
-        if (detail) applyTaskDetail(detail)
+    const { taskIds = [], eventType = 'upsert' } = event?.payload || {}
+    let added = false
+    taskIds.forEach((taskId) => {
+      if (taskId != null) {
+        queuedEvents.set(String(taskId), eventType)
+        added = true
       }
-    }).catch((error) => {
-      console.error('[TASK_WS_UPDATE_FAILED]', error)
     })
-    return wsUpdateQueue
+    if (!added) return Promise.resolve()
+    const done = new Promise((resolve) => eventWaiters.push(resolve))
+    if (queuedEvents.size && updateTimer == null && !processing) {
+      updateTimer = setTimeout(() => {
+        updateTimer = null
+        processQueuedEvents()
+      }, updateWindowMs)
+    } else if (processing && queuedEvents.size && updateTimer == null) {
+      updateTimer = setTimeout(() => {
+        updateTimer = null
+        processQueuedEvents()
+      }, updateWindowMs)
+    }
+    return done
   }
 
   const assignSelectedTask = async ({ resourceId, taskId }) => {

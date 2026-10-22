@@ -98,6 +98,66 @@ class CustomSeriesView extends ChartView {
   private _data: SeriesData
   private _progressiveEls: Element[]
 
+  updateItems(
+    customSeriesModel: CustomSeriesModel,
+    piModel: GlobalModel,
+    api: ExtensionAPI,
+    affectedIds: string[]
+  ): void {
+    const oldData = this._data
+    const data = customSeriesModel.getData()
+    const affected = new Set(affectedIds.map(String))
+    const oldIndexes = new Map<string, number>()
+    const newIndexes = new Map<string, number>()
+    const getBusinessId = (data: SeriesData, index: number): string => {
+      // The websocket payload uses the business task id. SeriesData.getId()
+      // falls back to an internal `p\0\0<index>` key when no id role is encoded,
+      // so use the raw first dimension that mirrors the task row instead.
+      const raw = data.getRawDataItem(index) as unknown
+      if (Array.isArray(raw) && raw.length > 0) return String(raw[0])
+      const idDimension = data.getDimensionIndex('id')
+      return String(data.getStore().get(idDimension, index))
+    }
+
+    if (oldData) {
+      for (let index = 0; index < oldData.count(); index++) {
+        oldIndexes.set(getBusinessId(oldData, index), index)
+      }
+    }
+    for (let index = 0; index < data.count(); index++) {
+      const id = getBusinessId(data, index)
+      newIndexes.set(id, index)
+      const oldIndex = oldIndexes.get(id)
+      if (oldIndex != null && !affected.has(id)) {
+        const oldEl = oldData.getItemGraphicEl(oldIndex)
+        if (oldEl) data.setItemGraphicEl(index, oldEl)
+      }
+    }
+
+    const renderItem = makeRenderItem(customSeriesModel, data, piModel, api)
+    affected.forEach((id) => {
+      const oldIndex = oldIndexes.get(id)
+      const newIndex = newIndexes.get(id)
+      const oldEl = oldIndex == null ? null : oldData?.getItemGraphicEl(oldIndex)
+      if (newIndex == null) {
+        oldEl && this.group.remove(oldEl)
+        return
+      }
+      createOrUpdateItem(
+        api,
+        oldEl,
+        newIndex,
+        renderItem(newIndex, null),
+        customSeriesModel,
+        this.group,
+        data
+      )
+    })
+
+    this._data = data
+    api.getZr().refresh()
+  }
+
   render(
     customSeriesModel: CustomSeriesModel,
     piModel: GlobalModel,

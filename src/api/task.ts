@@ -50,7 +50,8 @@ export async function assignTask(params: AssignmentCreateParams) {
   })
   const payload = response.data
 
-  if (payload?.code != null && payload.code !== 200) {
+  // assign 接口创建成功时返回 201（Created），与 200 一样属于成功响应。
+  if (payload?.code != null && (payload.code < 200 || payload.code >= 300)) {
     throw new Error(payload.message || `Assign task failed with code ${payload.code}`)
   }
 

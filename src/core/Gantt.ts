@@ -587,6 +587,30 @@ class Gantt extends Eventful<EventDefinition> {
     this._zr.refresh()
   }
 
+  updateTaskItems(payload: { data: unknown[]; affectedIds: string[] }): void {
+    if (!this._model || !payload?.affectedIds?.length) return
+
+    this._model.eachSeries((seriesModel: any) => {
+      if (seriesModel.id !== 'assignedTasks') return
+      seriesModel.updateData(payload.data, this._model)
+      seriesModel.dataTask.perform()
+      const chartView = this._chartsViewsMap[seriesModel.__viewId] as any
+      chartView?.updateItems?.(seriesModel, this._model, this._api, payload.affectedIds)
+    })
+    this._zr.refresh()
+  }
+
+  updateUnassignedTasks(payload: { data: unknown[]; affectedIds: string[] }): void {
+    if (!this._model) return
+    this._model.eachComponent('unassignedBoard', (boardModel: any) => {
+      if (boardModel.id !== 'unassignedBoard') return
+      boardModel.option.data = payload.data
+      const view = this._componentsMap[boardModel.__viewId] as any
+      view?.updateTasks?.(payload.data, payload.affectedIds)
+    })
+    this._zr.refresh()
+  }
+
   getDevicePixelRatio(): number {
     return (
       (this._zr.painter as CanvasPainter).dpr || window.devicePixelRatio || 1
