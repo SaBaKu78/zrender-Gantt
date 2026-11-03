@@ -208,14 +208,14 @@ export default class SliderSplitView extends SplitView {
     let iconStr = splitModel.get('handleIcon')
     const bRect = new Rect({
       shape: {
-        x: 0,
-        y: 0,
-        width: this._orient === HORIZONTAL ? api.getWidth() : DEFAULT_SPLIT_GAP,
+        x: this._orient === HORIZONTAL ? api.getWidth() / 2 - 32 : 0,
+        y: this._orient === HORIZONTAL ? -7 : 0,
+        width: this._orient === HORIZONTAL ? 64 : DEFAULT_SPLIT_GAP,
         height:
-          this._orient === HORIZONTAL ? DEFAULT_SPLIT_GAP : api.getHeight(),
+          this._orient === HORIZONTAL ? 18 : api.getHeight(),
       },
       style: {
-        fill: splitModel.get('backgroundColor'),
+        fill: this._orient === HORIZONTAL ? 'rgba(0,0,0,0)' : splitModel.get('backgroundColor'),
       },
       cursor: getCursor(this._orient),
       zlevel: zlevel,
@@ -247,9 +247,7 @@ export default class SliderSplitView extends SplitView {
       ;(handleIcon as any).__testId = 'horizontal-split-handle'
     }
     handleIcon.attr(this._getHandleIconPosition(this._hanldeEnd))
-    if (this._orient !== HORIZONTAL) {
-      sliderGroup.add(bRect)
-    }
+    sliderGroup.add(bRect)
     sliderGroup.add(handleIcon)
     sliderGroup.attr({
       draggable: true,

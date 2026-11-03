@@ -1,10 +1,10 @@
-import { ResourceRenderItem } from './renderResource'
+import { ResourceRenderItem, ResourceScheduleRenderItem } from './renderResource'
 import { TaskRenderItem } from './renderTask'
 import { PROJECT_ID } from './project'
 
 const TWENTY_MINUTES = 20 * 60 * 1000
 const TARGET_RESOURCE_ROW_HEIGHT = 44
-const GRID_TOP = 120
+const GRID_TOP = 148
 const GRID_BOTTOM = 26
 const DEFAULT_UNASSIGNED_PANEL_RATIO = 0.2
 const WS_URL = `ws://127.0.0.1:5001/ws?projectId=${encodeURIComponent(PROJECT_ID)}&transport=websocket`
@@ -23,7 +23,7 @@ const taskRange = (task) => {
 const resourceData = (resource, offset = 0) => resource.map((item, index) => [index + offset].concat(item))
 const initialYEnd = (dom, rows) => Math.min(100, Math.max(1, ((Math.max(0, dom.clientHeight - GRID_TOP - GRID_BOTTOM) / TARGET_RESOURCE_ROW_HEIGHT) / Math.max(1, rows)) * 100))
 
-export const createGanttOption = ({ dom, resource, task, unassignedTask, onAssignTask, resourceRowOffset = 0, resourceTotalCount = resource.length, resourceFilterOnChange, onTaskEvent, window }) => {
+export const createGanttOption = ({ dom, resource, task, unassignedTask, onAssignTask, resourceRowOffset = 0, resourceTotalCount = resource.length, resourceFilterOnChange, onTaskEvent, onSearch, window }) => {
   const paddingRows = Math.ceil((dom.clientHeight * DEFAULT_UNASSIGNED_PANEL_RATIO) / TARGET_RESOURCE_ROW_HEIGHT) + 1
   const totalRows = resourceTotalCount + resourceRowOffset + paddingRows
   const windowRange = [new Date(window?.startTime).getTime(), new Date(window?.endTime).getTime()]
@@ -43,16 +43,18 @@ export const createGanttOption = ({ dom, resource, task, unassignedTask, onAssig
       { type: 'slider', id: 'ySlider', yAxisIndex: 0, show: false, invisible: true, zoomLock: true, width: 10, right: 10, top: 70, bottom: 20, start: 0, end: yEnd, handleSize: 0, showDetail: false },
       { type: 'inside', id: 'insideY', yAxisIndex: 0, start: 0, end: yEnd, zoomOnMouseWheel: false, moveOnMouseMove: true, moveOnMouseWheel: true },
     ],
-    grid: { top: GRID_TOP },
-    xAxis: { type: 'time', position: 'top', interval: TWENTY_MINUTES, minInterval: TWENTY_MINUTES, maxInterval: TWENTY_MINUTES, min: xRange[0], max: xRange[1], axisTick: { lineStyle: { color: '#CBD5E1' } }, splitNumber: 24 },
+    // The scrollbar sits 6px beyond the grid and is 8px wide; keep 1px at the canvas edge.
+    grid: { top: GRID_TOP, right: 15 },
+    xAxis: { type: 'time', position: 'top', interval: TWENTY_MINUTES, minInterval: TWENTY_MINUTES, maxInterval: TWENTY_MINUTES, min: xRange[0], max: xRange[1], axisLabel: { show: true, color: '#475569', fontSize: 12, margin: 12 }, axisTick: { lineStyle: { color: '#CBD5E1' } }, splitNumber: 24 },
     yAxis: { axisTick: { show: false }, splitLine: { show: false }, axisLine: { show: false }, axisLabel: { show: false, margin: 90 }, splitNumber: 5, inverse: true, min: 0, resourceCount: resource.length, resourceRowOffset, targetRowHeight: TARGET_RESOURCE_ROW_HEIGHT, max: totalRows },
     resourceFilter: { id: 'resourceFilter', show: true, resources: resource, onChange: resourceFilterOnChange },
-    ganttQuery: { id: 'ganttQuery', show: true, placeholder: 'Search', top: 34, right: 96, width: 280, conditions: ['任务名', '资源名', '航班号', '进出港'] },
+    ganttQuery: { id: 'ganttQuery', show: true, placeholder: '输入关键词', top: 24, right: 16, width: 420, conditions: ['任务名', '资源名'], onSearch, windowRange: window },
     liquidGlassLayer: { id: 'liquidGlassLayer', show: false, width: 210, height: 150, left: 360, top: 20, zIndex: 35, title: '' },
     unassignedBoard: { id: 'unassignedBoard', show: true, data: unassignedTask, resources: resource, resourceRowOffset, onAssignTask },
     series: [
+      { type: 'custom', id: 'resourceSchedule', dimensions: ['rowIndex', 'name', 'id', 'code', 'status', 'timeline'], encode: { x: -1, y: 0 }, renderItem: ResourceScheduleRenderItem, animationDuration: 220, animationDurationUpdate: 1400, animationEasingUpdate: 'quadraticInOut', data: resourceData(resource, resourceRowOffset) },
       { type: 'custom', id: 'assignedTasks', dimensions: ['id', 'resourceIndex', 'startTime', 'endTime', 'taskName', 'status', 'color', 'outsideShift', 'laneIndex', 'laneCount', 'assignmentId', 'assignmentStatus', 'shiftId', 'assignmentVersion'], encode: { x: [2, 3], y: 1 }, renderItem: TaskRenderItem, data: task },
-      { type: 'custom', id: 'resourceRows', dimensions: ['rowIndex', 'name', 'id', 'code', 'status'], encode: { x: -1, y: 0 }, renderItem: ResourceRenderItem, data: resourceData(resource, resourceRowOffset) },
+      { type: 'custom', id: 'resourceRows', dimensions: ['rowIndex', 'name', 'id', 'code', 'status', 'timeline'], encode: { x: -1, y: 0 }, renderItem: ResourceRenderItem, data: resourceData(resource, resourceRowOffset) },
     ],
   }
 }

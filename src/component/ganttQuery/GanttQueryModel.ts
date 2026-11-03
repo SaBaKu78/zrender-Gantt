@@ -11,6 +11,8 @@ export interface GanttQueryOption extends ComponentOption {
   top?: number
   right?: number
   conditions?: string[]
+  onSearch?: (params: { keyword: string; condition: string }) => { count: number } | void
+  windowRange?: { startTime?: string | number; endTime?: string | number }
 }
 
 export default class GanttQueryModel extends ComponentModel<GanttQueryOption> {
@@ -19,12 +21,12 @@ export default class GanttQueryModel extends ComponentModel<GanttQueryOption> {
 
   static defaultOption: GanttQueryOption = {
     show: true,
-    placeholder: 'Search',
+    placeholder: '输入关键词',
     value: '',
-    width: 280,
-    top: 34,
-    right: 96,
-    conditions: ['\u4efb\u52a1\u540d', '\u8d44\u6e90\u540d', '\u822a\u73ed\u53f7', '\u8fdb\u51fa\u6e2f'],
+    width: 420,
+    top: 24,
+    right: 16,
+    conditions: ['任务名', '资源名'],
   }
 }
 

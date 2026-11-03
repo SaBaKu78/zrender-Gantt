@@ -13,6 +13,51 @@ export const buildResources = (rows) => (Array.isArray(rows) ? rows : [])
     row.resourceStatus || '',
   ])
 
+const toTimestamp = (value) => {
+  if (value == null || value === '') return null
+  const timestamp = new Date(value).getTime()
+  return Number.isFinite(timestamp) ? timestamp : null
+}
+
+export const buildLoadSegments = (tasks) => {
+  const events = []
+  ;(Array.isArray(tasks) ? tasks : []).forEach((task) => {
+    const start = toTimestamp(task?.startTime)
+    const end = toTimestamp(task?.endTime)
+    if (start == null || end == null || end <= start) return
+    events.push([start, 1], [end, -1])
+  })
+
+  if (!events.length) return []
+  events.sort((a, b) => a[0] - b[0] || a[1] - b[1])
+  const segments = []
+  let active = 0
+  let cursor = events[0][0]
+  let index = 0
+
+  while (index < events.length) {
+    const time = events[index][0]
+    if (time > cursor && active > 0) segments.push([cursor, time, active])
+    while (index < events.length && events[index][0] === time) {
+      active += events[index][1]
+      index += 1
+    }
+    cursor = time
+  }
+  return segments
+}
+
+export const buildResourcesWithLoad = (rows) => (Array.isArray(rows) ? rows : [])
+  .slice()
+  .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+  .map((row) => [
+    row.resourceDisplayName || row.resourceName || row.resourceCode || String(row.resourceId),
+    row.resourceId,
+    row.resourceCode || '',
+    row.resourceStatus || '',
+    { load: buildLoadSegments(row?.assignedTasks) },
+  ])
+
 export const assignOverlapLanes = (tasks) => {
   const byResource = new Map()
 
@@ -60,12 +105,6 @@ export const assignOverlapLanes = (tasks) => {
   })
 
   return tasks
-}
-
-const toTimestamp = (value) => {
-  if (!value) return null
-  const timestamp = new Date(value).getTime()
-  return Number.isFinite(timestamp) ? timestamp : null
 }
 
 export const buildAssignedTasks = (rows, visibleResources, resourceRowOffset = 0) => {

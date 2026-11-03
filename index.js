@@ -2,7 +2,7 @@ import { searchGantt } from './src/api/gantt'
 import { init } from './src/core/Gantt'
 import { createGanttOption } from './src/config/ganttOptions'
 import { createTaskController } from './src/config/taskController'
-import { buildResources } from './src/config/taskTransform'
+import { buildResourcesWithLoad } from './src/config/taskTransform'
 
 const RESOURCE_ROW_OFFSET = 0
 const dom = document.getElementById('main')
@@ -17,7 +17,7 @@ const searchParams = {
   resourceCategoryCode: 'STAF'
 }
 const result = await searchGantt(searchParams)
-const resource = buildResources(result.rows)
+const resource = buildResourcesWithLoad(result.rows)
 const gantt = init(dom)
 if (import.meta.env.DEV) window.__gantt__ = gantt
 
@@ -31,10 +31,12 @@ const taskController = createTaskController({
 
 const buildVisibleGanttData = (visibleResources) => {
   taskController.setVisibleResources(visibleResources)
+  const resources = taskController.getVisibleResources()
   return {
     assignedData: taskController.getAssignedTasks(),
     unassignedData: taskController.getUnassignedTasks(),
-    resourceData: visibleResources.map((item, index) => [index + RESOURCE_ROW_OFFSET].concat(item)),
+    resourceData: resources.map((item, index) => [index + RESOURCE_ROW_OFFSET].concat(item)),
+    resources,
   }
 }
 
@@ -43,7 +45,7 @@ const applyResourceFilter = (visibleResources) => {
   gantt.dispatchAction({
     type: 'updateResourceFilter',
     ...data,
-    resources: visibleResources,
+    resources: data.resources,
   })
 }
 
@@ -56,6 +58,7 @@ gantt.setOption(createGanttOption({
   window: result.window,
   onAssignTask: taskController.assignSelectedTask,
   onTaskEvent: taskController.handleTaskEvent,
+  onSearch: taskController.search,
   resourceRowOffset: RESOURCE_ROW_OFFSET,
   resourceTotalCount: resource.length,
   resourceFilterOnChange: ({ visibleResources }) => applyResourceFilter(visibleResources),

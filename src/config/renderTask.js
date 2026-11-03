@@ -9,8 +9,9 @@ const formatTaskTime = (value) => {
 
 const truncateText = (text, maxWidth, fontSize = 11) => {
   const value = String(text || '')
-  const maxChars = Math.max(1, Math.floor(maxWidth / (fontSize * 0.9)))
-  return value.length > maxChars ? `${value.slice(0, Math.max(1, maxChars - 1))}...` : value
+  const maxChars = Math.max(0, Math.floor(maxWidth / fontSize))
+  if (!maxChars) return ''
+  return value.length > maxChars ? `${value.slice(0, maxChars - 1)}…` : value
 }
 
 const TASK_STATUS_TEXT = {
@@ -43,15 +44,15 @@ export const TaskRenderItem = function (params, api) {
   const laneIndex = api.value(8) || 0
   const laneCount = Math.max(1, api.value(9) || 1)
   const laneHeight = rowHeight / laneCount
-  const taskHeight = Math.min(44, Math.max(10, laneHeight - 4))
+  const taskHeight = Math.min(44, Math.max(1, laneHeight - Math.min(4, laneHeight / 4)))
   const taskY = startTime[1] + laneIndex * laneHeight + (laneHeight - taskHeight) / 2
   const task = clipRectByRect({ x: startTime[0], y: taskY, width: endTime[0] - startTime[0], height: taskHeight }, params.coordSys)
   if (!task || task.width <= 0 || task.height <= 0) return
   task.r = 3
 
   const outsideShift = Boolean(api.value(7))
-  const borderColor = api.value(6) || (outsideShift ? '#EF4444' : '#2F9EEB')
-  const taskFill = outsideShift ? '#FEF2F2' : '#F3FAFF'
+  const borderColor = api.value(6) || (outsideShift ? '#EF4444' : '#2F83B8')
+  const taskFill = outsideShift ? '#FEF2F2' : '#EAF4FB'
   const taskName = api.value(4) || ''
   const statusText = formatTaskStatus(api.value(5))
   const contentInset = 5
@@ -68,18 +69,20 @@ export const TaskRenderItem = function (params, api) {
     end: createCell(contentX + topSideWidth + topCenterWidth, contentY, topSideWidth, cellHeight),
     name: createCell(contentX, contentY + cellHeight, contentWidth, cellHeight),
   }
-  const showTime = task.width >= 76
+  const showDetails = task.height >= 30 && task.width >= 140
+  const showTime = showDetails
+  const nameCell = showDetails ? cells.name : createCell(contentX, task.y, contentWidth, task.height)
 
   return {
     type: 'group',
     transition: [],
     info: { taskItem: true },
     children: [
-      { type: 'rect', shape: task, style: { fill: taskFill, stroke: borderColor, lineWidth: 1 } },
+      { type: 'rect', shape: task, style: { fill: taskFill, stroke: borderColor, lineWidth: 1.25 } },
       showTime && createTextCell(cells.start, formatTaskTime(api.value(2)), { textFill: '#64748B', fontSize: 10 }),
-      createTextCell(cells.status, truncateText(statusText, cells.status.width - 10, 10), { fontSize: 10 }),
+      showDetails && createTextCell(cells.status, truncateText(statusText, cells.status.width - 10, 11), { fontSize: 11 }),
       showTime && createTextCell(cells.end, formatTaskTime(api.value(3)), { textFill: '#64748B', fontSize: 10 }),
-      createTextCell(cells.name, truncateText(taskName, cells.name.width - 10, 11)),
+      task.height >= 16 && createTextCell(nameCell, truncateText(taskName, nameCell.width, 12), { fontSize: 12 }),
     ].filter(Boolean),
   }
 }

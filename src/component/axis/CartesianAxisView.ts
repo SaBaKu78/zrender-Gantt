@@ -21,6 +21,7 @@ class CartesianAxisView extends AxisView {
   type = CartesianAxisView.type
 
   private _axisGroup: graphic.Group
+  private _nowLineTimer: ReturnType<typeof setInterval> | null = null
 
   render(
     axisModel: CartesianAxisModel,
@@ -29,6 +30,10 @@ class CartesianAxisView extends AxisView {
     payload: Payload
   ): void {
     ;(this as any).api = api
+    if (this._nowLineTimer) {
+      clearInterval(this._nowLineTimer)
+      this._nowLineTimer = null
+    }
     this.group.removeAll()
     const oldAxisGroup = this._axisGroup
     this._axisGroup = new graphic.Group()
@@ -74,6 +79,10 @@ class CartesianAxisView extends AxisView {
       },
       this
     )
+
+    if (axisModel.axis.dim === 'x' && axisModel.axis.type === 'time') {
+      this.renderNowLine(axisModel, gridModel)
+    }
     const isInitialSortFromBarRacing =
       payload && payload.type === 'changeAxisOrder' && payload.isInitSort
 
@@ -82,6 +91,67 @@ class CartesianAxisView extends AxisView {
     }
 
     super.render(axisModel, piModel, api, payload)
+  }
+
+  dispose(): void {
+    if (this._nowLineTimer) {
+      clearInterval(this._nowLineTimer)
+      this._nowLineTimer = null
+    }
+    this._nowLine = null
+    super.dispose.apply(this, arguments as any)
+  }
+
+  private _nowLine: Line | null = null
+
+  private renderNowLine(
+    axisModel: CartesianAxisModel,
+    gridModel: GridModel
+  ): void {
+    const axis = axisModel.axis
+    const grid = gridModel.coordinateSystem
+    const rect = grid.getRect()
+    const endY = getVerticalSplitLineEndY(this.api, rect)
+    const line = new Line({
+      shape: {
+        x1: rect.x,
+        y1: rect.y,
+        x2: rect.x,
+        y2: endY,
+      },
+      style: {
+        stroke: '#2563EB',
+        lineWidth: 2,
+        opacity: 0.88,
+      },
+      z2: 6,
+      silent: true,
+    })
+
+    const updatePosition = (): void => {
+      const now = Date.now()
+      const extent = axis.scale.getExtent()
+      const min = Math.min(extent[0], extent[1])
+      const max = Math.max(extent[0], extent[1])
+      const visible = now >= min && now <= max
+      line.ignore = !visible
+      if (visible) {
+        const x = axis.toGlobalCoord(axis.dataToCoord(now))
+        line.setShape({ x1: x, x2: x })
+      }
+      line.dirty()
+      this.api.getZr().refresh()
+    }
+
+    this._nowLine = line
+    this._axisGroup.add(line)
+    updatePosition()
+    this._nowLineTimer = setInterval(updatePosition, 1000)
+    line
+      .animate('style', true)
+      .when(900, { opacity: 0.58 })
+      .when(1800, { opacity: 0.88 })
+      .start()
   }
 }
 
@@ -135,6 +205,8 @@ const axisElementBuilders: Record<
     if (axis.dim === 'x') {
       ticksCoords.forEach(function (tickCoord) {
         const x = rect.x + tickCoord.coord
+        const tickTime = new Date(tickCoord.tickValue as number)
+        const isHour = Number.isFinite(tickTime.getTime()) && tickTime.getMinutes() === 0
         axisGroup.add(new Line({
           shape: {
             x1: x,
@@ -143,8 +215,8 @@ const axisElementBuilders: Record<
             y2: endY,
           },
           style: {
-            stroke: '#D6DEE8',
-            lineWidth: 1,
+            stroke: isHour ? '#B8C6D5' : '#E0E6ED',
+            lineWidth: isHour ? 1.5 : 1,
             lineDash: null,
           },
           z2: 0,

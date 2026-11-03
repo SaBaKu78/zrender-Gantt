@@ -105,6 +105,7 @@ export default class UnassignedBoardView extends ComponentView {
   private _boundClickHandler: ((e: any) => void) | null = null
 
   private _assigning = false
+  private _statusHost: HTMLDivElement | null = null
 
   init(piModel: GlobalModel, api: ExtensionAPI): void {
     this.api = api
@@ -113,6 +114,7 @@ export default class UnassignedBoardView extends ComponentView {
     if (!this._assignmentMachine) {
       this._assignmentMachine = new AssignmentStateMachine()
       this._assignmentMachine.on('statechange', (_context, prevState, nextState) => {
+        this._renderAssignmentStatus()
         if (this.piModel && this.api && prevState !== nextState) {
           this._renderBoard(this._getUnassignedData())
         }
@@ -121,7 +123,7 @@ export default class UnassignedBoardView extends ComponentView {
 
     if (!this._boundKeyDownHandler && typeof window !== 'undefined') {
       this._boundKeyDownHandler = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && !this._assigning) {
           this._assignmentMachine?.esc()
         }
       }
@@ -140,6 +142,8 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   dispose(): void {
+    this._statusHost?.remove()
+    this._statusHost = null
     if (this._boundKeyDownHandler) {
       window.removeEventListener('keydown', this._boundKeyDownHandler)
       this._boundKeyDownHandler = null
@@ -195,6 +199,7 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   updateTasks(tasks: TaskData[], affectedIds: string[]): void {
+    this._renderAssignmentStatus(tasks.length)
     if (!this._taskContentGroup || !this._taskViewportGroup || !affectedIds?.length) {
       this._renderBoard(tasks)
       return
@@ -302,6 +307,7 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _renderBoard(tasks: TaskData[]): void {
+    this._renderAssignmentStatus(tasks.length)
     const group = this.group
     const api = this.api
 
@@ -577,9 +583,9 @@ export default class UnassignedBoardView extends ComponentView {
       new Rect({
         shape,
         style: {
-          fill: selected ? '#E8F4FF' : '#F3FAFF',
-          stroke: selected ? '#1D7FEA' : '#2F9EEB',
-          lineWidth: selected ? 2 : 1,
+          fill: selected ? '#E8F4FF' : '#EAF4FB',
+          stroke: selected ? '#1D7FEA' : '#2F83B8',
+          lineWidth: selected ? 2 : 1.25,
         },
         zlevel: BOARD_ZLEVEL,
         z: 0,
@@ -587,8 +593,9 @@ export default class UnassignedBoardView extends ComponentView {
       })
     )
 
-    const topY = y + height * 0.34
-    const bottomY = y + height * 0.72
+    const showDetails = width >= 140 && height >= 30
+    const topY = y + height * 0.30
+    const bottomY = y + height * (showDetails ? 0.73 : 0.5)
     const leftWidth = Math.min(48, Math.max(36, width * 0.2))
     const rightWidth = leftWidth
     const centerX = x + leftWidth
@@ -597,7 +604,7 @@ export default class UnassignedBoardView extends ComponentView {
     group.add(
       new Text({
         style: {
-          text: this._formatTimeLabel(startValue),
+          text: showDetails ? this._formatTimeLabel(startValue) : '',
           x: x + leftWidth / 2,
           y: topY,
           fontSize: 10,
@@ -615,7 +622,7 @@ export default class UnassignedBoardView extends ComponentView {
     group.add(
       new Text({
         style: {
-          text: this._formatTimeLabel(endValue),
+          text: showDetails ? this._formatTimeLabel(endValue) : '',
           x: x + width - rightWidth / 2,
           y: topY,
           fontSize: 10,
@@ -633,7 +640,7 @@ export default class UnassignedBoardView extends ComponentView {
     group.add(
       new Text({
         style: {
-          text: this._truncateText(task.flightStatusText || task.name || '', centerWidth - 8, 10),
+          text: showDetails ? this._truncateText(task.flightStatusText || '', centerWidth - 8, 10) : '',
           x: centerX + centerWidth / 2,
           y: topY,
           fontSize: 10,
@@ -651,10 +658,10 @@ export default class UnassignedBoardView extends ComponentView {
     group.add(
       new Text({
         style: {
-          text: this._truncateText(task.taskName || task.name || `Task ${task.id}`, width - 12, 11),
+          text: this._truncateText(task.taskName || task.name || `Task ${task.id}`, width - 12, 12),
           x: x + width / 2,
           y: bottomY,
-          fontSize: 11,
+          fontSize: 12,
           fill: '#111827',
           align: 'center',
           verticalAlign: 'middle',
@@ -677,7 +684,7 @@ export default class UnassignedBoardView extends ComponentView {
         z: 0,
         z2: 20,
         ondblclick: (event: any) => {
-          this._assignmentMachine?.selectTask(task)
+          if (!this._assigning) this._assignmentMachine?.selectTask(task)
           eventTool.stop(event.event)
         },
       })
@@ -829,6 +836,7 @@ export default class UnassignedBoardView extends ComponentView {
       if (result?.success) {
         console.info('派遣成功')
         showToast('任务已成功派遣，等待服务端同步最新任务状态。', {
+          type: 'success',
           title: '派遣成功',
           duration: 4000,
         })
@@ -840,6 +848,7 @@ export default class UnassignedBoardView extends ComponentView {
         this._assignmentMachine.refreshOk()
       } else {
         console.info('派遣失败')
+        showToast('服务端未接受此次派遣，请稍后重试。', { title: '派遣失败', type: 'error' })
         this._assignmentMachine.fail('SUBMIT_FAIL', 'assign failed')
       }
     } catch (error) {
@@ -854,22 +863,24 @@ export default class UnassignedBoardView extends ComponentView {
           message: '目标资源不在当前查询结果中，因此未发送请求。请重新选择资源或刷新数据。',
         },
         SHIFT_DAILY_ID_NOT_FOUND: {
-          title: '缺少班次 ID',
-          message: '目标资源在该任务时段内没有匹配的班次 ID（shiftDailyId），因此未发送请求。请选择有覆盖该时段班次的资源。',
+          title: '目标资源没有可用班次',
+          message: '目标资源在该任务时段内没有匹配的班次，因此未发送请求。请选择在该时段有班次的资源。',
         },
       }
       const preflight = preflightMessages[code]
       if (preflight) {
-        showToast(preflight.message, { title: preflight.title, duration: 6000 })
+        showToast(preflight.message, { title: preflight.title, type: 'warning', duration: 6000 })
       } else {
         showToast((error as Error)?.message || '派遣请求处理失败，请稍后重试。', {
           title: '派遣失败',
+          type: 'error',
           duration: 6000,
         })
       }
       this._assignmentMachine.fail('SUBMIT_FAIL', error as Error)
     } finally {
       this._assigning = false
+      this._renderAssignmentStatus()
     }
   }
 
@@ -935,6 +946,14 @@ export default class UnassignedBoardView extends ComponentView {
     ;(ghost as any).silent = true
     ;(ghost as any).attr({ zlevel: BOARD_ZLEVEL, z: 0, z2: 20 })
     this._setGroupOpacity(ghost, 0.48)
+    const rect = grid.getRect()
+    const rowTop = Math.max(rect.y, hit.rowY)
+    const rowBottom = Math.min(this._splitY, hit.rowY + hit.rowHeight)
+    ghost.add(new Rect({
+      shape: { x: rect.x, y: rowTop - this._splitY, width: rect.width, height: Math.max(0, rowBottom - rowTop) },
+      style: { fill: 'rgba(47,158,235,0.10)', stroke: '#2F9EEB', lineWidth: 1 },
+      silent: true, zlevel: BOARD_ZLEVEL, z2: -1,
+    }))
     this._assignmentGhostGroup = ghost
     this.group.add(ghost)
   }
@@ -947,23 +966,63 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _applySelectedTaskEffect(group: Group, task: TaskData): void {
-    const taskId = task.id
-    if (!this._isTaskSelected(task)) {
-      return
-    }
+    // Selection is expressed by the card border and persistent status, without a looping shake.
+  }
 
-    const tweenManager = this.api?.getTweenManager?.()
-    if (!tweenManager) {
-      return
+  private _renderAssignmentStatus(count = this._getUnassignedData().length): void {
+    if (typeof document === 'undefined' || !this.api) return
+    if (!this._statusHost) {
+      const zr = this.api.getZr() as any
+      const root = zr.dom || zr.painter?.getViewportRoot?.()
+      const parent = root?.parentElement || document.body
+      if (parent !== document.body && window.getComputedStyle(parent).position === 'static') parent.style.position = 'relative'
+      this._statusHost = document.createElement('div')
+      this._statusHost.setAttribute('role', 'status')
+      this._statusHost.setAttribute('aria-live', 'polite')
+      Object.assign(this._statusHost.style, {
+        position: 'absolute', top: '82px', left: '16px', right: '16px', height: '28px',
+        display: 'flex', alignItems: 'center', gap: '12px', zIndex: '20',
+        font: '13px "Microsoft YaHei", sans-serif', color: '#64748B', pointerEvents: 'none',
+      })
+      parent.appendChild(this._statusHost)
     }
-
-    const tween = tweenManager.presets.shakeY(group, {
-      amplitude: 3,
-      duration: 180,
-      restore: true,
-      loop: true,
-    })
-    this._selectedTaskTweens.set(taskId, tween)
+    const state = this._assignmentMachine?.getState() || 'idle'
+    const context = this._assignmentMachine?.getContext()
+    const name = context?.taskData?.name || context?.taskData?.taskName || String(context?.taskId || '')
+    const busy = state === 'submitting' || state === 'waiting_ws' || state === 'refreshing'
+    const text = document.createElement('span')
+    text.textContent = busy ? `正在派遣 · ${name}`
+      : state === 'error' ? '派遣未完成'
+      : state === 'idle' ? ''
+      : `已选择 · ${name} · 点击资源行派遣 · Esc 取消`
+    Object.assign(text.style, { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' })
+    this._statusHost.style.color = state === 'idle' ? '#64748B' : '#2563EB'
+    // Hover updates are frequent; avoid replacing DOM or repeating screen-reader announcements.
+    if (this._statusHost.dataset.status === text.textContent + state) return
+    this._statusHost.dataset.status = text.textContent + state
+    this._statusHost.replaceChildren()
+    if (state === 'idle') {
+      const label = document.createElement('strong')
+      label.textContent = '未分配任务'
+      label.style.color = '#334155'
+      const countBadge = document.createElement('span')
+      countBadge.textContent = String(count)
+      Object.assign(countBadge.style, { display: 'inline-flex', minWidth: '28px', height: '24px', padding: '0 7px', boxSizing: 'border-box', alignItems: 'center', justifyContent: 'center', border: '1px solid #D6DEE8', borderRadius: '4px', background: '#FFFFFF', color: '#475569', fontSize: '12px', fontWeight: '600' })
+      const hint = document.createElement('span')
+      hint.textContent = '双击任务，再点击目标资源行派遣'
+      Object.assign(hint.style, { marginLeft: '4px', color: '#64748B' })
+      this._statusHost.append(label, countBadge, hint)
+    } else {
+      this._statusHost.appendChild(text)
+    }
+    if (state !== 'idle' && !busy) {
+      const cancel = document.createElement('button')
+      cancel.type = 'button'
+      cancel.textContent = '取消派遣'
+      Object.assign(cancel.style, { flexShrink: '0', border: '1px solid #CBD5E1', borderRadius: '4px', background: '#FFF', color: '#475569', height: '28px', padding: '0 8px', cursor: 'pointer', pointerEvents: 'auto' })
+      cancel.onclick = () => { if (!this._assigning) this._assignmentMachine.cancel() }
+      this._statusHost.appendChild(cancel)
+    }
   }
 
   private _clearSelectedTaskTweens(): void {
@@ -1050,6 +1109,8 @@ export default class UnassignedBoardView extends ComponentView {
     ticksCoords.forEach((tickCoord: any) => {
       const x = rect.x + tickCoord.coord
       if (x < rect.x || x > rect.x + rect.width) return
+      const tickTime = new Date(tickCoord.tickValue)
+      const isHour = Number.isFinite(tickTime.getTime()) && tickTime.getMinutes() === 0
 
       gridGroup.add(
         new Line({
@@ -1060,8 +1121,8 @@ export default class UnassignedBoardView extends ComponentView {
             y2: height,
           },
           style: {
-            stroke: '#EDF1F5',
-            lineWidth: 1,
+            stroke: isHour ? '#C4CFDB' : '#E3E9EF',
+            lineWidth: isHour ? 1.5 : 1,
           },
           zlevel: BOARD_ZLEVEL,
           z: 0,
@@ -1271,10 +1332,11 @@ export default class UnassignedBoardView extends ComponentView {
 
   private _truncateText(text: string, maxWidth: number, fontSize = 11): string {
     const value = String(text || '')
-    const maxChars = Math.max(1, Math.floor(maxWidth / (fontSize * 0.9)))
+    const maxChars = Math.max(0, Math.floor(maxWidth / fontSize))
+    if (!maxChars) return ''
 
     return value.length > maxChars
-      ? `${value.slice(0, Math.max(1, maxChars - 1))}...`
+      ? `${value.slice(0, maxChars - 1)}…`
       : value
   }
 

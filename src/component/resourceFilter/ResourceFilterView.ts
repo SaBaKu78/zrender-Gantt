@@ -43,18 +43,15 @@ const injectStyle = (): void => {
   style.textContent = `
     .resource-filter-host {
       position: absolute;
-      left: 0;
-      top: 80px;
-      width: 10%;
-      min-width: 180px;
-      max-width: 320px;
-      height: 40px;
+      left: 128px;
+      top: 18px;
+      width: 156px;
+      height: 36px;
       z-index: 20;
       display: flex;
       align-items: center;
-      justify-content: center;
-      background: #F3F4F6;
-      border-bottom: 1px solid #CBD5E1;
+      justify-content: flex-start;
+      background: transparent;
       box-sizing: border-box;
       pointer-events: auto;
     }
@@ -66,7 +63,8 @@ const injectStyle = (): void => {
     }
     .resource-filter__button {
       width: 108px;
-      height: 26px;
+      height: 36px;
+      border-radius: 6px;
       border: 1px solid #CBD5E1;
       background: #FFFFFF;
       color: #334155;
@@ -83,7 +81,7 @@ const injectStyle = (): void => {
     }
     .resource-filter__status {
       min-width: 26px;
-      height: 26px;
+      height: 36px;
       padding: 0 6px;
       border: 1px solid #CBD5E1;
       border-radius: 2px;
@@ -104,11 +102,13 @@ const injectStyle = (): void => {
       display: flex;
       align-items: flex-start;
       justify-content: flex-start;
-      padding: 112px 0 0 18px;
+      padding: 72px 16px 16px;
       box-sizing: border-box;
     }
     .resource-filter__modal {
-      width: 320px;
+      width: min(320px, calc(100vw - 32px));
+      max-height: calc(100vh - 88px);
+      overflow-y: auto;
       border: 1px solid #CBD5E1;
       border-radius: 6px;
       background: #FFFFFF;

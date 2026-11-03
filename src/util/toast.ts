@@ -1,15 +1,25 @@
+export type ToastType = 'info' | 'success' | 'warning' | 'error'
+
 export interface ToastOptions {
+  type?: ToastType
   title?: string
   duration?: number
 }
 
 interface ToastItem {
+  type: ToastType
   title: string
   message: string
   duration: number
 }
 
 const DEFAULT_DURATION = 5000
+const PALETTE = {
+  info: { color: '#2563EB', background: '#EFF6FF', icon: 'i' },
+  success: { color: '#15803D', background: '#F0FDF4', icon: '✓' },
+  warning: { color: '#A16207', background: '#FFFBEB', icon: '!' },
+  error: { color: '#B91C1C', background: '#FEF2F2', icon: '!' },
+}
 const queue: ToastItem[] = []
 let container: HTMLDivElement | null = null
 let activeTimer: ReturnType<typeof setTimeout> | null = null
@@ -29,7 +39,7 @@ function ensureContainer(): HTMLDivElement | null {
     zIndex: '2147483647',
     width: 'min(360px, calc(100vw - 32px))',
     pointerEvents: 'none',
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: '"Microsoft YaHei", sans-serif',
   })
   document.body.appendChild(container)
   return container
@@ -51,19 +61,20 @@ function showNext(): void {
   if (!host) return
 
   const item = queue.shift()!
+  const palette = PALETTE[item.type]
   isShowing = true
 
   const toast = document.createElement('section')
-  toast.setAttribute('role', 'status')
+  toast.setAttribute('role', item.type === 'error' ? 'alert' : 'status')
   Object.assign(toast.style, {
     display: 'flex',
     alignItems: 'flex-start',
     gap: '12px',
     padding: '14px 14px 14px 16px',
-    borderLeft: '5px solid #3B82F6',
+    border: `1px solid ${palette.color}`,
     borderRadius: '6px',
-    background: '#E8F1FF',
-    color: '#3B82F6',
+    background: palette.background,
+    color: palette.color,
     boxShadow: '0 4px 14px rgba(31, 72, 130, 0.16)',
     pointerEvents: 'auto',
     boxSizing: 'border-box',
@@ -71,12 +82,13 @@ function showNext(): void {
   })
 
   const icon = document.createElement('span')
-  icon.textContent = 'i'
+  icon.textContent = palette.icon
+  icon.setAttribute('aria-hidden', 'true')
   Object.assign(icon.style, {
     flex: '0 0 24px',
     width: '24px',
     height: '24px',
-    border: '2px solid #3B82F6',
+    border: `2px solid ${palette.color}`,
     borderRadius: '50%',
     boxSizing: 'border-box',
     textAlign: 'center',
@@ -96,7 +108,7 @@ function showNext(): void {
   message.textContent = item.message
   Object.assign(message.style, {
     marginTop: '3px',
-    color: '#5485CE',
+    color: '#475569',
     fontSize: '13px',
     lineHeight: '19px',
     overflowWrap: 'anywhere',
@@ -108,13 +120,13 @@ function showNext(): void {
   close.title = '关闭提示'
   close.textContent = '×'
   Object.assign(close.style, {
-    flex: '0 0 20px',
-    width: '20px',
-    height: '20px',
+    flex: '0 0 28px',
+    width: '28px',
+    height: '28px',
     padding: '0',
     border: '0',
     background: 'transparent',
-    color: '#5485CE',
+    color: palette.color,
     fontSize: '20px',
     lineHeight: '18px',
     cursor: 'pointer',
@@ -132,6 +144,7 @@ function showNext(): void {
 
 export function showToast(message: string, options: ToastOptions = {}): void {
   queue.push({
+    type: options.type || 'info',
     title: options.title || '提示',
     message,
     duration: options.duration ?? DEFAULT_DURATION,

@@ -48,6 +48,9 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       if (seriesModel.id === 'resourceRows') {
         seriesModel.updateData?.(resourceData, model)
       }
+      if (seriesModel.id === 'resourceSchedule') {
+        seriesModel.updateData?.(resourceData, model)
+      }
     })
 
     model.eachComponent('unassignedBoard', function(boardModel: ActionComponentModel) {
@@ -68,6 +71,11 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       if (seriesModel.id !== 'assignedTasks') return
 
       seriesModel.updateData?.(assignedData, model)
+    })
+
+    model.eachSeries(function(seriesModel: ActionSeriesModel) {
+      if (seriesModel.id !== 'resourceRows' && seriesModel.id !== 'resourceSchedule') return
+      seriesModel.updateData?.(payload.resourceData || [], model)
     })
 
     model.eachComponent('unassignedBoard', function(boardModel: ActionComponentModel) {

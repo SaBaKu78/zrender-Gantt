@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assignOverlapLanes, buildAssignedTasks, buildResources } from '../../src/config/taskTransform.js'
+import { assignOverlapLanes, buildAssignedTasks, buildLoadSegments, buildResources, buildResourcesWithLoad } from '../../src/config/taskTransform.js'
 
 describe('taskTransform', () => {
   it('builds stable resources from rows', () => {
@@ -29,5 +29,19 @@ describe('taskTransform', () => {
   it('preserves the backend task status for display mapping', () => {
     const rows = [{ resourceId: '7', assignedTasks: [{ id: 'completed', name: '出港', startTime: '2026-01-01T10:00:00Z', endTime: '2026-01-01T11:00:00Z', status: 4, color: null, outsideShift: false }] }]
     expect(buildAssignedTasks(rows, [['Gate A', '7']])[0][5]).toBe(4)
+  })
+
+  it('builds shift bands and congestion segments from a resource snapshot', () => {
+    const row = {
+      availability: [{ shiftDailyId: 'shift-1', startTime: '2026-01-01T08:00:00Z', endTime: '2026-01-01T16:00:00Z', status: 1 }],
+      assignedTasks: [
+        { startTime: '2026-01-01T09:00:00Z', endTime: '2026-01-01T11:00:00Z' },
+        { startTime: '2026-01-01T10:00:00Z', endTime: '2026-01-01T12:00:00Z' },
+      ],
+    }
+    const resource = buildResourcesWithLoad([{ resourceId: 'r1', availability: row.availability, assignedTasks: row.assignedTasks }])[0]
+    expect(resource[4]).not.toHaveProperty('shifts')
+    const timeline = resource[4]
+    expect(buildLoadSegments(row.assignedTasks).map((segment) => segment[2])).toEqual([1, 2, 1])
   })
 })

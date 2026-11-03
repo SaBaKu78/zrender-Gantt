@@ -1,6 +1,6 @@
 import { searchGantt } from '../api/gantt'
 import { assignTask, findTaskById } from '../api/task'
-import { buildAssignedTasks, buildResources, buildUnassignedTasks } from './taskTransform'
+import { buildAssignedTasks, buildResourcesWithLoad, buildUnassignedTasks } from './taskTransform'
 
 const toTime = (value) => {
   const time = value == null ? NaN : new Date(value).getTime()
@@ -79,10 +79,36 @@ export const createTaskController = ({
   const queuedEvents = new Map()
   const eventWaiters = []
 
-  const setVisibleResources = (resources) => { currentVisibleResources = resources }
-  const getAssignedTasks = () => buildAssignedTasks(currentResult?.rows, currentVisibleResources, resourceRowOffset)
+  const setVisibleResources = (resources) => { currentVisibleResources = Array.isArray(resources) ? resources : [] }
+  let query = { keyword: '', condition: '任务名' }
+  const matches = (value) => String(value || '').toLocaleLowerCase().includes(query.keyword)
+  // Filtering is a projection of the authoritative snapshot: WS updates never overwrite the query.
+  const getAssignedTasks = () => {
+    const matchingResourceIds = new Set(currentVisibleResources.filter((item) => matches(item[0])).map((item) => String(item[1])))
+    const rows = (currentResult?.rows || []).map((row) => ({
+      ...row,
+      assignedTasks: (row.assignedTasks || []).filter((task) => !query.keyword
+        || (query.condition === '资源名' ? matchingResourceIds.has(String(row.resourceId)) : matches(task.name))),
+    }))
+    return buildAssignedTasks(rows, currentVisibleResources, resourceRowOffset)
+  }
   const getUnassignedTasks = () => buildUnassignedTasks(currentResult?.unassignedTasks)
-  const getResources = () => buildResources(currentResult?.rows)
+    .filter((task) => !query.keyword || (query.condition !== '资源名' && matches(task.name)))
+  const getResources = () => buildResourcesWithLoad(currentResult?.rows)
+  const getVisibleResources = () => {
+    const allResources = getResources()
+    const visibleIds = new Set(currentVisibleResources.map((item) => String(item[1])))
+    if (!visibleIds.size) return allResources
+    return allResources.filter((item) => visibleIds.has(String(item[1])))
+  }
+  const getResourceData = () => getVisibleResources().map((item, index) => [index + resourceRowOffset].concat(item))
+  const search = ({ keyword = '', condition = '任务名' }) => {
+    query = { keyword: keyword.trim().toLocaleLowerCase(), condition }
+    const assignedData = getAssignedTasks()
+    const unassignedData = getUnassignedTasks()
+    gantt.dispatchAction({ type: 'updateTaskData', assignedData, unassignedData, resourceData: getResourceData() })
+    return { count: assignedData.length + unassignedData.length }
+  }
 
   const refresh = async () => {
     currentResult = await searchGantt(searchParams)
@@ -95,8 +121,8 @@ export const createTaskController = ({
       type: 'updateResourceFilter',
       assignedData: getAssignedTasks(),
       unassignedData: getUnassignedTasks(),
-      resourceData: currentVisibleResources.map((item, index) => [index + resourceRowOffset].concat(item)),
-      resources: currentVisibleResources,
+      resourceData: getResourceData(),
+      resources: getVisibleResources(),
     })
     return currentResult
   }
@@ -179,12 +205,13 @@ export const createTaskController = ({
     const after = getAssignedTasks()
     const affectedIds = expandAffectedTaskIds(before, after, changedIds)
     if (typeof gantt.updateTaskItems === 'function') {
-      gantt.updateTaskItems({ data: after, affectedIds })
+      gantt.updateTaskItems({ data: after, affectedIds, resourceData: getResourceData() })
     } else {
       gantt.dispatchAction({
         type: 'updateTaskData',
         assignedData: after,
         unassignedData: getUnassignedTasks(),
+        resourceData: getResourceData(),
       })
     }
     if (typeof gantt.updateUnassignedTasks === 'function') {
@@ -295,10 +322,12 @@ export const createTaskController = ({
   }
 
   return {
+    search,
     setVisibleResources,
     getAssignedTasks,
     getUnassignedTasks,
     getResources,
+    getVisibleResources,
     refresh,
     assignSelectedTask,
     handleTaskEvent,

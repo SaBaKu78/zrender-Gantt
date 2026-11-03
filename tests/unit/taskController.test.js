@@ -12,6 +12,7 @@ const makeDetail = (taskId, assignment = null) => ({
 
 const createHarness = (findTaskById, options = {}) => {
   const gantt = {
+    dispatchAction: vi.fn(),
     updateTaskItems: vi.fn(),
     updateUnassignedTasks: vi.fn(),
   }
@@ -36,6 +37,43 @@ const createHarness = (findTaskById, options = {}) => {
 afterEach(() => vi.useRealTimers())
 
 describe('task controller websocket updates', () => {
+  it('searches without changing the snapshot and restores tasks when cleared', () => {
+    const { controller, initialResult, gantt } = createHarness(vi.fn())
+    expect(controller.search({ keyword: ' task 1 ', condition: '任务名' })).toEqual({ count: 1 })
+    expect(controller.getUnassignedTasks().map((task) => task.id)).toEqual(['task-1'])
+    expect(initialResult.unassignedTasks).toHaveLength(2)
+    expect(controller.search({ keyword: '', condition: '任务名' })).toEqual({ count: 2 })
+    expect(gantt.dispatchAction).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'updateTaskData' }))
+  })
+
+  it('keeps resource search active when a WS assignment arrives and composes with resource filtering', async () => {
+    vi.useFakeTimers()
+    const { controller, gantt } = createHarness(vi.fn(async (id) => makeDetail(id, true)))
+    controller.search({ keyword: 'resource 1', condition: '资源名' })
+    expect(controller.getUnassignedTasks()).toHaveLength(0)
+    const pending = controller.handleTaskEvent({ payload: { taskIds: ['task-1'] } })
+    await vi.advanceTimersByTimeAsync(50)
+    await pending
+    expect(controller.getAssignedTasks().map((task) => task[0])).toEqual(['task-1'])
+    expect(gantt.dispatchAction).toHaveBeenCalledTimes(1)
+    controller.setVisibleResources([])
+    expect(controller.getAssignedTasks()).toHaveLength(0)
+    controller.setVisibleResources([['Resource 1', 'resource-1']])
+    expect(controller.getAssignedTasks()).toHaveLength(1)
+  })
+
+  it('removes a task from search results when its WS detail no longer matches', async () => {
+    vi.useFakeTimers()
+    const { controller, initialResult } = createHarness(vi.fn(async (id) => ({ ...makeDetail(id), taskName: 'Renamed' })))
+    controller.search({ keyword: 'Task 1', condition: '任务名' })
+    const pending = controller.handleTaskEvent({ payload: { taskIds: ['task-1'] } })
+    await vi.advanceTimersByTimeAsync(50)
+    await pending
+    expect(controller.getUnassignedTasks()).toHaveLength(0)
+    expect(initialResult.unassignedTasks).toHaveLength(2)
+    expect(controller.search({ keyword: '', condition: '任务名' }).count).toBe(2)
+  })
+
   it('merges duplicate ids in the 50ms window and applies the fetched snapshot', async () => {
     vi.useFakeTimers()
     const findTaskById = vi.fn(async (id) => makeDetail(id, true))
