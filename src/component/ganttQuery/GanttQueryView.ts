@@ -9,8 +9,9 @@ const injectStyle = (): void => {
   style.id = 'gantt-query-style'
   style.textContent = `
     .gantt-workspace { container-type: inline-size; }
-    .gantt-query-host { position:absolute; z-index:20; inset:0 0 auto; height:120px; max-width:none; font:13px "Microsoft YaHei",sans-serif; pointer-events:none; }
-    .gantt-query-host::before { content:''; position:absolute; inset:0 0 auto; height:120px; box-sizing:border-box; background:linear-gradient(to bottom,#FFFFFF 0 64px,#F7F9FB 64px 100%); border-bottom:1px solid #D8E0E8; box-shadow:0 2px 5px rgba(31,41,55,.04); }
+    .gantt-query-host { position:absolute; z-index:20; inset:0 0 auto; height:112px; max-width:none; font:13px "Microsoft YaHei",sans-serif; pointer-events:none; }
+    .gantt-query-host::before { content:''; position:absolute; inset:0 0 auto; height:112px; box-sizing:border-box; background:linear-gradient(to bottom,#FFFFFF 0 64px,#F8FAFC 64px 100%); border-bottom:1px solid #D8E0E8; box-shadow:0 2px 5px rgba(31,41,55,.04); }
+    .gantt-query-host::after { content:''; position:absolute; left:0; right:0; top:64px; height:1px; background:#E7ECF2; }
     .gantt-query__title { position:absolute; top:25px; left:16px; color:#1F2937; font-size:16px; font-weight:700; line-height:24px; white-space:nowrap; }
     .gantt-query { position:absolute; top:18px; right:16px; display:flex; justify-content:flex-end; gap:6px; width:420px; max-width:calc(100% - 32px); height:36px; margin:0; pointer-events:auto; }
     .gantt-query__range { position:absolute; top:27px; left:50%; max-width:calc(100% - 880px); transform:translateX(-50%); color:#334155; font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
@@ -21,7 +22,7 @@ const injectStyle = (): void => {
     .gantt-query button[type=submit] { color:#FFF; background:#2F9EEB; border-color:#2F9EEB; }
     .gantt-query button:hover { filter:brightness(.96); }
     .gantt-query :focus-visible { outline:2px solid #2F9EEB; outline-offset:2px; }
-    .gantt-query__status { position:absolute; top:82px; right:16px; max-width:calc(100% - 32px); font-size:12px; color:#64748B; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
+    .gantt-query__status { position:absolute; top:72px; right:16px; max-width:calc(100% - 32px); font-size:12px; color:#64748B; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; pointer-events:none; }
     @container (max-width:600px) {
       .gantt-query-host { inset:0 0 auto; width:auto!important; max-width:none; }
       .gantt-query__title { top:20px; }

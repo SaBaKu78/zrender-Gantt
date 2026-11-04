@@ -19,6 +19,39 @@ const toTimestamp = (value) => {
   return Number.isFinite(timestamp) ? timestamp : null
 }
 
+const firstText = (...values) => values.find((value) => value != null && String(value).trim()) || ''
+
+const resolveFlightNumber = (task) => firstText(
+  task.flightNumber,
+  task.flightNum,
+  task.flightVo?.flightNum,
+  task.inFlightNum,
+  task.outFlightNum
+)
+
+const resolveAircraft = (task) => firstText(
+  task.aircraft,
+  task.fleetType,
+  task.flightVo?.aircraft,
+  task.flightVo?.aircraftIata,
+  task.inFlightAircraft,
+  task.outFlightAircraft,
+  task.inBoundAircraft,
+  task.outBoundAircraft
+)
+
+const resolveLocation = (task) => firstText(
+  task.location,
+  task.standName,
+  task.inBoundStandName,
+  task.outBoundStandName,
+  task.fromLocation,
+  task.toLocation,
+  task.fromLocationManual,
+  task.toLocationManual,
+  task.terminalBuilding
+)
+
 export const buildLoadSegments = (tasks) => {
   const events = []
   ;(Array.isArray(tasks) ? tasks : []).forEach((task) => {
@@ -127,7 +160,7 @@ export const buildAssignedTasks = (rows, visibleResources, resourceRowOffset = 0
         startTime,
         endTime,
         task.name || '',
-        task.status,
+        task.taskStatus ?? task.status,
         task.color,
         Boolean(task.outsideShift),
         0,
@@ -136,6 +169,12 @@ export const buildAssignedTasks = (rows, visibleResources, resourceRowOffset = 0
         task.assignmentStatus,
         task.shiftId,
         task.assignmentVersion,
+        resolveFlightNumber(task),
+        resolveAircraft(task),
+        resolveLocation(task),
+        Boolean(task.locked),
+        Boolean(task.unlocked || task.showUnlock || task.lockState === 'unlocked'),
+        task.notifyStatus ?? null,
       ])
     })
   })

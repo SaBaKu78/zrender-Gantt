@@ -37,6 +37,24 @@ const createHarness = (findTaskById, options = {}) => {
 afterEach(() => vi.useRealTimers())
 
 describe('task controller websocket updates', () => {
+  it('preserves notification and lock state on fetched task updates, including notifyStatus zero', async () => {
+    vi.useFakeTimers()
+    let notifyStatus = 2
+    const { controller } = createHarness(vi.fn(async (id) => ({
+      ...makeDetail(id, true), taskStatus: 3, notifyStatus, locked: true,
+    })))
+    for (const value of [2, 0]) {
+      notifyStatus = value
+      const pending = controller.handleTaskEvent({ payload: { taskIds: ['task-1'] } })
+      await vi.advanceTimersByTimeAsync(50)
+      await pending
+      const task = controller.getAssignedTasks()[0]
+      expect(task[5]).toBe(3)
+      expect(task[17]).toBe(true)
+      expect(task[19]).toBe(value)
+    }
+  })
+
   it('searches without changing the snapshot and restores tasks when cleared', () => {
     const { controller, initialResult, gantt } = createHarness(vi.fn())
     expect(controller.search({ keyword: ' task 1 ', condition: '任务名' })).toEqual({ count: 1 })

@@ -4,7 +4,8 @@ import { PROJECT_ID } from './project'
 
 const TWENTY_MINUTES = 20 * 60 * 1000
 const TARGET_RESOURCE_ROW_HEIGHT = 44
-const GRID_TOP = 148
+// 64px toolbar + 48px unassigned-task row + 56px timeline header.
+const GRID_TOP = 168
 const GRID_BOTTOM = 26
 const DEFAULT_UNASSIGNED_PANEL_RATIO = 0.2
 const WS_URL = `ws://127.0.0.1:5001/ws?projectId=${encodeURIComponent(PROJECT_ID)}&transport=websocket`
@@ -53,7 +54,7 @@ export const createGanttOption = ({ dom, resource, task, unassignedTask, onAssig
     unassignedBoard: { id: 'unassignedBoard', show: true, data: unassignedTask, resources: resource, resourceRowOffset, onAssignTask },
     series: [
       { type: 'custom', id: 'resourceSchedule', dimensions: ['rowIndex', 'name', 'id', 'code', 'status', 'timeline'], encode: { x: -1, y: 0 }, renderItem: ResourceScheduleRenderItem, animationDuration: 220, animationDurationUpdate: 1400, animationEasingUpdate: 'quadraticInOut', data: resourceData(resource, resourceRowOffset) },
-      { type: 'custom', id: 'assignedTasks', dimensions: ['id', 'resourceIndex', 'startTime', 'endTime', 'taskName', 'status', 'color', 'outsideShift', 'laneIndex', 'laneCount', 'assignmentId', 'assignmentStatus', 'shiftId', 'assignmentVersion'], encode: { x: [2, 3], y: 1 }, renderItem: TaskRenderItem, data: task },
+      { type: 'custom', id: 'assignedTasks', dimensions: ['id', 'resourceIndex', 'startTime', 'endTime', 'taskName', 'status', 'color', 'outsideShift', 'laneIndex', 'laneCount', 'assignmentId', 'assignmentStatus', 'shiftId', 'assignmentVersion', 'flightNumber', 'aircraft', 'location', 'locked', 'showUnlock', 'notifyStatus'], encode: { x: [2, 3], y: 1 }, renderItem: TaskRenderItem, data: task },
       { type: 'custom', id: 'resourceRows', dimensions: ['rowIndex', 'name', 'id', 'code', 'status', 'timeline'], encode: { x: -1, y: 0 }, renderItem: ResourceRenderItem, data: resourceData(resource, resourceRowOffset) },
     ],
   }

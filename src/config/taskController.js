@@ -174,12 +174,18 @@ export const createTaskController = ({
       startTime: detail.scheduleStartTime || detail.startTime,
       endTime: detail.scheduleEndTime || detail.endTime,
       status: detail.taskStatus ?? detail.status ?? null,
+      notifyStatus: detail.notifyStatus ?? null,
       color: detail.color ?? null,
       assignmentId: detail.currentAssignmentId ?? null,
       assignmentStatus: detail.currentAssignmentId != null ? 'ACTIVE' : null,
       shiftId: detail.currentShiftDailyId ?? detail.shiftId ?? null,
       assignmentVersion: detail.assignmentVersion ?? null,
       outsideShift: Boolean(detail.outsideShift),
+      flightNumber: detail.flightNumber || detail.flightNum || detail.flightVo?.flightNum || detail.inFlightNum || detail.outFlightNum || '',
+      aircraft: detail.aircraft || detail.fleetType || detail.flightVo?.aircraft || detail.flightVo?.aircraftIata || detail.inFlightAircraft || detail.outFlightAircraft || detail.inBoundAircraft || detail.outBoundAircraft || '',
+      location: detail.location || detail.standName || detail.inBoundStandName || detail.outBoundStandName || detail.fromLocation || detail.toLocation || detail.fromLocationManual || detail.toLocationManual || detail.terminalBuilding || '',
+      locked: Boolean(detail.locked),
+      unlocked: Boolean(detail.unlocked || detail.showUnlock || detail.lockState === 'unlocked'),
     }
 
     const isAssigned = detail.currentAssignmentId != null

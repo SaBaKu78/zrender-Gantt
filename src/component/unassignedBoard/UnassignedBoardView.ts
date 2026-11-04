@@ -980,7 +980,7 @@ export default class UnassignedBoardView extends ComponentView {
       this._statusHost.setAttribute('role', 'status')
       this._statusHost.setAttribute('aria-live', 'polite')
       Object.assign(this._statusHost.style, {
-        position: 'absolute', top: '82px', left: '16px', right: '16px', height: '28px',
+        position: 'absolute', top: '72px', left: '16px', right: '16px', height: '32px',
         display: 'flex', alignItems: 'center', gap: '12px', zIndex: '20',
         font: '13px "Microsoft YaHei", sans-serif', color: '#64748B', pointerEvents: 'none',
       })

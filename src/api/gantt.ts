@@ -24,6 +24,9 @@ export interface GanttTaskBar {
   startTime: string
   endTime: string
   status: number | null
+  taskStatus?: number | null
+  notifyStatus?: 0 | 1 | 2 | 3 | null
+  locked?: boolean
   color: string | null
   assignmentId: string | null
   assignmentStatus: string | null

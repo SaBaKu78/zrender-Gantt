@@ -392,3 +392,8 @@ export function clipRectByRect(
 }
 
 registerShape('rect', Rect)
+registerShape('line', Line)
+registerShape('circle', Circle)
+registerShape('polygon', Polygon)
+registerShape('polyline', Polyline)
+registerShape('arc', Arc)

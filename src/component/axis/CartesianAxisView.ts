@@ -67,6 +67,9 @@ class CartesianAxisView extends AxisView {
         layout
       )
     )
+    if (axisModel.axis.dim === 'x' && axisModel.axis.type === 'time') {
+      this.renderTimelineHeader(axisModel, gridModel, api)
+    }
     zrUtil.each(axisBuilderAttrs, axisBuilder.add, axisBuilder)
     this._axisGroup.add(axisBuilder.getGroup())
 
@@ -103,6 +106,74 @@ class CartesianAxisView extends AxisView {
   }
 
   private _nowLine: Line | null = null
+
+  private renderTimelineHeader(
+    axisModel: CartesianAxisModel,
+    gridModel: GridModel,
+    api: ExtensionAPI
+  ): void {
+    const grid = gridModel.coordinateSystem
+    const rect = grid.getRect()
+    const headerTop = Math.max(0, rect.y - 56)
+    const headerBottom = rect.y
+    const headerHeight = Math.max(0, headerBottom - headerTop)
+    const headerGroup = new graphic.Group({ silent: true })
+
+    headerGroup.add(new graphic.Rect({
+      shape: { x: 0, y: headerTop, width: api.getWidth(), height: headerBottom - headerTop },
+      style: { fill: '#F8FAFC' },
+      z2: -10,
+      silent: true,
+    }))
+    headerGroup.add(new graphic.Line({
+      shape: { x1: 0, y1: headerBottom, x2: api.getWidth(), y2: headerBottom },
+      style: { stroke: '#D8E0E8', lineWidth: 1 },
+      z2: 1,
+      silent: true,
+    }))
+    headerGroup.add(new graphic.Line({
+      shape: { x1: rect.x, y1: headerTop, x2: rect.x, y2: headerBottom },
+      style: { stroke: '#D8E0E8', lineWidth: 1 },
+      z2: 1,
+      silent: true,
+    }))
+
+    const extent = axisModel.axis.scale.getExtent()
+    const firstDate = new Date(Number(extent[0]))
+    const weekday = ['日', '一', '二', '三', '四', '五', '六']
+    const dateText = Number.isFinite(firstDate.getTime())
+      ? `${firstDate.getMonth() + 1}月${firstDate.getDate()}日 · 周${weekday[firstDate.getDay()]}`
+      : ''
+
+    headerGroup.add(new graphic.Text({
+      style: {
+        x: 16,
+        y: headerTop + headerHeight / 2,
+        text: '资源',
+        fill: '#64748B',
+        fontSize: 12,
+        align: 'left',
+        verticalAlign: 'middle',
+      },
+      z2: 8,
+      silent: true,
+    }))
+    headerGroup.add(new graphic.Text({
+      style: {
+        x: rect.x + 12,
+        y: headerTop + 14,
+        text: dateText,
+        fill: '#64748B',
+        fontSize: 12,
+        align: 'left',
+        verticalAlign: 'middle',
+      },
+      z2: 8,
+      silent: true,
+    }))
+
+    this._axisGroup.add(headerGroup)
+  }
 
   private renderNowLine(
     axisModel: CartesianAxisModel,
