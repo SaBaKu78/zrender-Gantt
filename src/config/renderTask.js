@@ -196,7 +196,7 @@ const createStateContent = (cell, notifyStatus, locked, taskStatus, fontSize) =>
     return child
   })
   return {
-    type: 'group', name: 'taskState', silent: true,
+    type: 'group', name: 'taskState', silent: true, transition: [],
     x: cell.x + (cell.width - width) / 2, y: cell.y + cell.height / 2,
     info: { width, iconSize, groupGap, codeGap: 2 }, children,
   }

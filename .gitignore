@@ -9,3 +9,6 @@ node_modules/
 test-results/
 playwright-report/
 blob-report/
+
+# Local performance baseline output
+perf-results/

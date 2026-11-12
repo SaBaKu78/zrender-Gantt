@@ -1012,7 +1012,6 @@ class SliderZoomView extends DataZoomView {
     event: ZRElementEvent
   ) {
     this._dragging = true
-
     // For mobile device, prevent screen slider on the button.
     eventTool.stop(event.event)
 

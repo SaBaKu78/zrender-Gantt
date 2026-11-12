@@ -107,6 +107,12 @@ export default class UnassignedBoardView extends ComponentView {
   private _assigning = false
   private _statusHost: HTMLDivElement | null = null
 
+  private _mainVerticalDataZoomRafId: number | null = null
+  private _pendingMainVerticalDataZoomOffsetY: number | null = null
+
+  private _unassignedBoardVerticalDataZoomRafId: number | null = null
+  private _pendingUnassignedBoardScrollOffset: number | null = null
+
   init(piModel: GlobalModel, api: ExtensionAPI): void {
     this.api = api
     this.piModel = piModel
@@ -158,6 +164,8 @@ export default class UnassignedBoardView extends ComponentView {
     }
     this._clearSelectedTaskTweens()
     this._clearAssignmentGhost()
+    this._clearMainVerticalDataZoomRaf()
+    this._clearUnassignedBoardVerticalDataZoomRaf()
     this._assignmentMachine?.destroy()
   }
 
@@ -365,6 +373,7 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _renderUnassignedTasks(tasks: TaskData[]): void {
+    this._clearUnassignedBoardVerticalDataZoomRaf()
     if (this._taskViewportGroup) {
       this.group.remove(this._taskViewportGroup)
     }
@@ -453,6 +462,8 @@ export default class UnassignedBoardView extends ComponentView {
     height: number,
     contentHeight: number
   ): void {
+    this._clearUnassignedBoardVerticalDataZoomRaf()
+
     if (contentHeight <= height || height <= 0) return
 
     const trackWidth = 8
@@ -509,18 +520,56 @@ export default class UnassignedBoardView extends ComponentView {
       drift: (_dx: number, _dy: number, event: any) => {
         const deltaY = event.offsetY - this._scrollDragStartY
         const trackMoveHeight = Math.max(1, height - thumbHeight)
-        const nextOffset =
+        this._pendingUnassignedBoardScrollOffset =
           this._scrollDragStartOffset +
           (deltaY / trackMoveHeight) * this._scrollMax
-        this._setScrollOffset(nextOffset)
         eventTool.stop(event.event)
+
+        if (this._unassignedBoardVerticalDataZoomRafId != null) {
+          return
+        }
+
+        this._unassignedBoardVerticalDataZoomRafId =
+          requestAnimationFrame(() => {
+            this._unassignedBoardVerticalDataZoomRafId = null
+            const nextOffset =
+              this._pendingUnassignedBoardScrollOffset
+            this._pendingUnassignedBoardScrollOffset = null
+            if (nextOffset != null) {
+              this._setScrollOffset(nextOffset)
+            }
+          })
       },
+      ondragend: (event: any) => {
+        eventTool.stop(event.event)
+        this._flushUnassignedBoardVerticalScroll()
+      }
     })
 
     scrollbarGroup.add(this._scrollThumb)
     this.group.add(scrollbarGroup)
   }
 
+  private _flushUnassignedBoardVerticalScroll(): void {
+    if (this._unassignedBoardVerticalDataZoomRafId != null) {
+      cancelAnimationFrame(this._unassignedBoardVerticalDataZoomRafId)
+      this._unassignedBoardVerticalDataZoomRafId = null
+    }
+
+    const nextOffset = this._pendingUnassignedBoardScrollOffset
+    this._pendingUnassignedBoardScrollOffset = null
+    if (nextOffset != null) {
+      this._setScrollOffset(nextOffset)
+    }
+  }
+
+  private _clearUnassignedBoardVerticalDataZoomRaf(): void {
+    if (this._unassignedBoardVerticalDataZoomRafId != null) {
+      cancelAnimationFrame(this._unassignedBoardVerticalDataZoomRafId)
+      this._unassignedBoardVerticalDataZoomRafId = null
+    }
+    this._pendingUnassignedBoardScrollOffset = null
+  }
   private _setScrollOffset(offset: number): void {
     this._scrollOffset = Math.max(0, Math.min(this._scrollMax, offset))
 
@@ -1136,6 +1185,7 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _renderMainVerticalDataZoomMirror(): void {
+    this._clearMainVerticalDataZoomRaf()
     if (this._mainScrollbarGroup) {
       this.group.remove(this._mainScrollbarGroup)
     }
@@ -1202,21 +1252,68 @@ export default class UnassignedBoardView extends ComponentView {
         eventTool.stop(event.event)
       },
       drift: (_dx: number, _dy: number, event: any) => {
-        const currentRange =
-          this._getVerticalDataZoomModel()?.getPercentRange?.() || range
-        const currentSpan = Math.max(1, Math.min(100, currentRange[1] - currentRange[0]))
-        const currentMovablePercent = Math.max(1, 100 - currentSpan)
-        const deltaY = event.offsetY - this._mainScrollDragStartY
-        const nextStart =
-          this._mainScrollDragStartStart +
-          (deltaY / trackMoveHeight) * currentMovablePercent
-        this._dispatchVerticalDataZoom(nextStart, nextStart + currentSpan)
+        this._pendingMainVerticalDataZoomOffsetY = event.offsetY
         eventTool.stop(event.event)
+
+        if (this._mainVerticalDataZoomRafId != null) {
+          return
+        }
+
+        this._mainVerticalDataZoomRafId = requestAnimationFrame(() => {
+          this._mainVerticalDataZoomRafId = null
+          this._flushMainVerticalDataZoom()
+        })
       },
+      ondragend: (event: any) => {
+        eventTool.stop(event.event)
+        this._flushMainVerticalDataZoom()
+      }
     })
 
     scrollbarGroup.add(this._mainScrollThumb)
     this.group.add(scrollbarGroup)
+  }
+
+  private _flushMainVerticalDataZoom(): void {
+    if (this._mainVerticalDataZoomRafId != null) {
+      cancelAnimationFrame(this._mainVerticalDataZoomRafId)
+      this._mainVerticalDataZoomRafId = null
+    }
+
+    const offsetY = this._pendingMainVerticalDataZoomOffsetY
+    this._pendingMainVerticalDataZoomOffsetY = null
+    if (offsetY == null) return
+
+    const currentRange =
+      this._getVerticalDataZoomModel()?.getPercentRange?.() || [0, 100]
+    const currentSpan = Math.max(
+      1,
+      Math.min(100, currentRange[1] - currentRange[0])
+    )
+    const currentMovablePercent = Math.max(1, 100 - currentSpan)
+    const grid = this._getGrid()
+    if (!grid) return
+
+    const rect = grid.getRect()
+    const trackHeight = Math.max(0, this._splitY - rect.y)
+    const thumbHeight = Math.max(
+      24,
+      (currentSpan / 100) * trackHeight
+    )
+    const trackMoveHeight = Math.max(1, trackHeight - thumbHeight)
+    const deltaY = offsetY - this._mainScrollDragStartY
+    const nextStart =
+      this._mainScrollDragStartStart +
+      (deltaY / trackMoveHeight) * currentMovablePercent
+    this._dispatchVerticalDataZoom(nextStart, nextStart + currentSpan)
+  }
+
+  private _clearMainVerticalDataZoomRaf(): void {
+    if (this._mainVerticalDataZoomRafId != null) {
+      cancelAnimationFrame(this._mainVerticalDataZoomRafId)
+      this._mainVerticalDataZoomRafId = null
+    }
+    this._pendingMainVerticalDataZoomOffsetY = null
   }
 
   private _getGrid(): any {
@@ -1271,6 +1368,13 @@ export default class UnassignedBoardView extends ComponentView {
     const span = Math.max(1, Math.min(100, end - start))
     const nextStart = Math.max(0, Math.min(100 - span, start))
     const nextEnd = Math.min(100, nextStart + span)
+    const currentRange = dataZoomModel.getPercentRange?.() || [0, 100]
+    if (
+      Math.abs(nextStart - currentRange[0]) < 0.001 &&
+      Math.abs(nextEnd - currentRange[1]) < 0.001
+    ) {
+      return
+    }
     this.api.dispatchAction({
       type: 'dataZoom',
       from: dataZoomModel.uid,

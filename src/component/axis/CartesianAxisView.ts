@@ -218,11 +218,11 @@ class CartesianAxisView extends AxisView {
     this._axisGroup.add(line)
     updatePosition()
     this._nowLineTimer = setInterval(updatePosition, 1000)
-    line
-      .animate('style', true)
-      .when(900, { opacity: 0.58 })
-      .when(1800, { opacity: 0.88 })
-      .start()
+    // line
+    //   .animate('style', true)
+    //   .when(900, { opacity: 0.58 })
+    //   .when(1800, { opacity: 0.88 })
+    //   .start()
   }
 }
 

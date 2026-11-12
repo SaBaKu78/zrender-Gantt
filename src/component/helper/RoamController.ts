@@ -82,6 +82,30 @@ class RoamController extends Eventful<{
 
   private _y: number
 
+  private _wheelRafId: number | null = null
+
+  private _pendingWheelEvent: ZRElementEvent | null = null
+
+  private _pendingWheelScrollDelta = 0
+
+  private _pendingWheelScale = 1
+
+  private _pendingWheelShouldMove = false
+
+  private _pendingWheelShouldZoom = false
+
+  private _panRafId: number | null = null
+
+  private _pendingPanEvent: ZRElementEvent | null = null
+
+  private _pendingPanStartX = 0
+
+  private _pendingPanStartY = 0
+
+  private _pendingPanEndX = 0
+
+  private _pendingPanEndY = 0
+
   readonly enable: (
     this: this,
     controlType?: RoamType,
@@ -136,6 +160,8 @@ class RoamController extends Eventful<{
     }
 
     this.disable = function () {
+      this._clearWheelFrame()
+      this._clearPanFrame()
       zr.off('mousedown', mousedownHandler)
       zr.off('mousemove', mousemoveHandler)
       zr.off('mouseup', mouseupHandler)
@@ -196,27 +222,30 @@ class RoamController extends Eventful<{
     const oldX = this._x
     const oldY = this._y
 
-    const dx = x - oldX
-    const dy = y - oldY
-
     this._x = x
     this._y = y
 
     this._opt.preventDefaultMouseMove && eventTool.stop(e.event)
 
-    trigger(this, 'pan', 'moveOnMouseMove', e, {
-      dx: dx,
-      dy: dy,
-      oldX: oldX,
-      oldY: oldY,
-      newX: x,
-      newY: y,
-      isAvailableBehavior: null,
-    })
+    if (this._panRafId == null) {
+      this._pendingPanStartX = oldX
+      this._pendingPanStartY = oldY
+    }
+    this._pendingPanEvent = e
+    this._pendingPanEndX = x
+    this._pendingPanEndY = y
+
+    if (this._panRafId == null) {
+      this._panRafId = requestAnimationFrame(() => {
+        this._panRafId = null
+        this._flushPan()
+      })
+    }
   }
 
   private _mouseupHandler(e: ZRElementEvent) {
     if (!eventTool.isMiddleOrRightButtonOnMouseUpDown(e)) {
+      this._flushPan()
       this._dragging = false
     }
   }
@@ -233,16 +262,21 @@ class RoamController extends Eventful<{
       return
     }
 
+    if (
+      this.pointerChecker
+      && !this.pointerChecker(e, originX, originY)
+    ) {
+      return
+    }
+
+    eventTool.stop(e.event)
+
     if (shouldZoom) {
       const factor =
         absWheelDeltaDelta > 3 ? 1.4 : absWheelDeltaDelta > 1 ? 1.2 : 1.1
       const scale = wheelDelta > 0 ? factor : 1 / factor
-      checkPointerAndTrigger(this, 'zoom', 'zoomOnMouseWheel', e, {
-        scale: scale,
-        originX: originX,
-        originY: originY,
-        isAvailableBehavior: null,
-      })
+      this._pendingWheelScale *= scale
+      this._pendingWheelShouldZoom = true
     }
 
     if (shouldMove) {
@@ -251,13 +285,102 @@ class RoamController extends Eventful<{
       const scrollDelta =
         (wheelDelta > 0 ? 1 : -1) *
         (absDelta > 3 ? 0.4 : absDelta > 1 ? 0.15 : 0.05)
-      checkPointerAndTrigger(this, 'scrollMove', 'moveOnMouseWheel', e, {
-        scrollDelta: scrollDelta,
-        originX: originX,
-        originY: originY,
+      this._pendingWheelScrollDelta += scrollDelta
+      this._pendingWheelShouldMove = true
+    }
+
+    this._pendingWheelEvent = e
+
+    if (this._wheelRafId == null) {
+      this._wheelRafId = requestAnimationFrame(() => {
+        this._flushWheel()
+      })
+    }
+  }
+
+  private _flushWheel(): void {
+    const e = this._pendingWheelEvent
+    const scale = this._pendingWheelScale
+    const scrollDelta = this._pendingWheelScrollDelta
+    const shouldZoom = this._pendingWheelShouldZoom
+    const shouldMove = this._pendingWheelShouldMove
+
+    this._wheelRafId = null
+    this._clearWheelFrame()
+
+    if (!e) {
+      return
+    }
+
+    if (shouldZoom && scale !== 1) {
+      trigger(this, 'zoom', 'zoomOnMouseWheel', e, {
+        scale,
+        originX: e.offsetX,
+        originY: e.offsetY,
         isAvailableBehavior: null,
       })
     }
+
+    if (shouldMove && scrollDelta !== 0) {
+      trigger(this, 'scrollMove', 'moveOnMouseWheel', e, {
+        scrollDelta,
+        originX: e.offsetX,
+        originY: e.offsetY,
+        isAvailableBehavior: null,
+      })
+    }
+  }
+
+  private _clearWheelFrame(): void {
+    if (this._wheelRafId != null) {
+      cancelAnimationFrame(this._wheelRafId)
+      this._wheelRafId = null
+    }
+    this._pendingWheelEvent = null
+    this._pendingWheelScrollDelta = 0
+    this._pendingWheelScale = 1
+    this._pendingWheelShouldMove = false
+    this._pendingWheelShouldZoom = false
+  }
+
+  private _flushPan(): void {
+    if (this._panRafId != null) {
+      cancelAnimationFrame(this._panRafId)
+      this._panRafId = null
+    }
+
+    const e = this._pendingPanEvent
+    const oldX = this._pendingPanStartX
+    const oldY = this._pendingPanStartY
+    const newX = this._pendingPanEndX
+    const newY = this._pendingPanEndY
+    this._clearPanFrame()
+
+    if (!e) {
+      return
+    }
+
+    trigger(this, 'pan', 'moveOnMouseMove', e, {
+      dx: newX - oldX,
+      dy: newY - oldY,
+      oldX,
+      oldY,
+      newX,
+      newY,
+      isAvailableBehavior: null,
+    })
+  }
+
+  private _clearPanFrame(): void {
+    if (this._panRafId != null) {
+      cancelAnimationFrame(this._panRafId)
+      this._panRafId = null
+    }
+    this._pendingPanEvent = null
+    this._pendingPanStartX = 0
+    this._pendingPanStartY = 0
+    this._pendingPanEndX = 0
+    this._pendingPanEndY = 0
   }
 }
 
@@ -292,23 +415,6 @@ function trigger<T extends RoamEventType>(
   )
   // TODO should not have type issue.
   ;(controller as any).trigger(eventName, contollerEvent)
-}
-
-function checkPointerAndTrigger<T extends 'scrollMove' | 'zoom'>(
-  controller: RoamController,
-  eventName: T,
-  behaviorToCheck: RoamBehavior,
-  e: ZRElementEvent,
-  contollerEvent: RoamEventParams[T],
-) {
-  if (
-    controller.pointerChecker &&
-    controller.pointerChecker(e, contollerEvent.originX, contollerEvent.originY)
-  ) {
-    eventTool.stop(e.event)
-
-    trigger(controller, eventName, behaviorToCheck, e, contollerEvent)
-  }
 }
 
 export default RoamController

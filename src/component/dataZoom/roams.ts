@@ -121,7 +121,15 @@ function createCoordSysRecord(
           })
       })
 
-      batch.length && coordSysRecord.dispatchAction(batch)
+      if (batch.length) {
+        // Wheel and pointer-pan input are already coalesced to one event per
+        // animation frame.
+        // Bypass the legacy fixed-rate throttle so it cannot reduce movement
+        // to roughly 10 updates per second.
+        eventName === 'scrollMove' || eventName === 'pan'
+          ? dispatchFramedAction(api, batch)
+          : coordSysRecord.dispatchAction(batch)
+      }
     })
   })
 
@@ -140,6 +148,19 @@ function dispatchAction(api: ExtensionAPI, batch: DataZoomPayloadBatchItem[]) {
         duration: 100,
       },
       batch: batch,
+    })
+  }
+}
+
+function dispatchFramedAction(
+  api: ExtensionAPI,
+  batch: DataZoomPayloadBatchItem[]
+) {
+  if (!api.isDisposed()) {
+    api.dispatchAction({
+      type: 'dataZoom',
+      animation: { duration: 0 },
+      batch,
     })
   }
 }
