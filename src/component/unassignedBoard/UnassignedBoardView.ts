@@ -9,6 +9,7 @@ import * as eventTool from 'zrender/src/core/event'
 import AssignmentStateMachine from '../../interaction/AssignmentStateMachine'
 import type { Tween } from '@tweenjs/tween.js'
 import { showToast } from '../../util/toast'
+import { getTheme } from '../../config/theme'
 
 const BOARD_ZLEVEL = 999
 
@@ -315,6 +316,7 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _renderBoard(tasks: TaskData[]): void {
+    const theme = getTheme()
     this._renderAssignmentStatus(tasks.length)
     const group = this.group
     const api = this.api
@@ -340,7 +342,7 @@ export default class UnassignedBoardView extends ComponentView {
           height: height,
         },
         style: {
-          fill: '#F7F8FA',
+          fill: theme.panel,
         },
         zlevel: BOARD_ZLEVEL,
         z: 0,
@@ -359,7 +361,7 @@ export default class UnassignedBoardView extends ComponentView {
             x: width / 2,
             y: height / 2,
             fontSize: 14,
-            fill: '#999',
+            fill: theme.faint,
             align: 'center',
             verticalAlign: 'middle',
           },
@@ -462,6 +464,7 @@ export default class UnassignedBoardView extends ComponentView {
     height: number,
     contentHeight: number
   ): void {
+    const theme = getTheme()
     this._clearUnassignedBoardVerticalDataZoomRaf()
 
     if (contentHeight <= height || height <= 0) return
@@ -487,7 +490,7 @@ export default class UnassignedBoardView extends ComponentView {
           r: 4,
         },
         style: {
-          fill: 'rgba(203, 213, 225, 0.35)',
+          fill: theme.scrollTrack,
         },
         zlevel: BOARD_ZLEVEL,
         z: 0,
@@ -505,7 +508,7 @@ export default class UnassignedBoardView extends ComponentView {
         r: 4,
       },
       style: {
-        fill: '#94A3B8',
+        fill: theme.scrollThumb,
       },
       zlevel: BOARD_ZLEVEL,
       z: 0,
@@ -598,6 +601,7 @@ export default class UnassignedBoardView extends ComponentView {
     selected = false,
     interactive = true
   ): Group | null {
+    const theme = getTheme()
     if (!grid) return null
 
     const rect = grid.getRect()
@@ -632,8 +636,8 @@ export default class UnassignedBoardView extends ComponentView {
       new Rect({
         shape,
         style: {
-          fill: selected ? '#E8F4FF' : '#EAF4FB',
-          stroke: selected ? '#1D7FEA' : '#2F83B8',
+          fill: selected ? theme.primarySoft : theme.surfaceRaised,
+          stroke: selected ? theme.primary : theme.border,
           lineWidth: selected ? 2 : 1.25,
         },
         zlevel: BOARD_ZLEVEL,
@@ -657,7 +661,7 @@ export default class UnassignedBoardView extends ComponentView {
           x: x + leftWidth / 2,
           y: topY,
           fontSize: 10,
-          fill: '#64748B',
+          fill: theme.taskMetaText,
           align: 'center',
           verticalAlign: 'middle',
         },
@@ -675,7 +679,7 @@ export default class UnassignedBoardView extends ComponentView {
           x: x + width - rightWidth / 2,
           y: topY,
           fontSize: 10,
-          fill: '#64748B',
+          fill: theme.taskMetaText,
           align: 'center',
           verticalAlign: 'middle',
         },
@@ -693,7 +697,7 @@ export default class UnassignedBoardView extends ComponentView {
           x: centerX + centerWidth / 2,
           y: topY,
           fontSize: 10,
-          fill: '#111827',
+          fill: theme.text,
           align: 'center',
           verticalAlign: 'middle',
         },
@@ -711,7 +715,7 @@ export default class UnassignedBoardView extends ComponentView {
           x: x + width / 2,
           y: bottomY,
           fontSize: 12,
-          fill: '#111827',
+          fill: theme.text,
           align: 'center',
           verticalAlign: 'middle',
         },
@@ -982,6 +986,7 @@ export default class UnassignedBoardView extends ComponentView {
       rowHeight: number
     }
   ): void {
+    const theme = getTheme()
     this._clearAssignmentGhost()
 
     const grid = this._getGrid()
@@ -1000,7 +1005,7 @@ export default class UnassignedBoardView extends ComponentView {
     const rowBottom = Math.min(this._splitY, hit.rowY + hit.rowHeight)
     ghost.add(new Rect({
       shape: { x: rect.x, y: rowTop - this._splitY, width: rect.width, height: Math.max(0, rowBottom - rowTop) },
-      style: { fill: 'rgba(47,158,235,0.10)', stroke: '#2F9EEB', lineWidth: 1 },
+      style: { fill: theme.ghostFill, stroke: theme.ghostStroke, lineWidth: 1 },
       silent: true, zlevel: BOARD_ZLEVEL, z2: -1,
     }))
     this._assignmentGhostGroup = ghost
@@ -1020,6 +1025,7 @@ export default class UnassignedBoardView extends ComponentView {
 
   private _renderAssignmentStatus(count = this._getUnassignedData().length): void {
     if (typeof document === 'undefined' || !this.api) return
+    const theme = getTheme()
     if (!this._statusHost) {
       const zr = this.api.getZr() as any
       const root = zr.dom || zr.painter?.getViewportRoot?.()
@@ -1031,7 +1037,7 @@ export default class UnassignedBoardView extends ComponentView {
       Object.assign(this._statusHost.style, {
         position: 'absolute', top: '72px', left: '16px', right: '16px', height: '32px',
         display: 'flex', alignItems: 'center', gap: '12px', zIndex: '20',
-        font: '13px "Microsoft YaHei", sans-serif', color: '#64748B', pointerEvents: 'none',
+        font: '13px "Microsoft YaHei", sans-serif', color: theme.muted, pointerEvents: 'none',
       })
       parent.appendChild(this._statusHost)
     }
@@ -1045,7 +1051,7 @@ export default class UnassignedBoardView extends ComponentView {
       : state === 'idle' ? ''
       : `已选择 · ${name} · 点击资源行派遣 · Esc 取消`
     Object.assign(text.style, { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' })
-    this._statusHost.style.color = state === 'idle' ? '#64748B' : '#2563EB'
+    this._statusHost.style.color = state === 'idle' ? theme.muted : theme.primary
     // Hover updates are frequent; avoid replacing DOM or repeating screen-reader announcements.
     if (this._statusHost.dataset.status === text.textContent + state) return
     this._statusHost.dataset.status = text.textContent + state
@@ -1053,13 +1059,13 @@ export default class UnassignedBoardView extends ComponentView {
     if (state === 'idle') {
       const label = document.createElement('strong')
       label.textContent = '未分配任务'
-      label.style.color = '#334155'
+      label.style.color = theme.textSecondary
       const countBadge = document.createElement('span')
       countBadge.textContent = String(count)
-      Object.assign(countBadge.style, { display: 'inline-flex', minWidth: '28px', height: '24px', padding: '0 7px', boxSizing: 'border-box', alignItems: 'center', justifyContent: 'center', border: '1px solid #D6DEE8', borderRadius: '4px', background: '#FFFFFF', color: '#475569', fontSize: '12px', fontWeight: '600' })
+      Object.assign(countBadge.style, { display: 'inline-flex', minWidth: '28px', height: '24px', padding: '0 7px', boxSizing: 'border-box', alignItems: 'center', justifyContent: 'center', border: `1px solid ${theme.border}`, borderRadius: '4px', background: theme.surface, color: theme.textSecondary, fontSize: '12px', fontWeight: '600' })
       const hint = document.createElement('span')
       hint.textContent = '双击任务，再点击目标资源行派遣'
-      Object.assign(hint.style, { marginLeft: '4px', color: '#64748B' })
+      Object.assign(hint.style, { marginLeft: '4px', color: theme.muted })
       this._statusHost.append(label, countBadge, hint)
     } else {
       this._statusHost.appendChild(text)
@@ -1068,7 +1074,7 @@ export default class UnassignedBoardView extends ComponentView {
       const cancel = document.createElement('button')
       cancel.type = 'button'
       cancel.textContent = '取消派遣'
-      Object.assign(cancel.style, { flexShrink: '0', border: '1px solid #CBD5E1', borderRadius: '4px', background: '#FFF', color: '#475569', height: '28px', padding: '0 8px', cursor: 'pointer', pointerEvents: 'auto' })
+      Object.assign(cancel.style, { flexShrink: '0', border: `1px solid ${theme.border}`, borderRadius: '4px', background: theme.surface, color: theme.textSecondary, height: '28px', padding: '0 8px', cursor: 'pointer', pointerEvents: 'auto' })
       cancel.onclick = () => { if (!this._assigning) this._assignmentMachine.cancel() }
       this._statusHost.appendChild(cancel)
     }
@@ -1088,6 +1094,7 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _renderGridExtension(): void {
+    const theme = getTheme()
     if (this._gridExtensionGroup) {
       this.group.remove(this._gridExtensionGroup)
     }
@@ -1112,7 +1119,7 @@ export default class UnassignedBoardView extends ComponentView {
     ;(gridGroup as any).attr({ zlevel: BOARD_ZLEVEL, z: 0, z2: 1 })
 
     for (let y = 0, rowIndex = 0; y < height; y += rowHeight, rowIndex++) {
-      const fill = rowIndex % 2 === 0 ? '#FFFFFF' : '#F7F8FA'
+      const fill = rowIndex % 2 === 0 ? theme.rowEven : theme.rowOdd
       const currentRowHeight = Math.min(rowHeight, height - y)
 
       gridGroup.add(
@@ -1143,7 +1150,7 @@ export default class UnassignedBoardView extends ComponentView {
               y2: y,
             },
             style: {
-              stroke: '#EDF1F5',
+              stroke: theme.gridMinor,
               lineWidth: 1,
             },
             zlevel: BOARD_ZLEVEL,
@@ -1170,7 +1177,7 @@ export default class UnassignedBoardView extends ComponentView {
             y2: height,
           },
           style: {
-            stroke: isHour ? '#C4CFDB' : '#E3E9EF',
+            stroke: isHour ? theme.gridMajor : theme.gridMinor,
             lineWidth: isHour ? 1.5 : 1,
           },
           zlevel: BOARD_ZLEVEL,
@@ -1185,6 +1192,7 @@ export default class UnassignedBoardView extends ComponentView {
   }
 
   private _renderMainVerticalDataZoomMirror(): void {
+    const theme = getTheme()
     this._clearMainVerticalDataZoomRaf()
     if (this._mainScrollbarGroup) {
       this.group.remove(this._mainScrollbarGroup)
@@ -1221,7 +1229,7 @@ export default class UnassignedBoardView extends ComponentView {
           r: 4,
         },
         style: {
-          fill: 'rgba(203, 213, 225, 0.35)',
+          fill: theme.scrollTrack,
         },
         zlevel: BOARD_ZLEVEL,
         z: 0,
@@ -1239,7 +1247,7 @@ export default class UnassignedBoardView extends ComponentView {
         r: 4,
       },
       style: {
-        fill: '#94A3B8',
+        fill: theme.scrollThumb,
       },
       zlevel: BOARD_ZLEVEL,
       z: 0,

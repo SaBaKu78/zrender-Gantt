@@ -11,6 +11,7 @@ import * as zrUtil from 'zrender/src/core/util'
 import GridModel from '../gird/GridModel'
 import { Line } from 'zrender'
 import * as layout from '../../util/layout'
+import { getTheme } from '../../config/theme'
 
 const axisBuilderAttrs = ['axisLine', 'axisTickLabel', 'axisName'] as const
 
@@ -112,6 +113,7 @@ class CartesianAxisView extends AxisView {
     gridModel: GridModel,
     api: ExtensionAPI
   ): void {
+    const theme = getTheme()
     const grid = gridModel.coordinateSystem
     const rect = grid.getRect()
     const headerTop = Math.max(0, rect.y - 56)
@@ -121,19 +123,19 @@ class CartesianAxisView extends AxisView {
 
     headerGroup.add(new graphic.Rect({
       shape: { x: 0, y: headerTop, width: api.getWidth(), height: headerBottom - headerTop },
-      style: { fill: '#F8FAFC' },
+      style: { fill: theme.panel },
       z2: -10,
       silent: true,
     }))
     headerGroup.add(new graphic.Line({
       shape: { x1: 0, y1: headerBottom, x2: api.getWidth(), y2: headerBottom },
-      style: { stroke: '#D8E0E8', lineWidth: 1 },
+      style: { stroke: theme.border, lineWidth: 1 },
       z2: 1,
       silent: true,
     }))
     headerGroup.add(new graphic.Line({
       shape: { x1: rect.x, y1: headerTop, x2: rect.x, y2: headerBottom },
-      style: { stroke: '#D8E0E8', lineWidth: 1 },
+      style: { stroke: theme.border, lineWidth: 1 },
       z2: 1,
       silent: true,
     }))
@@ -150,7 +152,7 @@ class CartesianAxisView extends AxisView {
         x: 16,
         y: headerTop + headerHeight / 2,
         text: '资源',
-        fill: '#64748B',
+        fill: theme.muted,
         fontSize: 12,
         align: 'left',
         verticalAlign: 'middle',
@@ -163,7 +165,7 @@ class CartesianAxisView extends AxisView {
         x: rect.x + 12,
         y: headerTop + 14,
         text: dateText,
-        fill: '#64748B',
+        fill: theme.muted,
         fontSize: 12,
         align: 'left',
         verticalAlign: 'middle',
@@ -179,6 +181,7 @@ class CartesianAxisView extends AxisView {
     axisModel: CartesianAxisModel,
     gridModel: GridModel
   ): void {
+    const theme = getTheme()
     const axis = axisModel.axis
     const grid = gridModel.coordinateSystem
     const rect = grid.getRect()
@@ -191,7 +194,7 @@ class CartesianAxisView extends AxisView {
         y2: endY,
       },
       style: {
-        stroke: '#2563EB',
+        stroke: theme.currentTime,
         lineWidth: 2,
         opacity: 0.88,
       },
@@ -267,6 +270,7 @@ const axisElementBuilders: Record<
   AxisElementBuilder
 > = {
   splitLine(axisView, axisGroup, axisModel, gridModel) {
+    const theme = getTheme()
     const axis = axisModel.axis
     const grid = gridModel.coordinateSystem
     const rect = grid.getRect()
@@ -286,7 +290,7 @@ const axisElementBuilders: Record<
             y2: endY,
           },
           style: {
-            stroke: isHour ? '#B8C6D5' : '#E0E6ED',
+            stroke: isHour ? theme.gridMajor : theme.gridMinor,
             lineWidth: isHour ? 1.5 : 1,
             lineDash: null,
           },
@@ -299,6 +303,7 @@ const axisElementBuilders: Record<
     }
   },
   minorSplitLine(axisView, axisGroup, axisModel, gridModel) {
+    const theme = getTheme()
     const axis = axisModel.axis
     if (axis.dim !== 'x') return
 
@@ -317,7 +322,7 @@ const axisElementBuilders: Record<
           y2: endY,
         },
         style: {
-          stroke: '#EDF1F5',
+          stroke: theme.gridMinor,
           lineWidth: 1,
           lineDash: null,
         },

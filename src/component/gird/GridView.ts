@@ -2,6 +2,7 @@ import GlobalModel from "../../model/Global";
 import ComponentView from "../../view/Component";
 import GridModel from "./GridModel";
 import { Line, Rect } from 'zrender'
+import { getTheme } from '../../config/theme'
 
 class GridView extends ComponentView {
   static readonly type = 'grid'
@@ -10,6 +11,7 @@ class GridView extends ComponentView {
   private _horizontalLines: Line[] = []
 
   render(gridModel: GridModel, piModel: GlobalModel){
+    const theme = getTheme()
     this.group.removeAll()
     this._horizontalLines = []
 
@@ -40,7 +42,7 @@ class GridView extends ComponentView {
       const rowEnd = yAxis.toGlobalCoord(yAxis.dataToCoord(min + i + 1))
       const rowY = Math.min(rowStart, rowEnd)
       const rowHeight = Math.abs(rowEnd - rowStart)
-      const rowFill = i % 2 === 0 ? '#FFFFFF' : '#F8FAFC'
+      const rowFill = i % 2 === 0 ? theme.rowEven : theme.rowOdd
 
       this.group.add(
         new Rect({
@@ -73,7 +75,7 @@ class GridView extends ComponentView {
           y2: globalY,
         },
         style: {
-          stroke: '#E9EEF3',
+          stroke: theme.gridMinor,
           lineWidth: 1,
         },
         z2: 0,

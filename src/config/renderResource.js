@@ -1,17 +1,24 @@
 import { clipRectByRect } from '../util/graphic'
+import { getTheme } from './theme'
 
-const STATUS_COLORS = {
-  ON: '#20C7B5',
-  ACTIVE: '#20C7B5',
-  READY: '#F3B33D',
-  OFF: '#94A3B8',
-  DISABLED: '#64748B',
+const getStatusColor = (status) => {
+  const theme = getTheme()
+  switch (String(status || '').toUpperCase()) {
+    case 'ON':
+    case 'ACTIVE':
+      return theme.success
+    case 'OFF':
+      return theme.faint
+    case 'DISABLED':
+      return theme.muted
+    default:
+      return theme.warn
+  }
 }
-
-const getStatusColor = (status) => STATUS_COLORS[String(status || '').toUpperCase()] || '#F3B33D'
 const getTimeline = (value) => value && typeof value === 'object' ? value : { load: [] }
 
 export const ResourceScheduleRenderItem = function (params, api) {
+  const theme = getTheme()
   const rowIndex = api.value(0)
   const y = api.coord([0, rowIndex])[1]
   const rowHeight = api.size([0, 1])[1]
@@ -31,7 +38,7 @@ export const ResourceScheduleRenderItem = function (params, api) {
       type: 'rect',
       shape: rect,
       style: {
-        fill: level >= 3 ? '#EF4444' : isCrowded ? '#F3B33D' : '#20C7B5',
+        fill: level >= 3 ? theme.danger : isCrowded ? theme.warn : theme.success,
         opacity,
         ...(isCrowded && !reducedMotion ? { enterFrom: { opacity: opacity * 0.18 } } : {}),
       },
@@ -44,11 +51,12 @@ export const ResourceScheduleRenderItem = function (params, api) {
 }
 
 export const ResourceRenderItem = function (params, api) {
+  const theme = getTheme()
   const rowIndex = api.value(0)
   const y = api.coord([api.value(2), rowIndex])[1]
   const gridX = params.coordSys.x
   const rectHeight = api.size([0, 1])[1]
-  const rowFill = rowIndex % 2 === 0 ? '#FFFFFF' : '#F8FAFC'
+  const rowFill = rowIndex % 2 === 0 ? theme.rowEven : theme.rowOdd
   const centerY = rectHeight / 2
   const status = api.value(4)
   const timeline = getTimeline(api.value(5))
@@ -57,9 +65,9 @@ export const ResourceRenderItem = function (params, api) {
   const badgeWidth = 18
   const badgeX = Math.max(32, gridX - 28)
   const nameWidth = Math.max(0, gridX - (hasPeakBadge ? 56 : 40))
-  const badgeColor = peak >= 3 ? '#EF4444' : '#C88916'
-  const badgeFill = peak >= 3 ? '#FFF1F2' : '#FFF7E6'
-  const badgeStroke = peak >= 3 ? '#FBCACA' : '#F3D7A0'
+  const badgeColor = peak >= 3 ? theme.danger : theme.warn
+  const badgeFill = peak >= 3 ? theme.taskStatus[5].background : theme.taskStatus[9].background
+  const badgeStroke = peak >= 3 ? theme.taskStatus[5].border : theme.taskStatus[9].border
 
   return {
     type: 'group',
@@ -68,7 +76,7 @@ export const ResourceRenderItem = function (params, api) {
       {
         type: 'rect',
         shape: { x: 0, y: 0, width: gridX, height: rectHeight },
-        style: { fill: rowFill, stroke: '#E5EAF0', lineWidth: 1 },
+        style: { fill: rowFill, stroke: theme.borderSoft, lineWidth: 1 },
       },
       {
         type: 'rect',
@@ -88,7 +96,7 @@ export const ResourceRenderItem = function (params, api) {
           align: 'left',
           textVerticalAlign: 'middle',
           textAlign: 'left',
-          textFill: '#1F2937',
+          textFill: theme.text,
           fontSize: 13,
         },
       },

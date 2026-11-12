@@ -2,6 +2,7 @@ import GlobalModel from '../../model/Global'
 import ComponentView from '../../view/Component'
 import ExtensionAPI from '../../core/ExtensionAPI'
 import ResourceFilterModel, { ResourceFilterResource } from './ResourceFilterModel'
+import { getTheme } from '../../config/theme'
 
 const TEXT = {
   filter: '资源过滤',
@@ -23,6 +24,7 @@ const createElement = (tagName: string, className?: string, text?: string): HTML
 }
 
 const createFunnelIcon = (active: boolean): SVGSVGElement => {
+  const theme = getTheme()
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.setAttribute('viewBox', '0 0 1024 1024')
   svg.setAttribute('width', '16')
@@ -30,7 +32,7 @@ const createFunnelIcon = (active: boolean): SVGSVGElement => {
   svg.setAttribute('aria-hidden', 'true')
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
   path.setAttribute('d', FUNNEL_PATH)
-  path.setAttribute('fill', active ? '#1296db' : '#8a8a8a')
+  path.setAttribute('fill', active ? theme.primary : theme.faint)
   svg.appendChild(path)
   return svg
 }
@@ -65,9 +67,9 @@ const injectStyle = (): void => {
       width: 108px;
       height: 36px;
       border-radius: 6px;
-      border: 1px solid #CBD5E1;
-      background: #FFFFFF;
-      color: #334155;
+      border: 1px solid var(--gantt-axis-line, #CBD5E1);
+      background: var(--gantt-surface, #FFFFFF);
+      color: var(--gantt-text-secondary, #334155);
       font-size: 14px;
       cursor: pointer;
       display: inline-flex;
@@ -76,17 +78,17 @@ const injectStyle = (): void => {
       gap: 6px;
     }
     .resource-filter__button:hover {
-      border-color: #94A3B8;
-      background: #F8FAFC;
+      border-color: var(--gantt-scroll-thumb, #94A3B8);
+      background: var(--gantt-panel, #F8FAFC);
     }
     .resource-filter__status {
       min-width: 26px;
       height: 36px;
       padding: 0 6px;
-      border: 1px solid #CBD5E1;
+      border: 1px solid var(--gantt-axis-line, #CBD5E1);
       border-radius: 2px;
-      background: #FFFFFF;
-      color: #64748B;
+      background: var(--gantt-surface, #FFFFFF);
+      color: var(--gantt-muted, #64748B);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -98,7 +100,7 @@ const injectStyle = (): void => {
       position: fixed;
       inset: 0;
       z-index: 1000;
-      background: rgba(15, 23, 42, 0.24);
+      background: rgba(6, 12, 18, 0.48);
       display: flex;
       align-items: flex-start;
       justify-content: flex-start;
@@ -109,11 +111,11 @@ const injectStyle = (): void => {
       width: min(320px, calc(100vw - 32px));
       max-height: calc(100vh - 88px);
       overflow-y: auto;
-      border: 1px solid #CBD5E1;
+      border: 1px solid var(--gantt-border, #CBD5E1);
       border-radius: 6px;
-      background: #FFFFFF;
-      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18);
-      color: #111827;
+      background: var(--gantt-surface, #FFFFFF);
+      box-shadow: 0 14px 36px rgba(15, 23, 42, 0.22);
+      color: var(--gantt-text, #111827);
       font-family: Arial, sans-serif;
     }
     .resource-filter__modal-header {
@@ -122,7 +124,7 @@ const injectStyle = (): void => {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #E5E7EB;
+      border-bottom: 1px solid var(--gantt-border-soft, #E5E7EB);
       font-size: 14px;
       font-weight: 600;
     }
@@ -131,7 +133,7 @@ const injectStyle = (): void => {
       height: 26px;
       border: 0;
       background: transparent;
-      color: #64748B;
+      color: var(--gantt-muted, #64748B);
       font-size: 20px;
       cursor: pointer;
     }
@@ -140,7 +142,7 @@ const injectStyle = (): void => {
       display: grid;
       gap: 6px;
       font-size: 12px;
-      color: #475569;
+      color: var(--gantt-text-secondary, #475569);
     }
     .resource-filter__combobox {
       position: relative;
@@ -150,18 +152,18 @@ const injectStyle = (): void => {
     .resource-filter__combobox-input {
       width: 100%;
       height: 32px;
-      border: 1px solid #CBD5E1;
+      border: 1px solid var(--gantt-axis-line, #CBD5E1);
       border-radius: 4px;
       padding: 0 30px 0 8px;
       box-sizing: border-box;
-      background: #FFFFFF;
-      color: #111827;
+      background: var(--gantt-surface, #FFFFFF);
+      color: var(--gantt-text, #111827);
       font-size: 13px;
       outline: none;
     }
     .resource-filter__combobox-input:focus {
-      border-color: #2563EB;
-      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+      border-color: var(--gantt-primary, #2563EB);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gantt-primary, #2563EB) 18%, transparent);
     }
     .resource-filter__combobox-clear {
       position: absolute;
@@ -170,13 +172,13 @@ const injectStyle = (): void => {
       height: 24px;
       border: 0;
       background: transparent;
-      color: #94A3B8;
+      color: var(--gantt-faint, #94A3B8);
       cursor: pointer;
       font-size: 16px;
       line-height: 1;
     }
     .resource-filter__combobox-clear:hover {
-      color: #334155;
+      color: var(--gantt-text-secondary, #334155);
     }
     .resource-filter__combobox-menu {
       position: absolute;
@@ -186,28 +188,28 @@ const injectStyle = (): void => {
       z-index: 2;
       max-height: 220px;
       overflow-y: auto;
-      border: 1px solid #CBD5E1;
+      border: 1px solid var(--gantt-border, #CBD5E1);
       border-radius: 4px;
-      background: #FFFFFF;
+      background: var(--gantt-surface, #FFFFFF);
       box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
     }
     .resource-filter__combobox-option {
       min-height: 32px;
       padding: 7px 8px;
       box-sizing: border-box;
-      color: #111827;
+      color: var(--gantt-text, #111827);
       font-size: 13px;
       line-height: 18px;
       cursor: pointer;
     }
     .resource-filter__combobox-option:hover,
     .resource-filter__combobox-option--selected {
-      background: #EFF6FF;
-      color: #1D4ED8;
+      background: var(--gantt-primary-soft, #EFF6FF);
+      color: var(--gantt-primary, #1D4ED8);
     }
     .resource-filter__combobox-empty {
       padding: 10px 8px;
-      color: #94A3B8;
+      color: var(--gantt-faint, #94A3B8);
       font-size: 13px;
     }
     .resource-filter__actions {
@@ -215,20 +217,21 @@ const injectStyle = (): void => {
       justify-content: flex-end;
       gap: 6px;
       padding: 12px 14px 14px;
-      border-top: 1px solid #E5E7EB;
+      border-top: 1px solid var(--gantt-border-soft, #E5E7EB);
     }
     .resource-filter__action {
       min-width: 68px;
       height: 30px;
-      border: 1px solid #CBD5E1;
+      border: 1px solid var(--gantt-axis-line, #CBD5E1);
       border-radius: 4px;
-      background: #FFFFFF;
+      background: var(--gantt-surface, #FFFFFF);
+      color: var(--gantt-text-secondary, #475569);
       cursor: pointer;
       font-size: 13px;
     }
     .resource-filter__action--primary {
-      border-color: #2563EB;
-      background: #2563EB;
+      border-color: var(--gantt-primary, #2563EB);
+      background: var(--gantt-primary, #2563EB);
       color: #FFFFFF;
     }
   `

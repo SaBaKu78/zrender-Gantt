@@ -1,6 +1,7 @@
 import { clipRectByRect } from '../util/graphic'
 import { getWidth } from 'zrender/lib/contain/text'
 import { lerp, parse } from 'zrender/lib/tool/color'
+import { getTheme } from './theme'
 
 const formatTaskTime = (value) => {
   const date = new Date(value)
@@ -41,17 +42,9 @@ const TASK_STATUS_ICON = {
   6: 'arrow', 7: 'cancel', 8: 'restore', 9: 'pause', 10: 'hold',
 }
 
-const STATUS_VISUAL = {
-  1: { border: '#CDBD99', background: '#FAF8F1', accent: '#B39C68' },
-  2: { border: '#91B4CA', background: '#F1F6FA', accent: '#719AB5' },
-  3: { border: '#99BDB8', background: '#F0F7F5', accent: '#6E9F96' },
-  4: { border: '#A9C5B4', background: '#F4F8F5', accent: '#7CA88E' },
-  5: { border: '#D1AAA6', background: '#FBF3F2', accent: '#BC8580' },
-  6: { border: '#99BDB8', background: '#F0F7F5', accent: '#6E9F96' },
-  7: { border: '#C3CAD2', background: '#F5F6F8', accent: '#96A1AF' },
-  8: { border: '#91B4CA', background: '#F1F6FA', accent: '#719AB5' },
-  9: { border: '#CDBD99', background: '#FAF8F1', accent: '#B39C68' },
-  10: { border: '#C3CAD2', background: '#F5F6F8', accent: '#96A1AF' },
+const getStatusVisual = (status) => {
+  const theme = getTheme()
+  return theme.taskStatus[Number(status)] || theme.taskStatus[2]
 }
 
 const createCell = (x, y, width, height) => ({ x, y, width, height })
@@ -64,7 +57,7 @@ const createTextCell = (cell, text, options = {}) => ({
     x: options.align === 'left' ? cell.x : options.align === 'right' ? cell.x + cell.width : cell.x + cell.width / 2,
     y: cell.y + cell.height / 2,
     text,
-    fill: options.textFill || '#34485E',
+    fill: options.textFill || getTheme().taskText,
     font: taskFont(options.fontSize || 11, options.fontWeight || 400),
     align: options.align || 'center',
     verticalAlign: 'middle',
@@ -93,8 +86,9 @@ const createNotifyIcon = (notifyStatus, cx, cy, size) => {
 }
 
 const createTaskStatusIcon = (taskStatus, cx, cy, size) => {
+  const theme = getTheme()
   const iconName = TASK_STATUS_ICON[taskStatus]
-  const color = STATUS_VISUAL[Number(taskStatus)]?.accent || '#7B8795'
+  const color = getStatusVisual(taskStatus).accent
   const stroke = { stroke: color, lineWidth: 1.6, fill: 'none', lineCap: 'round', lineJoin: 'round' }
   const line = (x1, y1, x2, y2) => createLine(x1, y1, x2, y2, color, 1.6)
   let children = []
@@ -144,11 +138,12 @@ const createLockIcon = (locked, cx, cy, size) => ({
   type: 'path', name: 'taskLockIcon', silent: true,
   shape: { pathData: locked ? LOCKED_PATH : UNLOCKED_PATH, x: cx - size / 2, y: cy - size / 2, width: size, height: size },
   info: { locked },
-  style: { fill: '#7B8795' },
+  style: { fill: getTheme().muted },
 })
 
 // Keep the script's groups, adding the designed task icon beside its short code.
 const createStateContent = (cell, notifyStatus, locked, taskStatus, fontSize) => {
+  const theme = getTheme()
   if (cell.width < 4 || cell.height < 6) return null
   const notify = notifyStatus == null || notifyStatus === '' ? null : Number(notifyStatus)
   const code = TASK_STATUS_CODE[taskStatus] || ''
@@ -190,7 +185,7 @@ const createStateContent = (cell, notifyStatus, locked, taskStatus, fontSize) =>
     else if (item === 'taskIcon') child = createTaskStatusIcon(taskStatus, cursor + iconSize / 2, 0, iconSize)
     else child = {
       type: 'text', name: 'taskStatusCode', silent: true,
-      style: { x: cursor, y: 0, text: code, font, fill: '#475569', align: 'left', verticalAlign: 'middle' },
+      style: { x: cursor, y: 0, text: code, font, fill: theme.taskMetaText, align: 'left', verticalAlign: 'middle' },
     }
     cursor += itemWidth(item)
     return child
@@ -223,6 +218,7 @@ const createCompactContent = (cell, title, notifyStatus, locked, taskStatus) => 
 }
 
 export const TaskRenderItem = function (params, api) {
+  const theme = getTheme()
   const resourceIndex = api.value(1)
   const startTime = api.coord([api.value(2), resourceIndex])
   const endTime = api.coord([api.value(3), resourceIndex])
@@ -239,11 +235,13 @@ export const TaskRenderItem = function (params, api) {
   const outsideShift = Boolean(api.value(7))
   const taskStatus = api.value(5)
   const notifyStatus = api.value(19)
-  const visual = outsideShift ? { border: '#CCB19E', background: '#FAF5F0', accent: '#B28F70' } : (STATUS_VISUAL[Number(taskStatus)] || STATUS_VISUAL[2])
+  const visual = outsideShift
+    ? theme.outsideShift
+    : getStatusVisual(taskStatus)
   const customColor = api.value(6)
   // Preserve custom hue, but blend it into the same subdued border palette.
   const borderColor = typeof customColor === 'string' && parse(customColor)
-    ? lerp(0.65, [customColor, '#E3E8ED']) : visual.border
+    ? lerp(0.65, [customColor, theme.border]) : visual.border
   const taskFill = visual.background
   const taskName = String(api.value(4) || '')
   const flightNumber = String(api.value(14) || '')
@@ -277,12 +275,12 @@ export const TaskRenderItem = function (params, api) {
     const fontSize = task.width >= 132 ? 10 : 9
     const startText = truncateText(formatTaskTime(api.value(2)), sideWidth, fontSize)
     const endText = truncateText(formatTaskTime(api.value(3)), sideWidth, fontSize)
-    children.push(createTextCell(topCells[0], startText, { name: 'taskStart', align: 'left', textFill: '#64748B', fontSize }))
+    children.push(createTextCell(topCells[0], startText, { name: 'taskStart', align: 'left', textFill: theme.taskMetaText, fontSize }))
     children.push(createStateContent(topCells[1], notifyStatus, locked, taskStatus, fontSize))
-    children.push(createTextCell(topCells[2], endText, { name: 'taskEnd', align: 'right', textFill: '#64748B', fontSize }))
+    children.push(createTextCell(topCells[2], endText, { name: 'taskEnd', align: 'right', textFill: theme.taskMetaText, fontSize }))
     if (flightNumber) children.push(createTextCell(bottomCells[0], truncateText(flightNumber, sideWidth, fontSize, 500), { name: 'taskFlight', align: 'left', fontSize, fontWeight: 500 }))
     if (taskName) children.push(createTextCell(bottomCells[1], truncateText(taskName, middleWidth, fontSize), { name: 'taskContent', fontSize }))
-    if (location) children.push(createTextCell(bottomCells[2], truncateText(location, sideWidth, fontSize), { name: 'taskLocation', align: 'right', textFill: '#475569', fontSize }))
+    if (location) children.push(createTextCell(bottomCells[2], truncateText(location, sideWidth, fontSize), { name: 'taskLocation', align: 'right', textFill: theme.taskMetaText, fontSize }))
   } else if (task.width >= 42 && task.height >= 14) {
     children.push(...createCompactContent(createCell(contentX, task.y, contentWidth, task.height), title, notifyStatus, locked, taskStatus))
   } else {

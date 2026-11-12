@@ -1,3 +1,5 @@
+import { getTheme } from '../config/theme'
+
 export type ToastType = 'info' | 'success' | 'warning' | 'error'
 
 export interface ToastOptions {
@@ -14,11 +16,18 @@ interface ToastItem {
 }
 
 const DEFAULT_DURATION = 5000
-const PALETTE = {
-  info: { color: '#2563EB', background: '#EFF6FF', icon: 'i' },
-  success: { color: '#15803D', background: '#F0FDF4', icon: '✓' },
-  warning: { color: '#A16207', background: '#FFFBEB', icon: '!' },
-  error: { color: '#B91C1C', background: '#FEF2F2', icon: '!' },
+function getPalette(type: ToastType) {
+  const theme = getTheme()
+  switch (type) {
+    case 'success':
+      return { color: theme.success, background: theme.taskStatus[4].background, icon: '✓' }
+    case 'warning':
+      return { color: theme.warn, background: theme.taskStatus[9].background, icon: '!' }
+    case 'error':
+      return { color: theme.danger, background: theme.taskStatus[5].background, icon: '!' }
+    default:
+      return { color: theme.primary, background: theme.primarySoft, icon: 'i' }
+  }
 }
 const queue: ToastItem[] = []
 let container: HTMLDivElement | null = null
@@ -61,7 +70,8 @@ function showNext(): void {
   if (!host) return
 
   const item = queue.shift()!
-  const palette = PALETTE[item.type]
+  const palette = getPalette(item.type)
+  const theme = getTheme()
   isShowing = true
 
   const toast = document.createElement('section')
@@ -75,7 +85,7 @@ function showNext(): void {
     borderRadius: '6px',
     background: palette.background,
     color: palette.color,
-    boxShadow: '0 4px 14px rgba(31, 72, 130, 0.16)',
+    boxShadow: `0 4px 14px ${theme.mode === 'dark' ? 'rgba(0, 0, 0, 0.34)' : 'rgba(31, 72, 130, 0.16)'}`,
     pointerEvents: 'auto',
     boxSizing: 'border-box',
     marginBottom: '10px',
@@ -108,7 +118,7 @@ function showNext(): void {
   message.textContent = item.message
   Object.assign(message.style, {
     marginTop: '3px',
-    color: '#475569',
+    color: theme.textSecondary,
     fontSize: '13px',
     lineHeight: '19px',
     overflowWrap: 'anywhere',
