@@ -87,6 +87,7 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
 
   registers.registerAction({
     type: 'updateUnassignedBoardPosition',
+    update: 'none',
   }, function(payload: PositionUpdatePayload, model: GlobalModel, api: ExtensionAPI) {
     const newY = payload.data?.y
     if (newY == null) return
@@ -156,6 +157,14 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
       boardModel.option.verticalSplitX = verticalSplitX
       api.getViewOfComponentModel(boardModel)?.updateLayout?.(boardModel, api, { type: 'updateUnassignedBoardPosition', data: { y: newY } })
     })
+    api.getZr().refresh()
+  })
+
+  registers.registerAction({
+    type: 'commitGanttLayout',
+    update: 'update',
+  }, function () {
+    // The next full update still runs, once, after the drag finishes.
   })
 }
 

@@ -274,7 +274,7 @@ export default class UnassignedBoardView extends ComponentView {
   private _updateBoardLayout(): void {
     const splitY = this._splitY
     const width = this.api.getWidth()
-    const height = this.api.getHeight() - splitY
+    const height = Math.max(0, this.api.getHeight() - splitY)
 
     ;(this.group as any).attr({ x: 0, y: splitY })
 
@@ -294,9 +294,53 @@ export default class UnassignedBoardView extends ComponentView {
       })
     }
 
-    this._renderGridExtension()
-    this._renderUnassignedTasks(this._getUnassignedData())
-    this._renderMainVerticalDataZoomMirror()
+    const grid = this._getGrid()
+    const rect = grid?.getRect()
+    if (rect) {
+      const viewportClip = this._taskViewportGroup?.getClipPath?.() as Rect
+      viewportClip?.setShape({
+        x: rect.x,
+        y: 0,
+        width: rect.width,
+        height,
+      })
+
+      const gridClip = this._gridExtensionGroup?.getClipPath?.() as Rect
+      if (gridClip) {
+        gridClip.setShape({
+          x: rect.x,
+          y: 0,
+          width: rect.width,
+          height,
+        })
+      } else {
+        this._gridExtensionGroup?.setClipPath(
+          new Rect({
+            shape: {
+              x: rect.x,
+              y: 0,
+              width: rect.width,
+              height,
+            },
+          })
+        )
+      }
+
+      const rowHeight = this._taskRowHeight || this._getRowHeight()
+      const contentHeight = this._taskRows.length * rowHeight
+      this._scrollMax = Math.max(0, contentHeight - height)
+      this._scrollOffset = Math.min(this._scrollOffset, this._scrollMax)
+      ;(this._taskContentGroup as any)?.attr({ y: -this._scrollOffset })
+
+      if (this._scrollbarGroup) {
+        this.group.remove(this._scrollbarGroup)
+        this._scrollbarGroup = null
+      }
+      this._renderVerticalDataZoom(rect, height, contentHeight)
+      this._renderMainVerticalDataZoomMirror()
+    }
+
+    this.api.getZr().refresh()
   }
 
   private _getUnassignedData(): TaskData[] {

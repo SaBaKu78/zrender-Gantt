@@ -7,6 +7,7 @@ let gridRightCache: number | null = null
 export default function installSliderSplitYAction(registers: ExtensionInstallRegisters) {
   registers.registerAction({
     type: 'updateYAxisPosition',
+    update: 'none',
   }, function(payload: any, model: GlobalModel, api: ExtensionAPI) {
     const newX = payload.data?.x
     if (newX == null) return

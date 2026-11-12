@@ -49,6 +49,12 @@ export default class SliderSplitView extends SplitView {
 
   private _horizontalMaxHandleEnd: number
 
+  private _layoutRafId: number | null = null
+
+  private _pendingLayoutPosition: number | null = null
+
+  private _layoutChanged = false
+
   init(piModel: GlobalModel, api: ExtensionAPI) {
     this.api = api
   }
@@ -62,6 +68,7 @@ export default class SliderSplitView extends SplitView {
   }
 
   private _buildView() {
+    this._cancelLayoutFrame()
     const group = this.group
     group.removeAll()
     ;(group as any).attr({ z: 99 })
@@ -310,41 +317,62 @@ export default class SliderSplitView extends SplitView {
     this.updateInterval(delta)
     if (this._boundaryDefinition()) return
     this._updateView()
-
-    if (this._orient === VERTICAL) {
-      const newX = this._hanldeEnd
-      this.api.dispatchAction({
-        type: 'updateYAxisPosition',
-        data: { x: newX }
-      })
-    } else {
-      const newY = this._hanldeEnd
-      const ratio = newY / this.api.getHeight()
-      ;(this.splitModel as any).option.ratio = ratio
-      this.api.dispatchAction({
-        type: 'updateUnassignedBoardPosition',
-        data: { y: newY }
-      })
-    }
+    this._layoutChanged = true
+    this._pendingLayoutPosition = this._hanldeEnd
+    if (this._layoutRafId != null) return
+    this._layoutRafId = requestAnimationFrame(() => {
+      this._layoutRafId = null
+      this._flushLayoutPosition(false)
+    })
   }
 
   private _onDrageEnd() {
     this._dragging = false
+    if (!this._layoutChanged) return
+    this._cancelLayoutFrame()
+    this._pendingLayoutPosition = this._hanldeEnd
+    this._flushLayoutPosition(true)
+    this._layoutChanged = false
+  }
+
+  dispose() {
+    this._cancelLayoutFrame()
+    super.dispose.apply(this, arguments as any)
+  }
+
+  private _flushLayoutPosition(commit: boolean): void {
+    const position = this._pendingLayoutPosition
+    this._pendingLayoutPosition = null
+    if (position == null) return
+
     if (this._orient === VERTICAL) {
-      const newX = this._hanldeEnd
       this.api.dispatchAction({
         type: 'updateYAxisPosition',
-        data: { x: newX }
+        data: { x: position },
       })
     } else {
-      const newY = this._hanldeEnd
-      const ratio = newY / this.api.getHeight()
+      const ratio = position / this.api.getHeight()
       ;(this.splitModel as any).option.ratio = ratio
       this.api.dispatchAction({
         type: 'updateUnassignedBoardPosition',
-        data: { y: newY }
+        data: { y: position },
       })
     }
+
+    if (commit) {
+      this.api.dispatchAction({
+        type: 'commitGanttLayout',
+        animation: { duration: 0 },
+      })
+    }
+  }
+
+  private _cancelLayoutFrame(): void {
+    if (this._layoutRafId != null) {
+      cancelAnimationFrame(this._layoutRafId)
+      this._layoutRafId = null
+    }
+    this._pendingLayoutPosition = null
   }
 
   private _findCoordRect(): RectLike {
