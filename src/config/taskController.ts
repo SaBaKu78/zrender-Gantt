@@ -8,6 +8,7 @@ import {
   buildUnassignedTasks,
   type AssignedTaskSeriesItem,
   type ResourceFilterResource,
+  type ResourceId,
   type ResourceRowSource,
   type ResourceSeriesItem,
   type ResourceWithLoad,
@@ -39,6 +40,12 @@ interface TaskControllerSearchResult {
   unassignedTasks: TaskSource[]
 }
 
+interface TaskLayoutSnapshot {
+  resourceId: string
+  startTime: number | null
+  endTime: number | null
+}
+
 /** Controller 只依赖甘特实例的公开更新能力，便于单元测试注入最小 mock。 */
 interface TaskGanttApi {
   dispatchAction(payload: Record<string, unknown>): void
@@ -46,6 +53,7 @@ interface TaskGanttApi {
     data: AssignedTaskSeriesItem[]
     affectedIds: string[]
     resourceData?: ResourceSeriesItem[]
+    affectedResourceIds?: ResourceId[]
   }): void
   updateUnassignedTasks?(payload: {
     data: UnassignedTaskView[]
@@ -167,7 +175,9 @@ export const createTaskController = ({
     return buildAssignedTasks(rows, currentVisibleResources, resourceRowOffset)
   }
   const getUnassignedTasks = (): UnassignedTaskView[] => buildUnassignedTasks(currentResult?.unassignedTasks)
-    .filter((task) => !query.keyword || (query.condition !== '资源名' && matches(task.name)))
+    .filter((task) => query.condition === '资源名'
+      || !query.keyword
+      || matches(task.name))
   const getResources = (): ResourceWithLoad[] => buildResourcesWithLoad(currentResult?.rows)
   const getVisibleResources = (): ResourceWithLoad[] => {
     const allResources = getResources()
@@ -175,8 +185,6 @@ export const createTaskController = ({
     if (!visibleIds.size) return allResources
     return allResources.filter((item) => visibleIds.has(String(item[1])))
   }
-  const getResourceData = (): ResourceSeriesItem[] =>
-    buildResourceSeriesData(getVisibleResources(), resourceRowOffset)
   const search = ({
     keyword = '',
     condition = '任务名',
@@ -210,31 +218,76 @@ export const createTaskController = ({
     return currentResult
   }
 
-  const expandAffectedTaskIds = (
+  /**
+   * 比较前后 series 元组的全部维度来确定真正变化的任务。
+   * 重叠任务如果 laneIndex/laneCount 发生变化，会自动进入结果，
+   * 不需要把所有时间重叠的任务无条件重建。
+   */
+  const collectChangedTaskIds = (
     before: AssignedTaskSeriesItem[],
     after: AssignedTaskSeriesItem[],
     seeds: Iterable<TaskId>
   ): string[] => {
     const affected = new Set(Array.from(seeds, String))
-    const expand = (items: AssignedTaskSeriesItem[]) => {
-      let changed = true
-      while (changed) {
-        changed = false
-        const selected = items.filter((item) => affected.has(String(item[0])))
-        items.forEach((candidate) => {
-          if (affected.has(String(candidate[0]))) return
-          const connected = selected.some((item) => item[1] === candidate[1]
-            && item[2] < candidate[3] && candidate[2] < item[3])
-          if (connected) {
-            affected.add(String(candidate[0]))
-            changed = true
-          }
-        })
-      }
-    }
-    expand(before)
-    expand(after)
+    const beforeById = new Map(before.map((item) => [String(item[0]), item]))
+    const afterById = new Map(after.map((item) => [String(item[0]), item]))
+    const allIds = new Set([...beforeById.keys(), ...afterById.keys()])
+
+    allIds.forEach((id) => {
+      const previous = beforeById.get(id)
+      const next = afterById.get(id)
+      const changed = !previous
+        || !next
+        || previous.some((value, index) => !Object.is(value, next[index]))
+      if (changed) affected.add(id)
+    })
+
     return Array.from(affected)
+  }
+
+  const collectTaskLayoutSnapshot = (
+    rows: ResourceRowSource[]
+  ): Map<string, TaskLayoutSnapshot> => {
+    const result = new Map<string, TaskLayoutSnapshot>()
+    rows.forEach((row) => {
+      ;(row.assignedTasks || []).forEach((task) => {
+        const taskId = getTaskId(task)
+        if (taskId == null) return
+        result.set(String(taskId), {
+          resourceId: String(row.resourceId),
+          startTime: toTime(task.startTime),
+          endTime: toTime(task.endTime),
+        })
+      })
+    })
+    return result
+  }
+
+  /**
+   * 资源负载判断必须读取权威快照，不能依赖当前搜索投影。
+   * 只有任务新增、删除、换资源或改变时间才会影响 resourceRows。
+   */
+  const collectResourceLayoutChangeIds = (
+    before: Map<string, TaskLayoutSnapshot>,
+    after: Map<string, TaskLayoutSnapshot>,
+    changedIds: Set<string>
+  ): ResourceId[] => {
+    const resourceIds = new Set<string>()
+
+    changedIds.forEach((id) => {
+      const previous = before.get(id)
+      const next = after.get(id)
+      const layoutChanged = !previous
+        || !next
+        || previous.resourceId !== next.resourceId
+        || previous.startTime !== next.startTime
+        || previous.endTime !== next.endTime
+      if (!layoutChanged) return
+      if (previous) resourceIds.add(previous.resourceId)
+      if (next) resourceIds.add(next.resourceId)
+    })
+
+    return Array.from(resourceIds)
   }
 
   const removeTaskFromSnapshot = (taskId: TaskId) => {
@@ -293,18 +346,38 @@ export const createTaskController = ({
     return idKey
   }
 
-  const renderTaskChanges = (before: AssignedTaskSeriesItem[], changedIds: Set<string>) => {
+  const renderTaskChanges = (
+    before: AssignedTaskSeriesItem[],
+    beforeTaskLayout: Map<string, TaskLayoutSnapshot>,
+    changedIds: Set<string>
+  ) => {
     if (!changedIds.size) return
     const after = getAssignedTasks()
-    const affectedIds = expandAffectedTaskIds(before, after, changedIds)
+    const affectedIds = collectChangedTaskIds(before, after, changedIds)
+    const visibleResources = getVisibleResources()
+    const affectedResourceIds = collectResourceLayoutChangeIds(
+      beforeTaskLayout,
+      collectTaskLayoutSnapshot(currentResult.rows),
+      changedIds
+    )
+    const hasResourceChanges = affectedResourceIds.length > 0
     if (typeof gantt.updateTaskItems === 'function') {
-      gantt.updateTaskItems({ data: after, affectedIds, resourceData: getResourceData() })
+      gantt.updateTaskItems({
+        data: after,
+        affectedIds,
+        resourceData: hasResourceChanges
+          ? buildResourceSeriesData(visibleResources, resourceRowOffset)
+          : undefined,
+        affectedResourceIds,
+      })
     } else {
       gantt.dispatchAction({
         type: 'updateTaskData',
         assignedData: after,
         unassignedData: getUnassignedTasks(),
-        resourceData: getResourceData(),
+        ...(hasResourceChanges
+          ? { resourceData: buildResourceSeriesData(visibleResources, resourceRowOffset) }
+          : {}),
       })
     }
     if (typeof gantt.updateUnassignedTasks === 'function') {
@@ -330,6 +403,7 @@ export const createTaskController = ({
     const batch = Array.from(queuedEvents.entries())
     queuedEvents.clear()
     const before = getAssignedTasks()
+    const beforeTaskLayout = collectTaskLayoutSnapshot(currentResult.rows)
     const changedIds = new Set<string>()
     let cursor = 0
     const workerCount = Math.max(1, Math.min(maxConcurrentUpdates, batch.length))
@@ -358,7 +432,7 @@ export const createTaskController = ({
       }
     })
     await Promise.all(workers)
-    renderTaskChanges(before, changedIds)
+    renderTaskChanges(before, beforeTaskLayout, changedIds)
     processing = false
     if (queuedEvents.size) {
       if (updateTimer != null) clearTimeout(updateTimer)

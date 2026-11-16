@@ -102,7 +102,8 @@ class CustomSeriesView extends ChartView {
     customSeriesModel: CustomSeriesModel,
     piModel: GlobalModel,
     api: ExtensionAPI,
-    affectedIds: string[]
+    affectedIds: string[],
+    idDimension?: string
   ): void {
     const oldData = this._data
     const data = customSeriesModel.getData()
@@ -110,13 +111,16 @@ class CustomSeriesView extends ChartView {
     const oldIndexes = new Map<string, number>()
     const newIndexes = new Map<string, number>()
     const getBusinessId = (data: SeriesData, index: number): string => {
+      if (idDimension) {
+        return String(data.getStore().get(data.getDimensionIndex(idDimension), index))
+      }
       // The websocket payload uses the business task id. SeriesData.getId()
       // falls back to an internal `p\0\0<index>` key when no id role is encoded,
       // so use the raw first dimension that mirrors the task row instead.
       const raw = data.getRawDataItem(index) as unknown
       if (Array.isArray(raw) && raw.length > 0) return String(raw[0])
-      const idDimension = data.getDimensionIndex('id')
-      return String(data.getStore().get(idDimension, index))
+      const idDim = data.getDimensionIndex('id')
+      return String(data.getStore().get(idDim, index))
     }
 
     if (oldData) {

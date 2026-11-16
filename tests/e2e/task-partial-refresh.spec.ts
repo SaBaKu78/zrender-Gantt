@@ -40,3 +40,39 @@ test('局部任务更新在目标资源行主动重绘', async ({ page }) => {
     )
   }, result!.nextName)).toBe(true)
 })
+
+test('未分配任务顺序不变时只替换变化卡片', async ({ page }) => {
+  await page.goto('/')
+  await expect.poll(() => page.evaluate(() => Boolean((window as any).__gantt__))).toBe(true)
+
+  const result = await page.evaluate(() => {
+    const gantt = (window as any).__gantt__
+    const boardModel = gantt.getModel().getComponent('unassignedBoard')
+    const data = (boardModel?.option?.data || []).map((item: any) => ({ ...item }))
+    if (data.length < 3) return null
+
+    const view = gantt._componentsMap[boardModel.__viewId]
+    const previousRows = view._taskRows.map((row: any) => ({ ...row }))
+    const targetIndex = 1
+    const targetId = String(data[targetIndex].id ?? data[targetIndex].taskId)
+    const nextName = '新未'
+    data[targetIndex].name = nextName
+    data[targetIndex].taskName = nextName
+
+    gantt.updateUnassignedTasks({ data, affectedIds: [targetId] })
+
+    return {
+      firstPreserved: view._taskRows[0].group === previousRows[0].group,
+      lastPreserved: view._taskRows[data.length - 1].group
+        === previousRows[data.length - 1].group,
+      changedReplaced: view._taskRows[targetIndex].group
+        !== previousRows[targetIndex].group,
+    }
+  })
+
+  expect(result).toEqual({
+    firstPreserved: true,
+    lastPreserved: true,
+    changedReplaced: true,
+  })
+})

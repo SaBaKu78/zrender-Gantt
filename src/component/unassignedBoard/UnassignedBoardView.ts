@@ -219,6 +219,45 @@ export default class UnassignedBoardView extends ComponentView {
     }
 
     const affected = new Set(affectedIds.map(String))
+    const previousIds = this._taskRows.map((row) => row.id)
+    const nextIds = tasks.map((task) => String(task.id ?? task.taskId))
+    const keepsPositions = previousIds.length === nextIds.length
+      && previousIds.every((id, index) => id === nextIds[index])
+
+    // 顺序未变化时只替换变化卡片；增删任务导致后续行位移时再走下方后缀重建。
+    if (keepsPositions) {
+      const grid = this._getGrid()
+      if (!grid) return
+      const rowHeight = this._taskRowHeight
+      const itemHeight = this._taskItemHeight
+      let changed = false
+      affected.forEach((id) => {
+        const index = nextIds.indexOf(id)
+        if (index < 0) return
+        const previous = this._taskRows[index]
+        previous.group && this._taskContentGroup?.remove(previous.group)
+        const task = tasks[index]
+        const yOffset = index * rowHeight + (rowHeight - itemHeight) / 2
+        const taskGroup = this._renderTaskItem(
+          task,
+          grid,
+          yOffset,
+          itemHeight,
+          this._isTaskSelected(task)
+        )
+        if (taskGroup) {
+          this._bindTaskEvents(taskGroup, task)
+          this._applySelectedTaskEffect(taskGroup, task)
+          this._taskContentGroup?.add(taskGroup)
+        }
+        this._taskRows[index] = { id, group: taskGroup }
+        changed = true
+      })
+      this._taskRecords = tasks
+      if (changed) this.api.getZr().refresh()
+      return
+    }
+
     let firstIndex = this._taskRows.findIndex((item) => affected.has(item.id))
     tasks.forEach((task, index) => {
       if (affected.has(String(task.id ?? task.taskId))) {

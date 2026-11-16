@@ -592,6 +592,7 @@ class Gantt extends Eventful<EventDefinition> {
     affectedIds: string[]
     resourceData?: unknown[]
     resourceScheduleData?: unknown[]
+    affectedResourceIds?: Array<string | number>
   }): void {
     if (!this._model || !payload?.affectedIds?.length) return
 
@@ -614,7 +615,21 @@ class Gantt extends Eventful<EventDefinition> {
         seriesModel.updateData?.(seriesData, this._model)
         seriesModel.dataTask.perform()
         const chartView = this._chartsViewsMap[seriesModel.__viewId] as any
-        chartView?.render?.(seriesModel, this._model, this._api, { type: 'updateTaskItems' })
+        if (
+          seriesModel.id === 'resourceRows'
+          && payload.affectedResourceIds !== undefined
+          && typeof chartView?.updateItems === 'function'
+        ) {
+          chartView.updateItems(
+            seriesModel,
+            this._model,
+            this._api,
+            payload.affectedResourceIds.map(String),
+            'id'
+          )
+        } else {
+          chartView?.render?.(seriesModel, this._model, this._api, { type: 'updateTaskItems' })
+        }
       })
     }
     this._zr.refresh()

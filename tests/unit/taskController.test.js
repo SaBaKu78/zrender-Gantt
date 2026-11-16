@@ -64,20 +64,139 @@ describe('task controller websocket updates', () => {
     expect(gantt.dispatchAction).toHaveBeenLastCalledWith(expect.objectContaining({ type: 'updateTaskData' }))
   })
 
-  it('keeps resource search active when a WS assignment arrives and composes with resource filtering', async () => {
+  it('keeps unassigned tasks available while resource search filters the main gantt', async () => {
     vi.useFakeTimers()
     const { controller, gantt } = createHarness(vi.fn(async (id) => makeDetail(id, true)))
     controller.search({ keyword: 'resource 1', condition: '资源名' })
-    expect(controller.getUnassignedTasks()).toHaveLength(0)
+    expect(controller.getUnassignedTasks().map((task) => task.id)).toEqual(['task-1', 'task-2'])
     const pending = controller.handleTaskEvent({ payload: { taskIds: ['task-1'] } })
     await vi.advanceTimersByTimeAsync(50)
     await pending
     expect(controller.getAssignedTasks().map((task) => task[0])).toEqual(['task-1'])
+    expect(controller.getUnassignedTasks().map((task) => task.id)).toEqual(['task-2'])
     expect(gantt.dispatchAction).toHaveBeenCalledTimes(1)
     controller.setVisibleResources([])
     expect(controller.getAssignedTasks()).toHaveLength(0)
     controller.setVisibleResources([['Resource 1', 'resource-1']])
     expect(controller.getAssignedTasks()).toHaveLength(1)
+  })
+
+  it('updates only the changed card when an overlapping task keeps its lane layout', async () => {
+    vi.useFakeTimers()
+    const initialResult = {
+      rows: [{
+        resourceId: 'resource-1',
+        assignedTasks: [
+          {
+            id: 'task-1',
+            name: 'Task 1',
+            startTime: '2025-11-10T07:00:00Z',
+            endTime: '2025-11-10T08:00:00Z',
+            status: 2,
+            assignmentId: 'assignment-1',
+            assignmentStatus: 'ACTIVE',
+          },
+          {
+            id: 'task-2',
+            name: 'Task 2',
+            startTime: '2025-11-10T07:15:00Z',
+            endTime: '2025-11-10T08:15:00Z',
+            status: 2,
+            assignmentId: 'assignment-2',
+            assignmentStatus: 'ACTIVE',
+          },
+        ],
+      }],
+      unassignedTasks: [],
+    }
+    const findTaskById = vi.fn(async () => ({
+      ...makeDetail('task-1', true),
+      taskName: 'Task 1',
+      taskStatus: 4,
+    }))
+    const { controller, gantt } = createHarness(findTaskById, { initialResult })
+
+    const pending = controller.handleTaskEvent({ payload: { taskIds: ['task-1'] } })
+    await vi.advanceTimersByTimeAsync(50)
+    await pending
+
+    expect(gantt.updateTaskItems).toHaveBeenCalledWith(expect.objectContaining({
+      affectedIds: ['task-1'],
+      resourceData: undefined,
+      affectedResourceIds: [],
+    }))
+  })
+
+  it('updates overlapping cards when a task time change alters their lane indices', async () => {
+    vi.useFakeTimers()
+    const initialResult = {
+      rows: [{
+        resourceId: 'resource-1',
+        assignedTasks: [
+          {
+            id: 'task-1',
+            name: 'Task 1',
+            startTime: '2025-11-10T07:00:00Z',
+            endTime: '2025-11-10T08:00:00Z',
+            status: 2,
+            assignmentId: 'assignment-1',
+            assignmentStatus: 'ACTIVE',
+          },
+          {
+            id: 'task-2',
+            name: 'Task 2',
+            startTime: '2025-11-10T10:00:00Z',
+            endTime: '2025-11-10T11:00:00Z',
+            status: 2,
+            assignmentId: 'assignment-2',
+            assignmentStatus: 'ACTIVE',
+          },
+        ],
+      }],
+      unassignedTasks: [],
+    }
+    const findTaskById = vi.fn(async () => ({
+      ...makeDetail('task-2', true),
+      scheduleStartTime: '2025-11-10T07:30:00Z',
+      scheduleEndTime: '2025-11-10T08:30:00Z',
+    }))
+    const { controller, gantt } = createHarness(findTaskById, { initialResult })
+
+    const pending = controller.handleTaskEvent({ payload: { taskIds: ['task-2'] } })
+    await vi.advanceTimersByTimeAsync(50)
+    await pending
+
+    const payload = gantt.updateTaskItems.mock.calls[0][0]
+    expect(payload.affectedIds.sort()).toEqual(['task-1', 'task-2'])
+    expect(payload.resourceData).toBeTruthy()
+    expect(payload.affectedResourceIds).toEqual(['resource-1'])
+  })
+
+  it('updates resource load from the authoritative snapshot when search hides the assigned task', async () => {
+    vi.useFakeTimers()
+    const initialResult = {
+      rows: [{ resourceId: 'resource-1', assignedTasks: [] }],
+      unassignedTasks: [{
+        id: 'task-1',
+        name: 'Task 1',
+        startTime: '2025-11-10T07:00:00Z',
+        endTime: '2025-11-10T08:00:00Z',
+      }],
+    }
+    const { controller, gantt } = createHarness(
+      vi.fn(async () => makeDetail('task-1', true)),
+      { initialResult },
+    )
+    controller.search({ keyword: '不匹配', condition: '任务名' })
+
+    const pending = controller.handleTaskEvent({ payload: { taskIds: ['task-1'] } })
+    await vi.advanceTimersByTimeAsync(50)
+    await pending
+
+    const payload = gantt.updateTaskItems.mock.calls[0][0]
+    expect(payload.data).toEqual([])
+    expect(payload.resourceData).toBeTruthy()
+    expect(payload.affectedResourceIds).toEqual(['resource-1'])
   })
 
   it('removes a task from search results when its WS detail no longer matches', async () => {
