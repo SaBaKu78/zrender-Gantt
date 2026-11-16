@@ -2,7 +2,7 @@ import { searchGantt } from './src/api/gantt'
 import { init } from './src/core/Gantt'
 import { createGanttOption } from './src/config/ganttOptions'
 import { createTaskController } from './src/config/taskController'
-import { buildResourcesWithLoad } from './src/config/taskTransform'
+import { buildResourceSeriesUpdate, buildResourcesWithLoad } from './src/config/taskTransform'
 
 const RESOURCE_ROW_OFFSET = 0
 const dom = document.getElementById('main')
@@ -35,7 +35,7 @@ const buildVisibleGanttData = (visibleResources) => {
   return {
     assignedData: taskController.getAssignedTasks(),
     unassignedData: taskController.getUnassignedTasks(),
-    resourceData: resources.map((item, index) => [index + RESOURCE_ROW_OFFSET].concat(item)),
+    ...buildResourceSeriesUpdate(resources, RESOURCE_ROW_OFFSET),
     resources,
   }
 }

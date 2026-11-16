@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assignOverlapLanes, buildAssignedTasks, buildLoadSegments, buildResources, buildResourcesWithLoad } from '../../src/config/taskTransform.js'
+import { assignOverlapLanes, buildAssignedTasks, buildAvailabilitySegments, buildLoadSegments, buildResourceScheduleData, buildResourceSeriesData, buildResourceSeriesUpdate, buildResources, buildResourcesWithLoad } from '../../src/config/taskTransform.ts'
 
 describe('taskTransform', () => {
   it('builds stable resources from rows', () => {
@@ -86,8 +86,71 @@ describe('taskTransform', () => {
       ],
     }
     const resource = buildResourcesWithLoad([{ resourceId: 'r1', availability: row.availability, assignedTasks: row.assignedTasks }])[0]
-    expect(resource[4]).not.toHaveProperty('shifts')
     const timeline = resource[4]
+    expect(timeline.availability).toEqual([[
+      new Date(row.availability[0].startTime).getTime(),
+      new Date(row.availability[0].endTime).getTime(),
+      1,
+      'shift-1',
+    ]])
     expect(buildLoadSegments(row.assignedTasks).map((segment) => segment[2])).toEqual([1, 2, 1])
+  })
+
+  it('keeps only valid, sorted availability intervals for schedule capsules', () => {
+    expect(buildAvailabilitySegments([
+      { startTime: '2026-01-01T12:00:00Z', endTime: '2026-01-01T14:00:00Z', status: 1 },
+      { startTime: 'bad', endTime: '2026-01-01T14:00:00Z', status: 1 },
+      { startTime: '2026-01-01T10:00:00Z', endTime: '2026-01-01T09:00:00Z', status: 1 },
+      { startTime: '2026-01-01T08:00:00Z', endTime: '2026-01-01T09:00:00Z', status: 2 },
+    ])).toEqual([
+      [new Date('2026-01-01T08:00:00Z').getTime(), new Date('2026-01-01T09:00:00Z').getTime(), 2, `${new Date('2026-01-01T08:00:00Z').getTime()}:${new Date('2026-01-01T09:00:00Z').getTime()}`],
+      [new Date('2026-01-01T12:00:00Z').getTime(), new Date('2026-01-01T14:00:00Z').getTime(), 1, `${new Date('2026-01-01T12:00:00Z').getTime()}:${new Date('2026-01-01T14:00:00Z').getTime()}`],
+    ])
+  })
+
+  it('adds peak load and flattens availability for dataZoom filtering', () => {
+    const resource = [[
+      'Gate A', '7', 'GA', 'ON',
+      {
+        load: [[200, 250, 1], [250, 300, 3], [300, 350, 2]],
+        availability: [
+          [200, 300, 1],
+          [100, 150, 1],
+        ],
+      },
+    ]]
+    expect(buildResourceSeriesData(resource, 4)).toEqual([[
+      4,
+      'Gate A', '7', 'GA', 'ON',
+      {
+        load: [[200, 250, 1], [250, 300, 3], [300, 350, 2]],
+        availability: [
+          [200, 300, 1],
+          [100, 150, 1],
+        ],
+      },
+      3,
+    ]])
+    expect(buildResourceSeriesData([['No shift', '8', '', '', { load: [], availability: [] }]])[0].slice(-1))
+      .toEqual([0])
+    expect(buildResourceScheduleData(resource, 4)).toEqual([
+      ['4:200:300', 4, 200, 300, 1],
+      ['4:100:150', 4, 100, 150, 1],
+    ])
+  })
+
+  it('builds row and schedule payloads together for resource updates', () => {
+    const resource = [[
+      'Gate A', '7', 'GA', 'ON',
+      {
+        load: [],
+        availability: [[200, 300, 1, 'shift-1']],
+      },
+    ]]
+
+    expect(buildResourceSeriesUpdate(resource, 4)).toEqual({
+      resourceData: buildResourceSeriesData(resource, 4),
+      resourceScheduleData: [['4:shift-1', 4, 200, 300, 1]],
+    })
   })
 })

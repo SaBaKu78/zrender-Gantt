@@ -2,17 +2,61 @@ import { clipRectByRect } from '../util/graphic'
 import { getWidth } from 'zrender/lib/contain/text'
 import { lerp, parse } from 'zrender/lib/tool/color'
 import { getTheme } from './theme'
+import type { GanttTaskTheme } from './theme'
 
-const formatTaskTime = (value) => {
-  const date = new Date(value)
+interface Cell {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+interface TextCellOptions {
+  name?: string
+  align?: 'left' | 'center' | 'right'
+  fontSize?: number
+  fontWeight?: number
+  textFill?: string
+}
+
+interface CartesianRenderParams {
+  coordSys: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+}
+
+interface CustomRenderApi {
+  value(dimension: number): unknown
+  coord(value: [unknown, unknown]): [number, number]
+  size(value: [number, number]): [number, number]
+}
+
+/**
+ * custom series 的 renderItem 返回 zrender 图形 option。
+ * 子元素可能包含 rect、text、group 等不同形状，因此保留开放式图形类型；
+ * 卡片坐标和业务数据仍通过 Cell、数值转换和任务维度顺序显式约束。
+ */
+type GraphicOption = Record<string, any>
+
+const formatTaskTime = (value: unknown): string => {
+  const date = new Date(value as string | number | Date)
   if (Number.isNaN(date.getTime())) return ''
-  const pad2 = (num) => (num < 10 ? `0${num}` : `${num}`)
+  const pad2 = (num: number): string => (num < 10 ? `0${num}` : `${num}`)
   return `${pad2(date.getHours())}:${pad2(date.getMinutes())}`
 }
 
-const taskFont = (fontSize, fontWeight = 400) => fontWeight + ' ' + fontSize + 'px sans-serif'
+const taskFont = (fontSize: number, fontWeight = 400): string =>
+  `${fontWeight} ${fontSize}px sans-serif`
 
-const truncateText = (text, maxWidth, fontSize = 11, fontWeight = 400) => {
+const truncateText = (
+  text: unknown,
+  maxWidth: number,
+  fontSize = 11,
+  fontWeight = 400
+): string => {
   const value = String(text || '')
   const font = taskFont(fontSize, fontWeight)
   if (maxWidth <= 0) return ''
@@ -32,24 +76,30 @@ const truncateText = (text, maxWidth, fontSize = 11, fontWeight = 400) => {
 const LOCKED_PATH = 'M780.8 435.2h38.4c21.2 0 38.4 17.2 38.4 38.4v384c0 21.2-17.2 38.4-38.4 38.4H204.8c-21.2 0-38.4-17.2-38.4-38.4v-384c0-21.2 17.2-38.4 38.4-38.4h38.4v-38.4C243.2 248.3 363.5 128 512 128s268.8 120.3 268.8 268.8v38.4z m-76.8 0v-38.4c0-106-86-192-192-192s-192 86-192 192v38.4h384zM473.6 588.8v153.6h76.8V588.8h-76.8z'
 const UNLOCKED_PATH = 'M324.3 435.2h499.2c21.2 0 38.4 17.2 38.4 38.4v384c0 21.2-17.2 38.4-38.4 38.4H209.1c-21.2 0-38.4-17.2-38.4-38.4v-384c0-21.2 17.2-38.4 38.4-38.4h38.4v-38.4c-0.1-148.5 120.2-268.9 268.7-268.9 101.9 0 195.1 57.5 240.6 148.7L688 310.9c-47.4-94.9-162.7-133.4-257.5-86-65.1 32.5-106.3 99.1-106.2 171.9v38.4z m115.2 192V704h153.6v-76.8H439.5z'
 
-const TASK_STATUS_CODE = {
+const TASK_STATUS_CODE: Record<number, string> = {
   1: '未', 2: '到', 3: '始', 4: '结', 5: '阻',
   6: '继', 7: '取', 8: '恢', 9: '挂', 10: '挂',
 }
 
-const TASK_STATUS_ICON = {
+/** 状态图标与短文字共用同一状态编号，修改编号时需同步更新两套映射。 */
+const TASK_STATUS_ICON: Record<number, string> = {
   1: 'clock', 2: 'flag', 3: 'play', 4: 'check', 5: 'warning',
   6: 'arrow', 7: 'cancel', 8: 'restore', 9: 'pause', 10: 'hold',
 }
 
-const getStatusVisual = (status) => {
+const getStatusVisual = (status: unknown): GanttTaskTheme => {
   const theme = getTheme()
   return theme.taskStatus[Number(status)] || theme.taskStatus[2]
 }
 
-const createCell = (x, y, width, height) => ({ x, y, width, height })
+const createCell = (x: number, y: number, width: number, height: number): Cell =>
+  ({ x, y, width, height })
 
-const createTextCell = (cell, text, options = {}) => ({
+const createTextCell = (
+  cell: Cell,
+  text: string,
+  options: TextCellOptions = {}
+): GraphicOption => ({
   type: 'text',
   name: options.name,
   silent: true,
@@ -64,12 +114,29 @@ const createTextCell = (cell, text, options = {}) => ({
   },
 })
 
-const createLine = (x1, y1, x2, y2, color, lineWidth = 1.1) => ({ type: 'line', silent: true, shape: { x1, y1, x2, y2 }, style: { stroke: color, lineWidth, lineCap: 'round' } })
+const createLine = (
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  color: string,
+  lineWidth = 1.1
+): GraphicOption => ({
+  type: 'line',
+  silent: true,
+  shape: { x1, y1, x2, y2 },
+  style: { stroke: color, lineWidth, lineCap: 'round' },
+})
 
-const createNotifyIcon = (notifyStatus, cx, cy, size) => {
+const createNotifyIcon = (
+  notifyStatus: number | null,
+  cx: number,
+  cy: number,
+  size: number
+): GraphicOption => {
   const h = size / 2
   const rect = { x: -h + 1, y: -h + 1, width: size - 2, height: size - 2, r: 0.5 }
-  let children
+  let children: GraphicOption[]
   if (notifyStatus === 0) {
     children = [{ type: 'rect', shape: rect, style: { stroke: '#7B8795', fill: 'none', lineWidth: 1 } }]
   } else if (notifyStatus === 1) {
@@ -85,13 +152,19 @@ const createNotifyIcon = (notifyStatus, cx, cy, size) => {
   return { type: 'group', name: 'taskNotifyIcon', silent: true, x: cx, y: cy, children }
 }
 
-const createTaskStatusIcon = (taskStatus, cx, cy, size) => {
+const createTaskStatusIcon = (
+  taskStatus: number,
+  cx: number,
+  cy: number,
+  size: number
+): GraphicOption => {
   const theme = getTheme()
   const iconName = TASK_STATUS_ICON[taskStatus]
   const color = getStatusVisual(taskStatus).accent
   const stroke = { stroke: color, lineWidth: 1.6, fill: 'none', lineCap: 'round', lineJoin: 'round' }
-  const line = (x1, y1, x2, y2) => createLine(x1, y1, x2, y2, color, 1.6)
-  let children = []
+  const line = (x1: number, y1: number, x2: number, y2: number): GraphicOption =>
+    createLine(x1, y1, x2, y2, color, 1.6)
+  let children: GraphicOption[] = []
   if (iconName === 'clock') children = [
     { type: 'circle', shape: { cx: 0, cy: 0, r: 6 }, style: stroke },
     line(0, 0, 0, -3.5), line(0, 0, 3, 1),
@@ -134,7 +207,12 @@ const createTaskStatusIcon = (taskStatus, cx, cy, size) => {
   }
 }
 
-const createLockIcon = (locked, cx, cy, size) => ({
+const createLockIcon = (
+  locked: boolean,
+  cx: number,
+  cy: number,
+  size: number
+): GraphicOption => ({
   type: 'path', name: 'taskLockIcon', silent: true,
   shape: { pathData: locked ? LOCKED_PATH : UNLOCKED_PATH, x: cx - size / 2, y: cy - size / 2, width: size, height: size },
   info: { locked },
@@ -142,7 +220,13 @@ const createLockIcon = (locked, cx, cy, size) => ({
 })
 
 // Keep the script's groups, adding the designed task icon beside its short code.
-const createStateContent = (cell, notifyStatus, locked, taskStatus, fontSize) => {
+const createStateContent = (
+  cell: Cell,
+  notifyStatus: unknown,
+  locked: boolean,
+  taskStatus: number,
+  fontSize: number
+): GraphicOption | null => {
   const theme = getTheme()
   if (cell.width < 4 || cell.height < 6) return null
   const notify = notifyStatus == null || notifyStatus === '' ? null : Number(notifyStatus)
@@ -152,13 +236,14 @@ const createStateContent = (cell, notifyStatus, locked, taskStatus, fontSize) =>
   const codeWidth = getWidth(code, font)
   let iconSize = Math.min(10, cell.height - 2, cell.width)
   let groupGap = 4
-  let items = []
-  if ([0, 1, 2, 3].includes(notify)) items.push('notify')
+  let items: string[] = []
+  if (notify != null && [0, 1, 2, 3].indexOf(notify) >= 0) items.push('notify')
   items.push('lock')
   if (taskIcon) items.push('taskIcon')
   if (code) items.push('code')
-  const itemWidth = (item) => item === 'code' ? codeWidth : iconSize
-  const gapBefore = (item, index) => index === 0 ? 0 : item === 'code' ? 2 : groupGap
+  const itemWidth = (item: string): number => item === 'code' ? codeWidth : iconSize
+  const gapBefore = (item: string, index: number): number =>
+    index === 0 ? 0 : item === 'code' ? 2 : groupGap
   const totalWidth = () => items.reduce((sum, item, index) => sum + itemWidth(item) + gapBefore(item, index), 0)
   if (totalWidth() > cell.width) {
     iconSize = Math.min(iconSize, 9)
@@ -179,7 +264,7 @@ const createStateContent = (cell, notifyStatus, locked, taskStatus, fontSize) =>
   let cursor = 0
   const children = items.map((item, index) => {
     cursor += gapBefore(item, index)
-    let child
+    let child: GraphicOption
     if (item === 'notify') child = createNotifyIcon(notify, cursor + iconSize / 2, 0, iconSize)
     else if (item === 'lock') child = createLockIcon(locked, cursor + iconSize / 2, 0, iconSize)
     else if (item === 'taskIcon') child = createTaskStatusIcon(taskStatus, cursor + iconSize / 2, 0, iconSize)
@@ -197,7 +282,13 @@ const createStateContent = (cell, notifyStatus, locked, taskStatus, fontSize) =>
   }
 }
 
-const createCompactContent = (cell, title, notifyStatus, locked, taskStatus) => {
+const createCompactContent = (
+  cell: Cell,
+  title: string,
+  notifyStatus: unknown,
+  locked: boolean,
+  taskStatus: number
+): GraphicOption[] => {
   const minimumStateWidth = 18
   const titleReserve = Math.min(getWidth(title, taskFont(10, 500)), 24, Math.max(0, cell.width - minimumStateWidth - 5))
   const stateCell = createCell(cell.x, cell.y, Math.max(0, cell.width - titleReserve - (titleReserve ? 5 : 0)), cell.height)
@@ -208,7 +299,7 @@ const createCompactContent = (cell, title, notifyStatus, locked, taskStatus) => 
   const textWidth = getWidth(text, taskFont(10, 500))
   const groupWidth = textWidth + stateWidth + (text ? gap : 0)
   const startX = cell.x + Math.max(0, (cell.width - groupWidth) / 2)
-  const children = []
+  const children: GraphicOption[] = []
   if (text) children.push(createTextCell(createCell(startX, cell.y, textWidth, cell.height), text, { name: 'taskTitle', align: 'left', fontSize: 10, fontWeight: 500 }))
   if (state) {
     state.x = startX + textWidth + (text ? gap : 0)
@@ -217,23 +308,26 @@ const createCompactContent = (cell, title, notifyStatus, locked, taskStatus) => 
   return children
 }
 
-export const TaskRenderItem = function (params, api) {
+export const TaskRenderItem = function (
+  params: CartesianRenderParams,
+  api: CustomRenderApi
+): GraphicOption | undefined {
   const theme = getTheme()
-  const resourceIndex = api.value(1)
+  const resourceIndex = Number(api.value(1))
   const startTime = api.coord([api.value(2), resourceIndex])
   const endTime = api.coord([api.value(3), resourceIndex])
   const rowHeight = api.size([0, 1])[1]
-  const laneIndex = api.value(8) || 0
-  const laneCount = Math.max(1, api.value(9) || 1)
+  const laneIndex = Number(api.value(8)) || 0
+  const laneCount = Math.max(1, Number(api.value(9)) || 1)
   const laneHeight = rowHeight / laneCount
   const taskHeight = Math.min(44, Math.max(1, laneHeight - Math.min(4, laneHeight / 4)))
   const taskY = startTime[1] + laneIndex * laneHeight + (laneHeight - taskHeight) / 2
   const task = clipRectByRect({ x: startTime[0], y: taskY, width: endTime[0] - startTime[0], height: taskHeight }, params.coordSys)
   if (!task || task.width <= 0 || task.height <= 0) return
-  task.r = 3
+  ;(task as GraphicOption).r = 3
 
   const outsideShift = Boolean(api.value(7))
-  const taskStatus = api.value(5)
+  const taskStatus = Number(api.value(5)) || 2
   const notifyStatus = api.value(19)
   const visual = outsideShift
     ? theme.outsideShift
@@ -254,7 +348,12 @@ export const TaskRenderItem = function (params, api) {
   const contentY = task.y + 2
   const contentWidth = Math.max(0, task.width - contentInset * 2)
   const contentHeight = Math.max(0, task.height - 4)
-  const children = [{ type: 'rect', shape: task, style: { fill: taskFill, stroke: borderColor, lineWidth: 1 } }]
+  // 维度顺序与 ganttOptions 中 assignedTasks.dimensions 保持一致。
+  const children: GraphicOption[] = [{
+    type: 'rect',
+    shape: task,
+    style: { fill: taskFill, stroke: borderColor, lineWidth: 1 },
+  }]
   if (task.width > 2 && task.height > 2) children.push({
     type: 'rect', name: 'taskStatusTab', silent: true,
     shape: { x: task.x + 0.5, y: task.y + 0.5, width: Math.min(4, task.width - 1), height: task.height - 1, r: [2, 0, 0, 2] },
@@ -276,21 +375,35 @@ export const TaskRenderItem = function (params, api) {
     const startText = truncateText(formatTaskTime(api.value(2)), sideWidth, fontSize)
     const endText = truncateText(formatTaskTime(api.value(3)), sideWidth, fontSize)
     children.push(createTextCell(topCells[0], startText, { name: 'taskStart', align: 'left', textFill: theme.taskMetaText, fontSize }))
-    children.push(createStateContent(topCells[1], notifyStatus, locked, taskStatus, fontSize))
+    const state = createStateContent(topCells[1], notifyStatus, locked, taskStatus, fontSize)
+    if (state) children.push(state)
     children.push(createTextCell(topCells[2], endText, { name: 'taskEnd', align: 'right', textFill: theme.taskMetaText, fontSize }))
     if (flightNumber) children.push(createTextCell(bottomCells[0], truncateText(flightNumber, sideWidth, fontSize, 500), { name: 'taskFlight', align: 'left', fontSize, fontWeight: 500 }))
     if (taskName) children.push(createTextCell(bottomCells[1], truncateText(taskName, middleWidth, fontSize), { name: 'taskContent', fontSize }))
     if (location) children.push(createTextCell(bottomCells[2], truncateText(location, sideWidth, fontSize), { name: 'taskLocation', align: 'right', textFill: theme.taskMetaText, fontSize }))
   } else if (task.width >= 42 && task.height >= 14) {
-    children.push(...createCompactContent(createCell(contentX, task.y, contentWidth, task.height), title, notifyStatus, locked, taskStatus))
+    children.push(...createCompactContent(
+      createCell(contentX, task.y, contentWidth, task.height),
+      title,
+      notifyStatus,
+      locked,
+      taskStatus
+    ))
   } else {
-    children.push(createStateContent(createCell(contentX, task.y, contentWidth, task.height), notifyStatus, locked, taskStatus, 9))
+    const state = createStateContent(
+      createCell(contentX, task.y, contentWidth, task.height),
+      notifyStatus,
+      locked,
+      taskStatus,
+      9
+    )
+    if (state) children.push(state)
   }
 
   return {
     type: 'group',
     transition: [],
     info: { taskItem: true, taskId: api.value(0), title, taskName, aircraft, location, locked, notifyStatus, taskStatus, startTime: api.value(2), endTime: api.value(3) },
-    children: children.filter(Boolean),
+    children,
   }
 }

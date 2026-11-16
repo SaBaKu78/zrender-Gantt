@@ -587,7 +587,12 @@ class Gantt extends Eventful<EventDefinition> {
     this._zr.refresh()
   }
 
-  updateTaskItems(payload: { data: unknown[]; affectedIds: string[]; resourceData?: unknown[] }): void {
+  updateTaskItems(payload: {
+    data: unknown[]
+    affectedIds: string[]
+    resourceData?: unknown[]
+    resourceScheduleData?: unknown[]
+  }): void {
     if (!this._model || !payload?.affectedIds?.length) return
 
     this._model.eachSeries((seriesModel: any) => {
@@ -597,10 +602,16 @@ class Gantt extends Eventful<EventDefinition> {
       const chartView = this._chartsViewsMap[seriesModel.__viewId] as any
       chartView?.updateItems?.(seriesModel, this._model, this._api, payload.affectedIds)
     })
-    if (payload.resourceData) {
+    if (payload.resourceData !== undefined || payload.resourceScheduleData !== undefined) {
       this._model.eachSeries((seriesModel: any) => {
-        if (seriesModel.id !== 'resourceRows' && seriesModel.id !== 'resourceSchedule') return
-        seriesModel.updateData?.(payload.resourceData, this._model)
+        const seriesData = seriesModel.id === 'resourceRows'
+          ? payload.resourceData
+          : seriesModel.id === 'resourceSchedule'
+            ? payload.resourceScheduleData
+            : undefined
+        if (seriesData === undefined) return
+
+        seriesModel.updateData?.(seriesData, this._model)
         seriesModel.dataTask.perform()
         const chartView = this._chartsViewsMap[seriesModel.__viewId] as any
         chartView?.render?.(seriesModel, this._model, this._api, { type: 'updateTaskItems' })

@@ -7,8 +7,7 @@
       "zrender/src/*": ["./node_modules/zrender/lib/*"]
     },
     "esModuleInterop": true,
-    "allowJs": true,
-    "checkJs": false,
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": false,
     "lib": ["ES2015", "DOM"],
@@ -18,8 +17,7 @@
   "include": [
     "global.d.ts",
     "extension.ts",
-    "src/**/*.ts",
-    "src/**/*.js"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",

@@ -1,7 +1,29 @@
 import { clipRectByRect } from '../util/graphic'
 import { getTheme } from './theme'
+import type { ResourceTimeline } from './taskTransform'
 
-const getStatusColor = (status) => {
+interface CartesianRenderParams {
+  coordSys: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+}
+
+interface CustomRenderApi {
+  value(dimension: number): unknown
+  coord(value: [unknown, unknown]): [number, number]
+  size(value: [number, number]): [number, number]
+}
+
+/**
+ * custom series 的图形 option 会随 rect/text/group 形状变化。
+ * 这里保留开放式形状类型，数据结构本身仍由 ResourceTimeline 等明确约束。
+ */
+type ResourceGraphicOption = Record<string, any>
+
+const getStatusColor = (status: unknown): string => {
   const theme = getTheme()
   switch (String(status || '').toUpperCase()) {
     case 'ON':
@@ -15,44 +37,52 @@ const getStatusColor = (status) => {
       return theme.warn
   }
 }
-const getTimeline = (value) => value && typeof value === 'object' ? value : { load: [] }
+const getTimeline = (value: unknown): ResourceTimeline =>
+  value && typeof value === 'object'
+    ? value as ResourceTimeline
+    : { load: [], availability: [] }
 
-export const ResourceScheduleRenderItem = function (params, api) {
+export const ResourceScheduleRenderItem = function (
+  params: CartesianRenderParams,
+  api: CustomRenderApi
+): ResourceGraphicOption | undefined {
   const theme = getTheme()
-  const rowIndex = api.value(0)
+  const rowIndex = Number(api.value(1))
   const y = api.coord([0, rowIndex])[1]
   const rowHeight = api.size([0, 1])[1]
-  const timeline = getTimeline(api.value(5))
-  const reducedMotion = typeof window !== 'undefined'
-    && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-  const children = []
-
-  timeline.load.forEach(([start, end, level]) => {
-    const x1 = api.coord([start, 0])[0]
-    const x2 = api.coord([end, 0])[0]
-    const rect = clipRectByRect({ x: x1, y: y + rowHeight - 5, width: x2 - x1, height: 4 }, params.coordSys)
-    if (!rect || rect.width <= 0) return
-    const isCrowded = level >= 2
-    const opacity = level >= 3 ? 0.7 : isCrowded ? 0.44 : 0.3
-    const element = {
-      type: 'rect',
-      shape: rect,
-      style: {
-        fill: level >= 3 ? theme.danger : isCrowded ? theme.warn : theme.success,
-        opacity,
-        ...(isCrowded && !reducedMotion ? { enterFrom: { opacity: opacity * 0.18 } } : {}),
-      },
-      silent: true,
-    }
-    children.push(element)
-  })
-
-  return { type: 'group', children }
+  const start = Number(api.value(2))
+  const end = Number(api.value(3))
+  const x1 = api.coord([start, rowIndex])[0]
+  const x2 = api.coord([end, rowIndex])[0]
+  const capsuleHeight = Math.min(12, Math.max(8, rowHeight * 0.23))
+  const rect = clipRectByRect({
+    x: x1,
+    y: y + (rowHeight - capsuleHeight) / 2,
+    width: x2 - x1,
+    height: capsuleHeight,
+  }, params.coordSys)
+  if (!rect || rect.width <= 0) return
+  return {
+    type: 'rect',
+    shape: {
+      ...rect,
+      r: rect.height / 2,
+    },
+    style: {
+      fill: theme.shiftLaneFill,
+      stroke: theme.shiftLaneStroke,
+      lineWidth: 1,
+    },
+    silent: true,
+  }
 }
 
-export const ResourceRenderItem = function (params, api) {
+export const ResourceRenderItem = function (
+  params: CartesianRenderParams,
+  api: CustomRenderApi
+): ResourceGraphicOption {
   const theme = getTheme()
-  const rowIndex = api.value(0)
+  const rowIndex = Number(api.value(0))
   const y = api.coord([api.value(2), rowIndex])[1]
   const gridX = params.coordSys.x
   const rectHeight = api.size([0, 1])[1]
@@ -60,7 +90,10 @@ export const ResourceRenderItem = function (params, api) {
   const centerY = rectHeight / 2
   const status = api.value(4)
   const timeline = getTimeline(api.value(5))
-  const peak = timeline.load.reduce((max, segment) => Math.max(max, Number(segment?.[2]) || 0), 0)
+  const peak = Math.max(
+    Number(api.value(6)) || 0,
+    timeline.load.reduce((max, segment) => Math.max(max, Number(segment?.[2]) || 0), 0),
+  )
   const hasPeakBadge = peak >= 2
   const badgeWidth = 18
   const badgeX = Math.max(32, gridX - 28)
@@ -89,7 +122,7 @@ export const ResourceRenderItem = function (params, api) {
         style: {
           x: 28,
           y: centerY,
-          text: api.value(1),
+          text: String(api.value(1) ?? ''),
           width: nameWidth,
           overflow: 'truncate',
           verticalAlign: 'middle',

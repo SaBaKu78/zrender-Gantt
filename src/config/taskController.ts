@@ -1,21 +1,91 @@
-import { searchGantt } from '../api/gantt'
+import { searchGantt, type GanttSearchParams } from '../api/gantt'
 import { assignTask, findTaskById } from '../api/task'
-import { buildAssignedTasks, buildResourcesWithLoad, buildUnassignedTasks } from './taskTransform'
+import {
+  buildAssignedTasks,
+  buildResourceSeriesData,
+  buildResourceSeriesUpdate,
+  buildResourcesWithLoad,
+  buildUnassignedTasks,
+  type AssignedTaskSeriesItem,
+  type ResourceFilterResource,
+  type ResourceRowSource,
+  type ResourceSeriesItem,
+  type ResourceWithLoad,
+  type TaskId,
+  type TaskSource,
+  type UnassignedTaskView,
+} from './taskTransform'
+import type { TaskEventType } from '../ws/task/types'
 
-const toTime = (value) => {
-  const time = value == null ? NaN : new Date(value).getTime()
+export type AssignmentErrorCode =
+  | 'TASK_NOT_FOUND'
+  | 'RESOURCE_NOT_FOUND'
+  | 'SHIFT_DAILY_ID_NOT_FOUND'
+
+type QueryCondition = '任务名' | '资源名'
+type TaskEventInput = {
+  payload?: {
+    taskIds?: TaskId[]
+    eventType?: TaskEventType
+  }
+}
+
+interface TaskControllerSearchResult {
+  window?: {
+    startTime: string
+    endTime: string
+  }
+  rows: ResourceRowSource[]
+  unassignedTasks: TaskSource[]
+}
+
+/** Controller 只依赖甘特实例的公开更新能力，便于单元测试注入最小 mock。 */
+interface TaskGanttApi {
+  dispatchAction(payload: Record<string, unknown>): void
+  updateTaskItems?(payload: {
+    data: AssignedTaskSeriesItem[]
+    affectedIds: string[]
+    resourceData?: ResourceSeriesItem[]
+  }): void
+  updateUnassignedTasks?(payload: {
+    data: UnassignedTaskView[]
+    affectedIds: string[]
+  }): void
+}
+
+export interface TaskControllerOptions {
+  gantt: TaskGanttApi
+  initialResult: TaskControllerSearchResult
+  searchParams: GanttSearchParams
+  initialVisibleResources: ResourceFilterResource[]
+  resourceRowOffset?: number
+  findTaskById?: (taskId: TaskId) => Promise<TaskSource> | TaskSource
+  updateWindowMs?: number
+  maxConcurrentUpdates?: number
+}
+
+const toTime = (value: unknown): number | null => {
+  const time = value == null ? NaN : new Date(value as string | number | Date).getTime()
   return Number.isFinite(time) ? time : null
 }
 
-const getTaskId = (task) => task?.taskId ?? task?.id
+const getTaskId = (task: TaskSource | undefined): TaskId | undefined => task?.taskId ?? task?.id
 
-const createAssignmentError = (code, message) => {
-  const error = new Error(message)
+const createAssignmentError = (code: AssignmentErrorCode, message: string) => {
+  const error = new Error(message) as Error & { code: AssignmentErrorCode }
   error.code = code
   return error
 }
 
-export const resolveShiftDailyId = ({ rows, resourceId, task }) => {
+export const resolveShiftDailyId = ({
+  rows,
+  resourceId,
+  task,
+}: {
+  rows: ResourceRowSource[] | undefined
+  resourceId: TaskId
+  task: TaskSource
+}): string | number => {
   const row = (Array.isArray(rows) ? rows : []).find(
     (item) => String(item?.resourceId) === String(resourceId)
   )
@@ -48,7 +118,7 @@ export const resolveShiftDailyId = ({ rows, resourceId, task }) => {
         start,
       }
     })
-    .filter(Boolean)
+    .filter((candidate): candidate is NonNullable<typeof candidate> => candidate !== null)
     .filter((candidate) => candidate.score > 0)
     .sort((a, b) => b.score - a.score || b.overlap - a.overlap || a.start - b.start)
 
@@ -71,19 +141,23 @@ export const createTaskController = ({
   findTaskById: fetchTaskById = findTaskById,
   updateWindowMs = 50,
   maxConcurrentUpdates = 8,
-}) => {
-  let currentResult = initialResult
-  let currentVisibleResources = initialVisibleResources
-  let updateTimer = null
+}: TaskControllerOptions) => {
+  // currentResult 是服务端快照；查询和资源过滤只投影它，不反向改写快照。
+  let currentResult: TaskControllerSearchResult = initialResult
+  let currentVisibleResources: ResourceFilterResource[] = initialVisibleResources
+  let updateTimer: ReturnType<typeof setTimeout> | null = null
   let processing = false
-  const queuedEvents = new Map()
-  const eventWaiters = []
+  const queuedEvents = new Map<string, TaskEventType>()
+  const eventWaiters: Array<() => void> = []
 
-  const setVisibleResources = (resources) => { currentVisibleResources = Array.isArray(resources) ? resources : [] }
-  let query = { keyword: '', condition: '任务名' }
-  const matches = (value) => String(value || '').toLocaleLowerCase().includes(query.keyword)
-  // Filtering is a projection of the authoritative snapshot: WS updates never overwrite the query.
-  const getAssignedTasks = () => {
+  const setVisibleResources = (resources: ResourceFilterResource[]) => {
+    currentVisibleResources = Array.isArray(resources) ? resources : []
+  }
+  let query: { keyword: string; condition: QueryCondition } = { keyword: '', condition: '任务名' }
+  const matches = (value: unknown): boolean =>
+    String(value || '').toLocaleLowerCase().includes(query.keyword)
+  // 搜索和资源过滤都是快照的投影；WebSocket 更新不会覆盖当前查询条件。
+  const getAssignedTasks = (): AssignedTaskSeriesItem[] => {
     const matchingResourceIds = new Set(currentVisibleResources.filter((item) => matches(item[0])).map((item) => String(item[1])))
     const rows = (currentResult?.rows || []).map((row) => ({
       ...row,
@@ -92,44 +166,57 @@ export const createTaskController = ({
     }))
     return buildAssignedTasks(rows, currentVisibleResources, resourceRowOffset)
   }
-  const getUnassignedTasks = () => buildUnassignedTasks(currentResult?.unassignedTasks)
+  const getUnassignedTasks = (): UnassignedTaskView[] => buildUnassignedTasks(currentResult?.unassignedTasks)
     .filter((task) => !query.keyword || (query.condition !== '资源名' && matches(task.name)))
-  const getResources = () => buildResourcesWithLoad(currentResult?.rows)
-  const getVisibleResources = () => {
+  const getResources = (): ResourceWithLoad[] => buildResourcesWithLoad(currentResult?.rows)
+  const getVisibleResources = (): ResourceWithLoad[] => {
     const allResources = getResources()
     const visibleIds = new Set(currentVisibleResources.map((item) => String(item[1])))
     if (!visibleIds.size) return allResources
     return allResources.filter((item) => visibleIds.has(String(item[1])))
   }
-  const getResourceData = () => getVisibleResources().map((item, index) => [index + resourceRowOffset].concat(item))
-  const search = ({ keyword = '', condition = '任务名' }) => {
+  const getResourceData = (): ResourceSeriesItem[] =>
+    buildResourceSeriesData(getVisibleResources(), resourceRowOffset)
+  const search = ({
+    keyword = '',
+    condition = '任务名',
+  }: {
+    keyword?: string
+    condition?: QueryCondition
+  }) => {
     query = { keyword: keyword.trim().toLocaleLowerCase(), condition }
     const assignedData = getAssignedTasks()
     const unassignedData = getUnassignedTasks()
-    gantt.dispatchAction({ type: 'updateTaskData', assignedData, unassignedData, resourceData: getResourceData() })
+    gantt.dispatchAction({ type: 'updateTaskData', assignedData, unassignedData })
     return { count: assignedData.length + unassignedData.length }
   }
 
-  const refresh = async () => {
+  const refresh = async (): Promise<TaskControllerSearchResult> => {
     currentResult = await searchGantt(searchParams)
     const allResources = getResources()
     const availableIds = new Set(allResources.map((item) => String(item[1])))
     currentVisibleResources = currentVisibleResources.filter((item) => availableIds.has(String(item[1])))
-    if (!currentVisibleResources.length) currentVisibleResources = allResources
+    if (!currentVisibleResources.length) {
+      currentVisibleResources = allResources.map(([name, id]) => [name, id])
+    }
 
     gantt.dispatchAction({
       type: 'updateResourceFilter',
       assignedData: getAssignedTasks(),
       unassignedData: getUnassignedTasks(),
-      resourceData: getResourceData(),
+      ...buildResourceSeriesUpdate(getVisibleResources(), resourceRowOffset),
       resources: getVisibleResources(),
     })
     return currentResult
   }
 
-  const expandAffectedTaskIds = (before, after, seeds) => {
+  const expandAffectedTaskIds = (
+    before: AssignedTaskSeriesItem[],
+    after: AssignedTaskSeriesItem[],
+    seeds: Iterable<TaskId>
+  ): string[] => {
     const affected = new Set(Array.from(seeds, String))
-    const expand = (items) => {
+    const expand = (items: AssignedTaskSeriesItem[]) => {
       let changed = true
       while (changed) {
         changed = false
@@ -150,7 +237,7 @@ export const createTaskController = ({
     return Array.from(affected)
   }
 
-  const removeTaskFromSnapshot = (taskId) => {
+  const removeTaskFromSnapshot = (taskId: TaskId) => {
     const idKey = String(taskId)
     currentResult.rows.forEach((row) => {
       row.assignedTasks = (Array.isArray(row.assignedTasks) ? row.assignedTasks : [])
@@ -161,7 +248,7 @@ export const createTaskController = ({
       : []).filter((task) => String(getTaskId(task)) !== idKey)
   }
 
-  const applyTaskDetail = (detail) => {
+  const applyTaskDetail = (detail: TaskSource): string | null => {
     const taskId = getTaskId(detail)
     if (taskId == null) return null
 
@@ -206,7 +293,7 @@ export const createTaskController = ({
     return idKey
   }
 
-  const renderTaskChanges = (before, changedIds) => {
+  const renderTaskChanges = (before: AssignedTaskSeriesItem[], changedIds: Set<string>) => {
     if (!changedIds.size) return
     const after = getAssignedTasks()
     const affectedIds = expandAffectedTaskIds(before, after, changedIds)
@@ -225,23 +312,25 @@ export const createTaskController = ({
     }
   }
 
-  const isNotFound = (error) => error?.response?.status === 404
+  const isNotFound = (error: unknown): boolean =>
+    (error as { response?: { status?: number } })?.response?.status === 404
 
   const resolveWaiters = () => {
     if (processing || queuedEvents.size || updateTimer != null) return
     eventWaiters.splice(0).forEach((resolve) => resolve())
   }
 
-  const processQueuedEvents = async () => {
+  const processQueuedEvents = async (): Promise<void> => {
     if (processing || !queuedEvents.size) {
       resolveWaiters()
       return
     }
     processing = true
+    // 同一批次内的任务详情并行拉取，但最终只执行一次局部渲染。
     const batch = Array.from(queuedEvents.entries())
     queuedEvents.clear()
     const before = getAssignedTasks()
-    const changedIds = new Set()
+    const changedIds = new Set<string>()
     let cursor = 0
     const workerCount = Math.max(1, Math.min(maxConcurrentUpdates, batch.length))
     const workers = Array.from({ length: workerCount }, async () => {
@@ -258,7 +347,7 @@ export const createTaskController = ({
           const detail = await fetchTaskById(taskId)
           const changedId = detail && applyTaskDetail(detail)
           if (changedId) changedIds.add(changedId)
-        } catch (error) {
+        } catch (error: unknown) {
           if (isNotFound(error)) {
             removeTaskFromSnapshot(taskId)
             changedIds.add(idKey)
@@ -280,7 +369,7 @@ export const createTaskController = ({
     resolveWaiters()
   }
 
-  const handleTaskEvent = (event) => {
+  const handleTaskEvent = (event: TaskEventInput): Promise<void> => {
     const { taskIds = [], eventType = 'upsert' } = event?.payload || {}
     let added = false
     taskIds.forEach((taskId) => {
@@ -290,7 +379,7 @@ export const createTaskController = ({
       }
     })
     if (!added) return Promise.resolve()
-    const done = new Promise((resolve) => eventWaiters.push(resolve))
+    const done = new Promise<void>((resolve) => eventWaiters.push(resolve))
     if (queuedEvents.size && updateTimer == null && !processing) {
       updateTimer = setTimeout(() => {
         updateTimer = null
@@ -305,7 +394,14 @@ export const createTaskController = ({
     return done
   }
 
-  const assignSelectedTask = async ({ resourceId, taskId }) => {
+  const assignSelectedTask = async ({
+    resourceId,
+    taskId,
+  }: {
+    resourceId: TaskId
+    taskId: TaskId
+  }): Promise<{ success: boolean }> => {
+    // 派遣前必须从服务端快照重新定位任务和可用班次，避免使用界面旧数据。
     const task = (Array.isArray(currentResult?.unassignedTasks) ? currentResult.unassignedTasks : [])
       .find((item) => String(getTaskId(item)) === String(taskId))
     if (!task) {

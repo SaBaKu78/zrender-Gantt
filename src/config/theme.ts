@@ -22,6 +22,8 @@ export interface GanttTheme {
   borderSoft: string
   primary: string
   primarySoft: string
+  shiftLaneFill: string
+  shiftLaneStroke: string
   success: string
   warn: string
   danger: string
@@ -88,6 +90,8 @@ export const LIGHT_THEME: GanttTheme = {
   borderSoft: '#E8EDF3',
   primary: '#2F9EEB',
   primarySoft: '#E8F4FF',
+  shiftLaneFill: 'rgba(47,158,235,0.07)',
+  shiftLaneStroke: 'rgba(47,158,235,0.36)',
   success: '#20C7B5',
   warn: '#F3B33D',
   danger: '#EF4444',
@@ -133,6 +137,8 @@ export const DARK_THEME: GanttTheme = {
   borderSoft: 'rgba(187,204,220,0.13)',
   primary: '#5FC6D2',
   primarySoft: '#234851',
+  shiftLaneFill: 'rgba(95,198,210,0.10)',
+  shiftLaneStroke: 'rgba(95,198,210,0.42)',
   success: '#77C79B',
   warn: '#E0B35F',
   danger: '#E47A73',
@@ -211,6 +217,8 @@ export function applyThemeToDocument(mode: GanttThemeMode): void {
     '--gantt-border-soft': theme.borderSoft,
     '--gantt-primary': theme.primary,
     '--gantt-primary-soft': theme.primarySoft,
+    '--gantt-shift-lane-fill': theme.shiftLaneFill,
+    '--gantt-shift-lane-stroke': theme.shiftLaneStroke,
     '--gantt-success': theme.success,
     '--gantt-warn': theme.warn,
     '--gantt-danger': theme.danger,

@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import CustomSeriesView from '../../src/component/custom/CustomView'
 import { customInnerStore } from '../../src/component/custom/CustomModel'
 import { TaskRenderItem } from '../../src/config/renderTask'
+import { ResourceScheduleRenderItem } from '../../src/config/renderResource'
 
 // Node exposes navigator in recent versions; zrender would mistake it for a browser.
 vi.hoisted(() => { vi.stubGlobal('navigator', undefined) })
@@ -40,6 +41,18 @@ function renderTask(status, width = 260, locked = false, showUnlock = false, ove
   }
   new CustomSeriesView().render(model, {}, {}, null)
   return graphic
+}
+
+function renderSchedule(start, end, rowHeight = 44) {
+  const values = ['0:shift-1', 0, start, end, 1]
+  const api = {
+    value: (dimension) => values[dimension],
+    coord: ([x]) => [x, 100],
+    size: () => [0, rowHeight],
+  }
+  return ResourceScheduleRenderItem({
+    coordSys: { x: 0, y: 100, width: 500, height: rowHeight },
+  }, api)
 }
 
 describe('task card custom-series rendering', () => {
@@ -209,5 +222,21 @@ describe('task card custom-series rendering', () => {
     const labels = []
     graphic.traverse((element) => { if (element.type === 'text') labels.push(element.style.text) })
     expect(labels.filter((text) => text === '进港')).toHaveLength(1)
+  })
+})
+
+describe('resource schedule custom-series rendering', () => {
+  it('renders availability as centered oval capsules without endpoint handles', () => {
+    const capsule = renderSchedule(50, 360)
+
+    expect(capsule.type).toBe('rect')
+    expect(capsule.shape.r).toBe(capsule.shape.height / 2)
+    expect(capsule.shape.y + capsule.shape.height / 2).toBe(122)
+    expect(capsule.silent).toBe(true)
+  })
+
+  it('does not render empty or invalid availability ranges', () => {
+    expect(renderSchedule(200, 200)).toBeUndefined()
+    expect(renderSchedule(300, 250)).toBeUndefined()
   })
 })

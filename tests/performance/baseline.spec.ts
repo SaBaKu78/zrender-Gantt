@@ -154,7 +154,7 @@ test('fixed Gantt performance baseline', async ({ page }, testInfo) => {
           warmupSteps,
         }): Promise<ScenarioResult> => {
           const { assignOverlapLanes } = await import(
-            '/src/config/taskTransform.js'
+            '/src/config/taskTransform.ts'
           )
           const percentile = (values: number[], ratio: number): number => {
             if (!values.length) return 0

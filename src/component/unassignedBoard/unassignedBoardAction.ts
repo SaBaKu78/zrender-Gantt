@@ -11,6 +11,7 @@ interface TaskDataUpdatePayload extends Payload {
   assignedData?: unknown[]
   unassignedData?: TaskData[]
   resourceData?: unknown[]
+  resourceScheduleData?: unknown[]
   resources?: UnassignedBoardOption['resources']
 }
 
@@ -36,28 +37,19 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
     type: 'updateResourceFilter',
     update: 'update',
   }, function(payload: TaskDataUpdatePayload, model: GlobalModel, api: ExtensionAPI) {
-    const assignedData = payload.assignedData || []
-    const unassignedData = payload.unassignedData || []
-    const resourceData = payload.resourceData || []
-    const resources = payload.resources || []
-
-    model.eachSeries(function(seriesModel: ActionSeriesModel) {
-      if (seriesModel.id === 'assignedTasks') {
-        seriesModel.updateData?.(assignedData, model)
-      }
-      if (seriesModel.id === 'resourceRows') {
-        seriesModel.updateData?.(resourceData, model)
-      }
-      if (seriesModel.id === 'resourceSchedule') {
-        seriesModel.updateData?.(resourceData, model)
-      }
-    })
+    updateSeriesData(model, 'assignedTasks', payload.assignedData)
+    updateSeriesData(model, 'resourceRows', payload.resourceData)
+    updateSeriesData(model, 'resourceSchedule', payload.resourceScheduleData)
 
     model.eachComponent('unassignedBoard', function(boardModel: ActionComponentModel) {
       if (boardModel.id !== 'unassignedBoard') return
 
-      boardModel.option.data = unassignedData
-      boardModel.option.resources = resources
+      if (payload.unassignedData !== undefined) {
+        boardModel.option.data = payload.unassignedData
+      }
+      if (payload.resources !== undefined) {
+        boardModel.option.resources = payload.resources
+      }
     })
   })
 
@@ -65,23 +57,16 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
     type: 'updateTaskData',
     update: 'update',
   }, function(payload: TaskDataUpdatePayload, model: GlobalModel, api: ExtensionAPI) {
-    const assignedData = payload.assignedData || []
-    const unassignedData = payload.unassignedData || []
-    model.eachSeries(function(seriesModel: ActionSeriesModel) {
-      if (seriesModel.id !== 'assignedTasks') return
-
-      seriesModel.updateData?.(assignedData, model)
-    })
-
-    model.eachSeries(function(seriesModel: ActionSeriesModel) {
-      if (seriesModel.id !== 'resourceRows' && seriesModel.id !== 'resourceSchedule') return
-      seriesModel.updateData?.(payload.resourceData || [], model)
-    })
+    updateSeriesData(model, 'assignedTasks', payload.assignedData)
+    updateSeriesData(model, 'resourceRows', payload.resourceData)
+    updateSeriesData(model, 'resourceSchedule', payload.resourceScheduleData)
 
     model.eachComponent('unassignedBoard', function(boardModel: ActionComponentModel) {
       if (boardModel.id !== 'unassignedBoard') return
 
-      boardModel.option.data = unassignedData
+      if (payload.unassignedData !== undefined) {
+        boardModel.option.data = payload.unassignedData
+      }
     })
   })
 
@@ -165,6 +150,18 @@ export default function installUnassignedBoardAction(registers: ExtensionInstall
     update: 'update',
   }, function () {
     // The next full update still runs, once, after the drag finishes.
+  })
+}
+
+function updateSeriesData(
+  model: GlobalModel,
+  seriesId: string,
+  data: unknown[] | undefined
+) {
+  if (data === undefined) return
+  model.eachSeries(function(seriesModel: ActionSeriesModel) {
+    if (seriesModel.id !== seriesId) return
+    seriesModel.updateData?.(data, model)
   })
 }
 

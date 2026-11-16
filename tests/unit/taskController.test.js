@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { createTaskController } from '../../src/config/taskController.js'
+import { createTaskController } from '../../src/config/taskController.ts'
 
 const makeDetail = (taskId, assignment = null) => ({
   taskId,

@@ -339,7 +339,7 @@ E2E 使用真实 Chrome channel。`slowMo` 只用于放慢可见操作，不改�
 - `index.js` 尚未把 `onTaskEvent` 接回 `taskController`，WebSocket 任务更新链路还没有闭环。
 - 派遣成功后状态机当前同步模拟 `WS_UPDATE`，没有真正等待推送。
 - `src/util/axios.ts` 创建了配置实例但导出原始 Axios，拦截器目前不会作用于业务请求。
-- `tsconfig.app.json` 当前为 `strict: false`，且 `.js` 业务文件未开启 `checkJs`。
+- `tsconfig.app.json` 当前为 `strict: false`；`src/config` 已完成 TypeScript 迁移，并禁止 `src` 新增未声明的 JavaScript 业务文件。
 - `Gantt.ts` 和 `UnassignedBoardView.ts` 职责较多，新增功能时优先抽离纯业务逻辑，不继续扩大 View。
 - `package.json` 的 `main`、`module` 尚未与 `dist` 库产物对齐，正式发布 npm 包前需要修正导出声明。
 

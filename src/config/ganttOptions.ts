@@ -2,6 +2,17 @@ import { ResourceRenderItem, ResourceScheduleRenderItem } from './renderResource
 import { TaskRenderItem } from './renderTask'
 import { PROJECT_ID } from './project'
 import { getTheme } from './theme'
+import {
+  buildResourceScheduleData,
+  buildResourceSeriesData,
+  type AssignedTaskSeriesItem,
+  type ResourceFilterResource,
+  type ResourceId,
+  type ResourceWithLoad,
+  type UnassignedTaskView,
+} from './taskTransform'
+import type { UnassignedBoardOption } from '../component/unassignedBoard/UnassignedBoardView'
+import type { WsOption } from '../ws/types'
 
 const TWENTY_MINUTES = 20 * 60 * 1000
 const TARGET_RESOURCE_ROW_HEIGHT = 44
@@ -13,23 +24,72 @@ const WS_URL = `ws://127.0.0.1:5001/ws?projectId=${encodeURIComponent(PROJECT_ID
 const VERTICAL_HANDLE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg=='
 const HORIZONTAL_HANDLE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAFCAMAAABl/6zIAAAABlBMVEUAAADMzMzIT8AyAAAAAXRSTlMAQObYZgAAABRJREFUeAFjYGRkwIMJSeMHlBkOABP7AEGzSuPKAAAAAElFTkSuQmCC'
 
-const defaultRange = () => {
+type QueryCondition = '任务名' | '资源名'
+
+export interface GanttWindow {
+  startTime?: string
+  endTime?: string
+}
+
+export interface CreateGanttOptionParams {
+  dom: HTMLElement
+  resource: ResourceWithLoad[]
+  task: AssignedTaskSeriesItem[]
+  unassignedTask: UnassignedTaskView[]
+  onAssignTask?: UnassignedBoardOption['onAssignTask']
+  resourceRowOffset?: number
+  resourceTotalCount?: number
+  resourceFilterOnChange?: (params: {
+    filter: { resourceId?: ResourceId }
+    visibleResources: ResourceFilterResource[]
+  }) => void
+  onTaskEvent?: WsOption['onTaskEvent']
+  onSearch?: (query: { keyword: string; condition: QueryCondition }) => unknown
+  window?: GanttWindow
+}
+
+const defaultRange = (): [number, number] => {
   const start = new Date(); start.setHours(4, 0, 0, 0)
   const end = new Date(start); end.setDate(end.getDate() + 1)
   return [start.getTime(), end.getTime()]
 }
-const taskRange = (task) => {
-  const values = (Array.isArray(task) ? task : []).flatMap((item) => [item?.[2], item?.[3]]).filter(Number.isFinite)
+const taskRange = (task: AssignedTaskSeriesItem[]): [number, number] => {
+  const values: number[] = []
+  ;(Array.isArray(task) ? task : []).forEach((item) => {
+    if (Number.isFinite(item?.[2])) values.push(item[2])
+    if (Number.isFinite(item?.[3])) values.push(item[3])
+  })
   return values.length ? [Math.min(...values), Math.max(...values)] : defaultRange()
 }
-const resourceData = (resource, offset = 0) => resource.map((item, index) => [index + offset].concat(item))
-const initialYEnd = (dom, rows) => Math.min(100, Math.max(1, ((Math.max(0, dom.clientHeight - GRID_TOP - GRID_BOTTOM) / TARGET_RESOURCE_ROW_HEIGHT) / Math.max(1, rows)) * 100))
+const initialYEnd = (dom: HTMLElement, rows: number): number => Math.min(
+  100,
+  Math.max(
+    1,
+    ((Math.max(0, dom.clientHeight - GRID_TOP - GRID_BOTTOM) / TARGET_RESOURCE_ROW_HEIGHT)
+      / Math.max(1, rows)) * 100
+  )
+)
 
-export const createGanttOption = ({ dom, resource, task, unassignedTask, onAssignTask, resourceRowOffset = 0, resourceTotalCount = resource.length, resourceFilterOnChange, onTaskEvent, onSearch, window }) => {
+export const createGanttOption = ({
+  dom,
+  resource,
+  task,
+  unassignedTask,
+  onAssignTask,
+  resourceRowOffset = 0,
+  resourceTotalCount = resource.length,
+  resourceFilterOnChange,
+  onTaskEvent,
+  onSearch,
+  window,
+}: CreateGanttOptionParams) => {
   const theme = getTheme()
   const paddingRows = Math.ceil((dom.clientHeight * DEFAULT_UNASSIGNED_PANEL_RATIO) / TARGET_RESOURCE_ROW_HEIGHT) + 1
   const totalRows = resourceTotalCount + resourceRowOffset + paddingRows
-  const windowRange = [new Date(window?.startTime).getTime(), new Date(window?.endTime).getTime()]
+  const windowRange: number[] = [
+    new Date(window?.startTime || '').getTime(),
+    new Date(window?.endTime || '').getTime(),
+  ]
   const xRange = windowRange.every(Number.isFinite) ? windowRange : taskRange(task)
   const yEnd = initialYEnd(dom, totalRows)
 
@@ -55,9 +115,10 @@ export const createGanttOption = ({ dom, resource, task, unassignedTask, onAssig
     liquidGlassLayer: { id: 'liquidGlassLayer', show: false, width: 210, height: 150, left: 360, top: 20, zIndex: 35, title: '' },
     unassignedBoard: { id: 'unassignedBoard', show: true, data: unassignedTask, resources: resource, resourceRowOffset, onAssignTask },
     series: [
-      { type: 'custom', id: 'resourceSchedule', dimensions: ['rowIndex', 'name', 'id', 'code', 'status', 'timeline'], encode: { x: -1, y: 0 }, renderItem: ResourceScheduleRenderItem, animationDuration: 220, animationDurationUpdate: 1400, animationEasingUpdate: 'quadraticInOut', data: resourceData(resource, resourceRowOffset) },
+      // 三类 series 的数据结构不同，必须使用各自的构建函数，不能交叉复用数组。
+      { type: 'custom', id: 'resourceRows', dimensions: ['rowIndex', 'name', 'id', 'code', 'status', 'timeline', 'peakLoad'], encode: { x: -1, y: 0 }, renderItem: ResourceRenderItem, data: buildResourceSeriesData(resource, resourceRowOffset) },
+      { type: 'custom', id: 'resourceSchedule', dimensions: ['id', 'rowIndex', 'startTime', 'endTime', 'status'], encode: { x: [2, 3], y: 1 }, renderItem: ResourceScheduleRenderItem, animationDuration: 0, animationDurationUpdate: 0, data: buildResourceScheduleData(resource, resourceRowOffset) },
       { type: 'custom', id: 'assignedTasks', dimensions: ['id', 'resourceIndex', 'startTime', 'endTime', 'taskName', 'status', 'color', 'outsideShift', 'laneIndex', 'laneCount', 'assignmentId', 'assignmentStatus', 'shiftId', 'assignmentVersion', 'flightNumber', 'aircraft', 'location', 'locked', 'showUnlock', 'notifyStatus'], encode: { x: [2, 3], y: 1 }, renderItem: TaskRenderItem, data: task },
-      { type: 'custom', id: 'resourceRows', dimensions: ['rowIndex', 'name', 'id', 'code', 'status', 'timeline'], encode: { x: -1, y: 0 }, renderItem: ResourceRenderItem, data: resourceData(resource, resourceRowOffset) },
     ],
   }
 }
