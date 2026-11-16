@@ -3,6 +3,7 @@ import CustomSeriesView from '../../src/component/custom/CustomView'
 import { customInnerStore } from '../../src/component/custom/CustomModel'
 import { TaskRenderItem } from '../../src/config/renderTask'
 import { ResourceScheduleRenderItem } from '../../src/config/renderResource'
+import { getTheme } from '../../src/config/theme'
 
 // Node exposes navigator in recent versions; zrender would mistake it for a browser.
 vi.hoisted(() => { vi.stubGlobal('navigator', undefined) })
@@ -177,7 +178,7 @@ describe('task card custom-series rendering', () => {
     expect(tab.shape.width).toBe(4)
     expect(tab.shape.x).toBeCloseTo(card.shape.x + 0.5)
     expect(tab.shape.height).toBe(card.shape.height - 1)
-    expect(tab.style.fill).toBe('#7CA88E')
+    expect(tab.style.fill).toBe(getTheme().taskStatus[4].accent)
     expect(graphic.childOfName('taskStart').style.x).toBeGreaterThan(tab.shape.x + tab.shape.width)
     expect(graphic.childOfName('taskFlight').style.x).toBeGreaterThan(tab.shape.x + tab.shape.width)
   })
@@ -187,7 +188,7 @@ describe('task card custom-series rendering', () => {
     const card = graphic.childAt(0)
     expect(card.style.stroke).not.toBe('#FAAD14')
     expect(card.style.lineWidth).toBe(1)
-    expect(card.style.fill).toBe('#F1F6FA')
+    expect(card.style.fill).toBe(getTheme().taskStatus[2].background)
   })
 
   it('places start/status/end above flight/task/stand in matching columns', () => {
